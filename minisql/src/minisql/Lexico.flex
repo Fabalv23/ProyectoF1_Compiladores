@@ -10,7 +10,7 @@ D=[0-9]
 espacio=[ ,\t,\r,\n]
 Char = [^\r\n]
 S=[']
-
+C = [","]
 
 
 %{
@@ -191,7 +191,7 @@ EXCEPT|OUTPUT|ZONE|EXCEPTION    {palabra=yytext(); linea = yyline ; col = yycolu
 "||" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return OR;}
 "!" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return ADMIRACION_CERRADO;}
 ";" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return PUNTO_COMA;}
-"\," {palabra=yytext() ; linea = yyline ; col = yycolumn ; return COMA;}
+{C} {palabra=yytext() ; linea = yyline ; col = yycolumn ; return COMA;}
 "." {palabra=yytext() ; linea = yyline ; col = yycolumn ; return PUNTO;}
 "[" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return CORCHETE_ABIERTO;}
 "]" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return CORCHETE_CERRADO;}
@@ -216,7 +216,7 @@ EXCEPT|OUTPUT|ZONE|EXCEPTION    {palabra=yytext(); linea = yyline ; col = yycolu
 ({D})+(".")(({D})*("E+"|"e+"|"E"|"e"|"E-"|"e-")?({D})+)? {palabra=yytext() ; linea = yyline ; col = yycolumn ; return FLOAT;}
 
 
-"\'".*[^\n']("\'")|("\'")("\'") {palabra=yytext() ; linea = yyline ; col = yycolumn ; return STRING;}
+"\'".[^\n']*("\'")|("\'")("\'") {palabra=yytext() ; linea = yyline ; col = yycolumn ; return STRING;}
 
 "\'"[^\n']* {palabra=yytext() ; linea = yyline ; col = yycolumn ; return ERROR_STRING;}
 
