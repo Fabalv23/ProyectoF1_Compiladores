@@ -21,15 +21,7 @@ C = [","]
 %}
 %%
 
-
-{espacio} {/*Ignore*/}
-
-"--" {Char}*(\r|\n|\r\n) {/*Ignore*/}
-
-"/*" [^*] ~("*/") | "/*" ("*"+ "/") {/*Ignore*/}
-
-
-
+"," {palabra=yytext() ; linea = yyline ; col = yycolumn ; return COMA;}
 
 ADD|EXTERNAL|PROCEDURE {palabra=yytext(); linea = yyline ; col = yycolumn ; return RESERVADAS;}
 ALL|FETCH|PUBLIC    {palabra=yytext(); linea = yyline ; col = yycolumn ; return RESERVADAS;}
@@ -191,7 +183,7 @@ EXCEPT|OUTPUT|ZONE|EXCEPTION    {palabra=yytext(); linea = yyline ; col = yycolu
 "||" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return OR;}
 "!" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return ADMIRACION_CERRADO;}
 ";" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return PUNTO_COMA;}
-{C} {palabra=yytext() ; linea = yyline ; col = yycolumn ; return COMA;}
+
 "." {palabra=yytext() ; linea = yyline ; col = yycolumn ; return PUNTO;}
 "[" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return CORCHETE_ABIERTO;}
 "]" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return CORCHETE_CERRADO;}
@@ -216,12 +208,20 @@ EXCEPT|OUTPUT|ZONE|EXCEPTION    {palabra=yytext(); linea = yyline ; col = yycolu
 ({D})+(".")(({D})*("E+"|"e+"|"E"|"e"|"E-"|"e-")?({D})+)? {palabra=yytext() ; linea = yyline ; col = yycolumn ; return FLOAT;}
 
 
-"\'".[^\n']*("\'")|("\'")("\'") {palabra=yytext() ; linea = yyline ; col = yycolumn ; return STRING;}
+"\'"[^\n]*("\'")|("\'")("\'") {palabra=yytext() ; linea = yyline ; col = yycolumn ; return STRING;}
+
+{espacio} {/*Ignore*/}
+
+"--" {Char}*(\r|\n|\r\n) {/*Ignore*/}
+
+"/*" [^*] ~("*/") | "/*" ("*"+ "/") {/*Ignore*/}
+
 
 "\'"[^\n']* {palabra=yytext() ; linea = yyline ; col = yycolumn ; return ERROR_STRING;}
 
 "/*"[^\n*\/]* {palabra=yytext() ; linea = yyline ; col = yycolumn ; return ERROR_COMENTARIO;}
 
 (".")(({D})*("E+"|"e+"|"E"|"e"|"E-"|"e-")?({D})+)? {palabra=yytext() ; linea = yyline ; col = yycolumn ; return ERROR_FLOAT;}
+
 
  . {palabra=yytext() ; linea = yyline ; col = yycolumn ;return ERROR;}

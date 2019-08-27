@@ -213,27 +213,30 @@ public class Inicio extends javax.swing.JFrame {
                         r.show();
 
                         abrirarchivo();
+                        
+                        Tokens = "";
+                        errores="";                        
                         return;
                     }
                     switch (tokens) {
                         case ERROR:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR SIMBOLO NO RECONOCIDO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR SIMBOLO NO RECONOCIDO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR SIMBOLO NO RECONOCIDO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length())   + " \n";
+                            errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR SIMBOLO NO RECONOCIDO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case ERROR_COMENTARIO:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE COMENTARIO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE COMENTARIO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE COMENTARIO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE COMENTARIO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case ERROR_STRING:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE STRING" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE STRING" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE STRING" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE STRING" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case ERROR_FLOAT:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR INICIO INVALIDO DE DECIMAL" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR INICIO INVALIDO DE DECIMAL" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR INICIO INVALIDO DE DECIMAL" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR INICIO INVALIDO DE DECIMAL" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case IDENTIFICADOR:
@@ -246,207 +249,207 @@ public class Inicio extends javax.swing.JFrame {
 
 //                                JOptionPane.showMessageDialog(null, "Identificador mayor a 31 caracteres \n Original: " + lexer.palabra + "\n Reemplazo: " + truncado,
 //                                        "Mensaje de Error ", HEIGHT);
-                                resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " Original con ERROR  \n";
-                                errores += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " Original con ERROR  \n";
-                                resultado += "TOKEN: " + truncado + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                                Tokens += "TOKEN: " + truncado + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                                resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " Original con ERROR  \n";
+                                errores += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " Original con ERROR  \n";
+                                resultado += "TOKEN: " + truncado + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " +((lexer.col) + lexer.palabra.length()) + " \n";
+                                Tokens += "TOKEN: " + truncado + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                                 break;
 
                             } else {
 
-                                resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                                Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                                resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                                Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
 
                                 break;
                             }
 
                         case RESERVADAS:
 
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case BIT:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case FLOAT:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case INT:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case Comentario_LineaUnica:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case SUMA:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length())+ " \n";
                             break;
 
                         case RESTA:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length())+ " \n";
                             break;
 
                         case MULTIPLICACION:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case DIVISION:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case PORCENTAJE:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case MENOR_QUE:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case MENOR_IGUAL:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case MAYOR_QUE:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case MAYOR_IGUAL:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case ASIGNAR:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case IGUAL_IGUAL:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case DIFERENTE_DE:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case AND:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case OR:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case ADMIRACION_CERRADO:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case PUNTO_COMA:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case PUNTO:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case COMA:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case CORCHETE_ABIERTO:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case CORCHETE_CERRADO:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case PARENTESIS_ABIERTO:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case PARENTESIS_CERRADO:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case LLAVE_ABIERTA:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case LLAVE_CERRADA:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case CORCHETES:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case PARENTESIS:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case LLAVES:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case ARROBA:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case NUMERAL:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case NUMERALES:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             break;
 
                         case STRING:
 
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
 
                             break;
 
                         case COMENTARIO_MULTILINEA:
 
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + (lexer.col) + lexer.palabra.length() + " \n";
+                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
 
                             break;
 

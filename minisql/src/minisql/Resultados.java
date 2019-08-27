@@ -20,7 +20,7 @@ public class Resultados extends javax.swing.JFrame {
      */
     public Resultados(String x,String y) {
         initComponents();
-        
+            
         jTextArea1.setText(y);
         jTextArea2.setText(x);
     }
@@ -118,7 +118,8 @@ public class Resultados extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        
+        jTextArea1.setText("");
+        jTextArea2.setText("");
         this.dispose();
         
         
