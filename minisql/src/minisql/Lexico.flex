@@ -208,20 +208,16 @@ EXCEPT|OUTPUT|ZONE|EXCEPTION    {palabra=yytext(); linea = yyline ; col = yycolu
 ({D})+(".")(({D})*("E+"|"e+"|"E"|"e"|"E-"|"e-")?({D})+)? {palabra=yytext() ; linea = yyline ; col = yycolumn ; return FLOAT;}
 
 
-"\'"[^\n]*("\'")|("\'")("\'") {palabra=yytext() ; linea = yyline ; col = yycolumn ; return STRING;}
+"\'"[^\n']*("\'")|("\'")("\'") {palabra=yytext() ; linea = yyline ; col = yycolumn ; return STRING;}
 
 {espacio} {/*Ignore*/}
 
 "--" {Char}*(\r|\n|\r\n) {/*Ignore*/}
 
-"/*" [^*] ~("*/") | "/*" ("*"+ "/") {/*Ignore*/}
-
+"/*"~("*/") | "/*" ("*"+ "/") {/*Ignore*/}
 
 "\'"[^\n']* {palabra=yytext() ; linea = yyline ; col = yycolumn ; return ERROR_STRING;}
 
 "/*"[^\n*\/]* {palabra=yytext() ; linea = yyline ; col = yycolumn ; return ERROR_COMENTARIO;}
-
-(".")(({D})*("E+"|"e+"|"E"|"e"|"E-"|"e-")?({D})+)? {palabra=yytext() ; linea = yyline ; col = yycolumn ; return ERROR_FLOAT;}
-
 
  . {palabra=yytext() ; linea = yyline ; col = yycolumn ;return ERROR;}
