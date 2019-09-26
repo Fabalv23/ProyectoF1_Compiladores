@@ -13,14 +13,18 @@ import java.util.ArrayList;
  */
 public class analisis_lexico_descendente {
 
-    public analisis_lexico_descendente(ArrayList<Tokens> lista) {
+    public analisis_lexico_descendente(ArrayList<Tokens> lista, ArrayList<detalle_token> lista2) {
         this.tokens_a_evaluar = lista;
+        this.tokens_a_evaluar_detalle = lista2;
     }
 
     public Tokens token_actual = null;
     public Tokens token_siguiente = null;
     public ArrayList<Tokens> tokens_a_evaluar = new ArrayList<>();
+    public ArrayList<detalle_token> tokens_a_evaluar_detalle = new ArrayList<>();
+    public ArrayList<error_token> Errores = new ArrayList<>();
     int cont = 0;
+    public error_token error_agregar = null;
 
     public void cambio_token(int siguiente) {
         if (siguiente < tokens_a_evaluar.size()) {
@@ -46,33 +50,383 @@ public class analisis_lexico_descendente {
     public void analisis(Tokens actual) {
 
         switch (actual) {
+//SENTENCIAS DML
+
+            case INSERT:
+                cont++;
+                cambio_token(cont);
+                insert(token_siguiente);
+                values(token_siguiente);
+
+                if (token_siguiente != null) {
+
+                    switch (token_siguiente) {
+                        case PUNTO_COMA:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.GO) {
+                                cont++;
+                                cambio_token(cont);
+                                System.out.println("CADENA ANALIZADA CORRECTAMENTE");
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "GO");
+                            }
+
+                            if (token_siguiente != null) {
+                                analisis(token_siguiente);
+                            } else {
+
+                            }
+
+                            break;
+
+                        default:
+                            if (token_siguiente == Tokens.CREATE || token_siguiente == Tokens.ALTER || token_siguiente == Tokens.SELECT || token_siguiente == Tokens.INSERT || token_siguiente == Tokens.UPDATE || token_siguiente == Tokens.DROP || token_siguiente == Tokens.TRUNCATE || token_siguiente == Tokens.DELETE) {
+                                error_sintaxis(token_siguiente, cont, "PUNTO y COMA");
+                            }
+                            analisis(token_siguiente);
+
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "PUNTO y COMA");
+                }
+
+                break;
 
             case ALTER:
                 cont++;
                 cambio_token(cont);
                 alter(token_siguiente);
+
+                if (token_siguiente != null) {
+
+                    switch (token_siguiente) {
+                        case PUNTO_COMA:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.GO) {
+                                cont++;
+                                cambio_token(cont);
+                                System.out.println("CADENA ANALIZADA CORRECTAMENTE");
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "GO");
+                            }
+
+                            if (token_siguiente != null) {
+                                analisis(token_siguiente);
+                            } else {
+
+                            }
+
+                            break;
+
+                        default:
+                            if (token_siguiente == Tokens.CREATE || token_siguiente == Tokens.ALTER || token_siguiente == Tokens.SELECT || token_siguiente == Tokens.INSERT || token_siguiente == Tokens.UPDATE || token_siguiente == Tokens.DROP || token_siguiente == Tokens.TRUNCATE || token_siguiente == Tokens.DELETE) {
+                                error_sintaxis(token_siguiente, cont, "PUNTO y COMA");
+                            }
+                            analisis(token_siguiente);
+
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "PUNTO y COMA");
+                }
+
+                break;
+
+            default:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente != null) {
+                    switch (token_siguiente) {
+                        case PUNTO_COMA:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.GO) {
+                                cont++;
+                                cambio_token(cont);
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "GO");
+                            }
+
+                            if (token_siguiente != null) {
+                                analisis(token_siguiente);
+                            }
+
+                            break;
+
+                        default:
+                            analisis(token_siguiente);
+
+                    }
+
+                }
+                break;
+        }
+
+    }
+
+    public void values(Tokens v) {
+        switch (v) {
+            case VALUES:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+                    valores_insertar(token_siguiente);
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                        if (token_siguiente == Tokens.COMA) {
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                                cont++;
+                                cambio_token(cont);
+                                valores_insertar(token_siguiente);
+                                if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                                    cont++;
+                                    cambio_token(cont);
+                                } else {
+                                    error_sintaxis(token_siguiente, cont, ")");
+                                }
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "(");
+                            }
+                        }
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+                } else {
+                    error_sintaxis(token_siguiente, cont, "(");
+                }
+                break;
+
+            case DEFAULT:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.VALUES) {
+                    cont++;
+                    cambio_token(cont);
+                } else {
+                    error_sintaxis(token_siguiente, cont, "VALUES");
+                }
+                break;
+        }
+    }
+
+    public void valores_insertar(Tokens a) {
+        switch (a) {
+            case STRING:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.COMA) {
+                    cont++;
+                    cambio_token(cont);
+                    valores_insertar(token_siguiente);
+                }
+                break;
+            case BIT_NUM:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.COMA) {
+                    cont++;
+                    cambio_token(cont);
+                    valores_insertar(token_siguiente);
+                }
+                break;
+            case INT_NUM:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.COMA) {
+                    cont++;
+                    cambio_token(cont);
+                    valores_insertar(token_siguiente);
+                }
+                break;
+            case FLOAT_NUM:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.COMA) {
+                    cont++;
+                    cambio_token(cont);
+                    valores_insertar(token_siguiente);
+                }
+                break;
+
+            case NULL:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.COMA) {
+                    cont++;
+                    cambio_token(cont);
+                    valores_insertar(token_siguiente);
+                }
+                break;
+
+            default:
+                error_sintaxis(token_siguiente, cont, "CONSTANTE");
+                break;
+        }
+    }
+
+    public void insert(Tokens token_alter) {
+
+        switch (token_alter) {
+
+            case INTO:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.PUNTO) {
+                        objeto_nombre(token_siguiente);
+                        if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                columnas(token_siguiente);
+
+                                if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                                    cont++;
+                                    cambio_token(cont);
+
+                                } else {
+                                    error_sintaxis(token_siguiente, cont, ")");
+                                }
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                        } else if (token_siguiente == Tokens.DEFAULT) {
+
+                        } else if (token_siguiente == Tokens.VALUES) {
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "(");
+                        }
+
+                    } else if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                        cont++;
+                        cambio_token(cont);
+                        if (token_siguiente == Tokens.IDENTIFICADOR) {
+                            columnas(token_siguiente);
+
+                            if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                                cont++;
+                                cambio_token(cont);
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, ")");
+                            }
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                        }
+                    } else if (token_siguiente == Tokens.DEFAULT) {
+
+                    } else if (token_siguiente == Tokens.VALUES) {
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "(");
+                    }
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+                break;
+
+            case IDENTIFICADOR:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.PUNTO) {
+                    objeto_nombre(token_siguiente);
+                    if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                        cont++;
+                        cambio_token(cont);
+                        if (token_siguiente == Tokens.IDENTIFICADOR) {
+                            columnas(token_siguiente);
+
+                            if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                                cont++;
+                                cambio_token(cont);
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, ")");
+                            }
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                        }
+                    } else if (token_siguiente == Tokens.VALUES) {
+
+                    } else if (token_siguiente == Tokens.DEFAULT) {
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "(");
+                    }
+
+                } else if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.IDENTIFICADOR) {
+                        columnas(token_siguiente);
+
+                        if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                            cont++;
+                            cambio_token(cont);
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, ")");
+                        }
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                    }
+                } else if (token_siguiente == Tokens.VALUES) {
+
+                } else if (token_siguiente == Tokens.DEFAULT) {
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "(");
+                }
+
+                break;
+
+            default:
+                error_sintaxis(token_siguiente, cont, "INTO O IDENTIFICADOR");
                 break;
 
         }
 
     }
 
+    public void columnas(Tokens a) {
+        switch (a) {
+            case IDENTIFICADOR:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.COMA) {
+                    mas_de_un_identificador(token_siguiente);
+                }
+                break;
+
+            default:
+                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+        }
+    }
+
     public void alter(Tokens token_alter) {
 
         switch (token_alter) {
 
-            case DATABASE:
+            case DATABASE:      //listo
                 cont++;
                 cambio_token(cont);
                 database(token_siguiente);
 
                 break;
-
-            case INDEX:
-                cont++;
-
-                break;
-
             case TABLE:
                 cont++;
                 cambio_token(cont);
@@ -80,13 +434,29 @@ public class analisis_lexico_descendente {
 
                 break;
 
-            case LOGIN:
+            case INDEX:
                 cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.IDENTIFICADOR || token_siguiente == Tokens.ALL) {
+                    cont++;
+                    cambio_token(cont);
+                    index(token_siguiente);
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
 
+                break;
+
+            case USER:
+                cont++;
+                cambio_token(cont);
+                user(token_siguiente);
                 break;
 
             case VIEW:
                 cont++;
+                cambio_token(cont);
+                view(token_siguiente);
 
                 break;
 
@@ -94,7 +464,196 @@ public class analisis_lexico_descendente {
 
     }
 
-    public void database(Tokens token_alert) {
+    public void view(Tokens a) {
+        switch (a) {
+            case IDENTIFICADOR:
+
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PUNTO) {
+                    objeto_nombre(token_siguiente);
+
+                    if (token_siguiente == Tokens.IDENTIFICADOR) {
+                        cont++;
+                        cambio_token(cont);
+                        if (token_siguiente == Tokens.AS) {
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.SELECT) {
+                                analisis(token_siguiente);
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "SELECT");
+                            }
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "AS");
+                        }
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                    }
+
+                } else if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.AS) {
+                        cont++;
+                        cambio_token(cont);
+                        if (token_siguiente == Tokens.SELECT) {
+                            analisis(token_siguiente);
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "SELECT");
+                        }
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "AS");
+                    }
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+
+                break;
+
+            default:
+
+                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+
+                break;
+        }
+    }
+
+    public void user(Tokens a) {
+        switch (a) {
+            case IDENTIFICADOR:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.WITH) {
+                    cont++;
+                    cambio_token(cont);
+                    set_item(token_siguiente);
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "WITH");
+                }
+
+                break;
+        }
+    }
+
+    public void set_item(Tokens b) {
+        switch (b) {
+            case NAME:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.ASIGNAR) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.IDENTIFICADOR) {
+                        cont++;
+                        cambio_token(cont);
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                    }
+                } else {
+                    error_sintaxis(token_siguiente, cont, "=");
+                }
+                break;
+
+            case NULL:
+                cont++;
+                cambio_token(cont);
+                break;
+
+            case LOGIN:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.ASIGNAR) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.IDENTIFICADOR) {
+                        cont++;
+                        cambio_token(cont);
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                    }
+                } else {
+                    error_sintaxis(token_siguiente, cont, "=");
+                }
+                break;
+
+        }
+    }
+
+    public void index(Tokens token_alter) {
+        switch (token_alter) {
+            case ON:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.PUNTO) {
+                        objeto_nombre(token_siguiente);
+                        accion_index(token_siguiente);
+                    } else if (token_siguiente == Tokens.DISABLE || token_siguiente == Tokens.REBUILD || token_siguiente == Tokens.UNUSABLE || token_siguiente == Tokens.USABLE) {
+                        accion_index(token_siguiente);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "ACCION INDEX");
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+
+                break;
+            default:
+                error_sintaxis(token_siguiente, cont, "ON");
+                break;
+        }
+    }
+
+    public void accion_index(Tokens cambio) {
+        switch (cambio) {
+            case DISABLE:
+                cont++;
+                cambio_token(cont);
+                break;
+
+            case REBUILD:
+                cont++;
+                cambio_token(cont);
+                break;
+
+            case UNUSABLE:
+                cont++;
+                cambio_token(cont);
+
+                break;
+
+            case USABLE:
+                cont++;
+                cambio_token(cont);
+                break;
+            default:
+                error_sintaxis(token_siguiente, cont, "ACCION INDEX");
+                break;
+
+        }
+    }
+
+    public void set_index(Tokens a) {
+        switch (a) {
+            default:
+
+                break;
+        }
+    }
+
+    public void database(Tokens token_alert) {//listo
         switch (token_alert) {
 
             case IDENTIFICADOR:
@@ -109,10 +668,13 @@ public class analisis_lexico_descendente {
                 tipo_alter_base(token_siguiente);
                 break;
 
+            default:
+                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                break;
         }
     }
 
-    public void tipo_alter_base(Tokens token_alert) {
+    public void tipo_alter_base(Tokens token_alert) {//listo
         switch (token_alert) {
 
             case MODIFY:
@@ -131,29 +693,20 @@ public class analisis_lexico_descendente {
                             cont++;
                             cambio_token(cont);
 
-                            if (token_siguiente == Tokens.PUNTO_COMA) {
-                                cont++;
-                                cambio_token(cont);
-
-                                if (token_siguiente != null) {
-                                    analisis(token_siguiente);
-                                } else {
-                                    System.out.println("listo");
-                                }
-                            } else {
-                                //error de sintaxis
-                            }
                         } else {
-                            //error
+                            error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
                         }
 
                     } else {
-                        //error
+                        error_sintaxis(token_siguiente, cont, "=");
                     }
                 } else {
-                    //error
+                    error_sintaxis(token_siguiente, cont, "NAME");
                 }
 
+                break;
+            default:
+                error_sintaxis(token_siguiente, cont, "MODIFY");
                 break;
         }
     }
@@ -167,19 +720,18 @@ public class analisis_lexico_descendente {
                 cambio_token(cont);
                 if (token_siguiente == Tokens.PUNTO) {
                     objeto_nombre(token_siguiente);
-                    cont++;
-                    cambio_token(cont);
                     accion_alter(token_siguiente);
                 } else if (token_siguiente == Tokens.ADD || token_siguiente == Tokens.ALTER || token_siguiente == Tokens.DROP) {
                     accion_alter(token_siguiente);
                 } else {
-                    //Error de sintaxis
+                    error_sintaxis(token_siguiente, cont, "ADD DROP ALTER");
                 }
-
                 break;
 
+            default:
+                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                break;
         }
-
     }
 
     public void accion_alter(Tokens token_alter) {
@@ -197,12 +749,17 @@ public class analisis_lexico_descendente {
                     if (token_siguiente == Tokens.IDENTIFICADOR) {
                         cont++;
                         cambio_token(cont);
+                        if (token_siguiente == Tokens.PUNTO) {
+                            objeto_nombre(token_siguiente);
+                        }
                         tipo_dato(token_siguiente);
                         constraint(token_siguiente);
 
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
                     }
                 } else {
-                    //error sintaxis
+                    error_sintaxis(token_siguiente, cont, "COLUMN");
                 }
 
                 break;
@@ -216,12 +773,74 @@ public class analisis_lexico_descendente {
 
             case DROP:
                 cont++;
-
+                cambio_token(cont);
+                tipo_drop(token_siguiente);
                 break;
 
         }
     }
+//eliminar solo un objeto
 
+    public void tipo_drop(Tokens alter_token) {
+        switch (alter_token) {
+
+            case CONSTRAINT:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.COMA) {
+                        mas_de_un_identificador(token_siguiente);
+
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+
+                break;
+
+            case COLUMN:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.COMA) {
+                        mas_de_un_identificador(token_siguiente);
+
+                    }
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+                break;
+
+            case INDEX:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.COMA) {
+                        mas_de_un_identificador(token_siguiente);
+
+                    }
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+                break;
+
+            default:
+                error_sintaxis(token_siguiente, cont, "UN VALOR FINAL");
+                break;
+        }
+
+    }
+
+    //opciones para agregar algo a una tabla
     public void tipo_add(Tokens token_alter) {
         switch (token_alter) {
 
@@ -233,51 +852,56 @@ public class analisis_lexico_descendente {
                     cont++;
                     cambio_token(cont);
 
-                    if (token_siguiente == Tokens.PUNTO) {
-                        objeto_nombre(token_siguiente);
-                        cont++;
-                        cambio_token(cont);
-                    }else if(token_siguiente == Tokens.FOREIGN) {
-                        tipo_add(Tokens.FOREIGN);       ///aqui va todo el tipo de add de constraints 
-                    }else{
-                        //error
-                    }
+                    switch (token_siguiente) {
+                        case FOREIGN:
+                            constraint(Tokens.FOREIGN);
+                            break;
 
-                } else {
-                    //error
-                }
+                        case UNIQUE:
 
-                break;
-
-            case IDENTIFICADOR:
-                cont++;
-                cambio_token(cont);
-                tipo_dato(token_siguiente);
-                constraint(token_siguiente);
-
-                break;
-
-            case FOREIGN:
-                cont++;
-                cambio_token(cont);
-
-                if (token_siguiente == Tokens.KEY) {
-                    cont++;
-                    cambio_token(cont);
-
-                    if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
-                        cont++;
-                        cambio_token(cont);
-
-                        if (token_siguiente == Tokens.IDENTIFICADOR) {
                             cont++;
                             cambio_token(cont);
 
-                            if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                            if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+
                                 cont++;
                                 cambio_token(cont);
 
-                                if (token_siguiente == Tokens.REFERENCES) {
+                                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                    cont++;
+                                    cambio_token(cont);
+
+                                    if (token_siguiente == Tokens.COMA) {
+                                        mas_de_un_identificador(token_siguiente);
+
+                                        if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                                            cont++;
+                                            cambio_token(cont);
+
+                                        } else {
+                                            error_sintaxis(token_siguiente, cont, ")");
+                                        }
+
+                                    }
+
+                                } else {
+                                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "(");
+                            }
+
+                            break;
+
+                        case PRIMARY:
+                            if (token_siguiente != Tokens.KEY) {
+                                error_sintaxis(token_siguiente, cont, "KEY");
+                            } else {
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
                                     cont++;
                                     cambio_token(cont);
 
@@ -285,121 +909,221 @@ public class analisis_lexico_descendente {
                                         cont++;
                                         cambio_token(cont);
 
-                                        if (token_siguiente == Tokens.PUNTO) {
-                                            objeto_nombre(token_siguiente);
-                                            cont++;
-                                            cambio_token(cont);
+                                        if (token_siguiente == Tokens.COMA) {
+                                            mas_de_un_identificador(token_siguiente);
 
-                                            if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                                            if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
                                                 cont++;
                                                 cambio_token(cont);
 
-                                                if (token_siguiente == Tokens.IDENTIFICADOR) {
-                                                    cont++;
-                                                    cambio_token(cont);
-
-                                                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
-                                                        cont++;
-                                                        cambio_token(cont);
-
-                                                    } else {
-                                                        //error
-
-                                                    }
-
-                                                } else {
-                                                    //error
-
-                                                }
-
                                             } else {
-                                                //error
-
+                                                error_sintaxis(token_siguiente, cont, ")");
                                             }
-
-                                        } else if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
-                                            cont++;
-                                            cambio_token(cont);
-
-                                            if (token_siguiente == Tokens.IDENTIFICADOR) {
-                                                cont++;
-                                                cambio_token(cont);
-
-                                                if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
-                                                    cont++;
-                                                    cambio_token(cont);
-
-                                                } else {
-                                                    //error
-
-                                                }
-
-                                            } else {
-                                                //error
-
-                                            }
-
-                                        } else {
-                                            //error
 
                                         }
 
                                     } else {
-                                        //error
-
+                                        error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
                                     }
 
                                 } else {
-                                    //error
-
+                                    error_sintaxis(token_siguiente, cont, "(");
                                 }
-
-                            } else {
-                                //error
 
                             }
 
-                        } else {
-                            //error
+                            break;
 
-                        }
-
-                    } else {
-                        //error
-
+                        case CHECK:
+                            constraint(Tokens.CHECK);
+                            break;
                     }
 
-                } else {
-                    //error
-
                 }
-
-                break;
-
-        }
-    }
-
-    public void add_column(Tokens token_alter) {
-
-        switch (token_alter) {
-
-            case CONSTRAINT:
-                cont++;
 
                 break;
 
             case IDENTIFICADOR:
                 cont++;
                 cambio_token(cont);
-                tipo_dato(token_siguiente);
-                constraint(token_siguiente);
+                switch (token_siguiente) {
+                    case CHECK:
+                        constraint(Tokens.CHECK);
+                        break;
+
+                    default:
+                        if (token_siguiente != null) {
+                            tipo_dato(token_siguiente);
+                            constraint(token_siguiente);
+                        }
+
+                        break;
+
+                }
+
+                if (token_siguiente == Tokens.COMA) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.IDENTIFICADOR) {
+                        tipo_add(Tokens.IDENTIFICADOR);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                    }
+
+                }
+
                 break;
 
             case FOREIGN:
+                constraint(Tokens.FOREIGN);
+                break;
+
+            case CHECK:
+                constraint(Tokens.CHECK);
+                break;
+
+        }
+    }
+
+    public void mas_de_un_check(Tokens token_alter) {
+
+        switch (token_siguiente) {
+            case AND:
                 cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        cont++;
+                        cambio_token(cont);
+
+                        if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                mas_de_un_check(token_siguiente);
+                            }
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "valor");
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "OPERADOR LOGICO");
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
 
                 break;
 
+            case OR:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        cont++;
+                        cambio_token(cont);
+
+                        if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                mas_de_un_check(token_siguiente);
+                            }
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "VALOR");
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "OPERADOR LOGICO");
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+
+                break;
+
+            case AND_OP:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        cont++;
+                        cambio_token(cont);
+
+                        if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                mas_de_un_check(token_siguiente);
+                            }
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "VALOR");
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "OPERADOR LOGICO");
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+
+                break;
+
+            case OR_OP:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        cont++;
+                        cambio_token(cont);
+
+                        if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                mas_de_un_check(token_siguiente);
+                            }
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "VALOR");
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "OPERADOR LOGICO");
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+
+                break;
         }
 
     }
@@ -408,9 +1132,70 @@ public class analisis_lexico_descendente {
     public void constraint(Tokens token_alter) {
         switch (token_alter) {
 
+            case CHECK:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.IDENTIFICADOR) {
+                        cont++;
+                        cambio_token(cont);
+
+                        if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                    mas_de_un_check(token_siguiente);
+                                }
+
+                                if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                                    cont++;
+                                    cambio_token(cont);
+
+                                } else {
+                                    error_sintaxis(token_siguiente, cont, ")");
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "VALOR");
+                            }
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "OPERADOR LOGICO");
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "(");
+                }
+
+                break;
+
             case NULL:
                 cont++;
                 cambio_token(cont);
+
+                break;
+
+            case NOT:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.NULL) {
+                    cont++;
+                    cambio_token(cont);
+                }
 
                 break;
 
@@ -425,7 +1210,7 @@ public class analisis_lexico_descendente {
                 cambio_token(cont);
 
                 if (token_siguiente != Tokens.KEY) {
-                    //error
+                    error_sintaxis(token_siguiente, cont, "KEY");
                 } else {
                     cont++;
                     cambio_token(cont);
@@ -463,8 +1248,6 @@ public class analisis_lexico_descendente {
 
                                         if (token_siguiente == Tokens.PUNTO) {
                                             objeto_nombre(token_siguiente);
-                                            cont++;
-                                            cambio_token(cont);
 
                                             if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
                                                 cont++;
@@ -479,17 +1262,17 @@ public class analisis_lexico_descendente {
                                                         cambio_token(cont);
 
                                                     } else {
-                                                        //error
+                                                        error_sintaxis(token_siguiente, cont, ")");
 
                                                     }
 
                                                 } else {
-                                                    //error
+                                                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
 
                                                 }
 
                                             } else {
-                                                //error
+                                                error_sintaxis(token_siguiente, cont, "(");
 
                                             }
 
@@ -506,47 +1289,44 @@ public class analisis_lexico_descendente {
                                                     cambio_token(cont);
 
                                                 } else {
-                                                    //error
-
+                                                    error_sintaxis(token_siguiente, cont, ")");
                                                 }
 
                                             } else {
-                                                //error
+                                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
 
                                             }
 
                                         } else {
-                                            //error
+                                            error_sintaxis(token_siguiente, cont, "(");
 
                                         }
 
                                     } else {
-                                        //error
-
+                                        error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
                                     }
 
                                 } else {
-                                    //error
-
+                                    error_sintaxis(token_siguiente, cont, "REFERENCES");
                                 }
 
                             } else {
-                                //error
+                                error_sintaxis(token_siguiente, cont, ")");
 
                             }
 
                         } else {
-                            //error
+                            error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
 
                         }
 
                     } else {
-                        //error
+                        error_sintaxis(token_siguiente, cont, "(");
 
                     }
 
                 } else {
-                    //error
+                    error_sintaxis(token_siguiente, cont, "KEY");
 
                 }
 
@@ -585,42 +1365,66 @@ public class analisis_lexico_descendente {
                                     cont++;
                                     cambio_token(cont);
                                 } else {
-                                    //error
+                                    error_sintaxis(token_siguiente, cont, ")");
+
                                 }
                             } else {
-                                //error
+                                error_sintaxis(token_siguiente, cont, "INT");
+
                             }
                         } else {
-                            //error
+                            error_sintaxis(token_siguiente, cont, ",");
+
                         }
 
                     } else {
-                        //error de sintaxis
+                        error_sintaxis(token_siguiente, cont, "INT");
+
                     }
 
                 } else {
-                    //error
+                    error_sintaxis(token_siguiente, cont, "(");
+
                 }
 
-                break;
-
-            case COMA:
-                cont++;
-                cambio_token(cont);
-                add_column(token_siguiente);
-
-                break;
-
-            case PUNTO_COMA:
-                cont++;
-                cambio_token(cont);
-                if (token_siguiente != null) {
-                    analisis(token_siguiente);
-                } else {
-                    System.out.println("listo");
-                }
                 break;
         }
+    }
+
+    //valores para el default
+    public void data_tipo(Tokens token_alter) {
+
+        switch (token_alter) {
+
+            case STRING:
+                cont++;
+                cambio_token(cont);
+
+                break;
+
+            case BIT_NUM:
+                cont++;
+                cambio_token(cont);
+
+                break;
+
+            case INT_NUM:
+                cont++;
+                cambio_token(cont);
+
+                break;
+
+            case FLOAT_NUM:
+                cont++;
+                cambio_token(cont);
+
+                break;
+
+            default:
+                error_sintaxis(token_siguiente, cont, "Tipo de dato");
+                break;
+        }
+
     }
 
     //Tipos de dato para cuando se crea una columna
@@ -643,11 +1447,11 @@ public class analisis_lexico_descendente {
                             cont++;
                             cambio_token(cont);
                         } else {
-                            //error sintaxis
+                            error_sintaxis(token_siguiente, cont, ")");
                         }
 
                     } else {
-                        //error de sintaxis
+                        error_sintaxis(token_siguiente, cont, "INT");
                     }
 
                 }
@@ -671,11 +1475,11 @@ public class analisis_lexico_descendente {
                             cont++;
                             cambio_token(cont);
                         } else {
-                            //error sintaxis
+                            error_sintaxis(token_siguiente, cont, ")");
                         }
 
                     } else {
-                        //error de sintaxis
+                        error_sintaxis(token_siguiente, cont, "INT");
                     }
 
                 }
@@ -710,11 +1514,11 @@ public class analisis_lexico_descendente {
                             cont++;
                             cambio_token(cont);
                         } else {
-                            //error sintaxis
+                            error_sintaxis(token_siguiente, cont, ")");
                         }
 
                     } else {
-                        //error de sintaxis
+                        error_sintaxis(token_siguiente, cont, "MAX");
                     }
 
                 }
@@ -779,11 +1583,11 @@ public class analisis_lexico_descendente {
                             cont++;
                             cambio_token(cont);
                         } else {
-                            //error sintaxis
+                            error_sintaxis(token_siguiente, cont, ")");
                         }
 
                     } else {
-                        //error de sintaxis
+                        error_sintaxis(token_siguiente, cont, "INT");
                     }
 
                 }
@@ -841,17 +1645,17 @@ public class analisis_lexico_descendente {
                                     cont++;
                                     cambio_token(cont);
                                 } else {
-                                    //error
+                                    error_sintaxis(token_siguiente, cont, ")");
                                 }
                             } else {
-                                //error
+                                error_sintaxis(token_siguiente, cont, "INT");
                             }
                         } else {
-                            //error
+                            error_sintaxis(token_siguiente, cont, "COMA");
                         }
 
                     } else {
-                        //error de sintaxis
+                        error_sintaxis(token_siguiente, cont, "INT");
                     }
 
                 }
@@ -885,26 +1689,24 @@ public class analisis_lexico_descendente {
                                     cont++;
                                     cambio_token(cont);
                                 } else {
-                                    //error
+                                    error_sintaxis(token_siguiente, cont, ")");
                                 }
                             } else {
-                                //error
+                                error_sintaxis(token_siguiente, cont, "INT");
                             }
                         } else {
-                            //error
+                            error_sintaxis(token_siguiente, cont, "COMA");
                         }
 
                     } else {
-                        //error de sintaxis
+                        error_sintaxis(token_siguiente, cont, "INT");
                     }
 
                 }
-
                 break;
 
             default:
-
-                //error de sintaxis
+                error_sintaxis(token_siguiente, cont, "TIPO DE DATO");
                 break;
         }
 
@@ -919,13 +1721,78 @@ public class analisis_lexico_descendente {
                 cambio_token(cont);
 
                 if (token_siguiente == Tokens.IDENTIFICADOR) {
-                    objeto_nombre(token_siguiente);
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.PUNTO) {
+                        objeto_nombre(token_siguiente);
+                    } else if (token_siguiente == Tokens.COMA) {
+                        mas_de_un_objeto(token_siguiente);
+                    }
+
                 } else {
-                    //Error de sintaxis
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+
                 }
 
                 break;
 
+        }
+    }
+
+    public void mas_de_un_identificador(Tokens token_alter) {
+
+        switch (token_alter) {
+            case COMA:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.COMA) {
+                        mas_de_un_identificador(token_siguiente);
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+
+                break;
+
+        }
+
+    }
+
+    //mas de un objeto 
+    public void mas_de_un_objeto(Tokens token_alter) {
+        switch (token_alter) {
+
+            case IDENTIFICADOR:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PUNTO) {
+                    objeto_nombre(token_siguiente);
+                }
+
+                break;
+
+        }
+    }
+
+    //error de sintaxis
+    public void error_sintaxis(Tokens token_siguiente, int pos, String mensaje) {
+        if (token_siguiente != null) {
+
+            error_agregar = new error_token(tokens_a_evaluar_detalle.get(pos).token, tokens_a_evaluar_detalle.get(pos).linea, tokens_a_evaluar_detalle.get(pos).Columna, "SE ESPERABA " + mensaje);
+            Errores.add(error_agregar);
+
+        } else {
+            error_agregar = new error_token(tokens_a_evaluar_detalle.get(pos - 1).token, tokens_a_evaluar_detalle.get(pos - 1).linea, tokens_a_evaluar_detalle.get(pos - 1).Columna, "SE ESPERABA " + mensaje);
+            Errores.add(error_agregar);
         }
     }
 

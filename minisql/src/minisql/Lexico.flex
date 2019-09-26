@@ -346,6 +346,12 @@ DATETIMEOFFSET {palabra=yytext(); linea = yyline ; col = yycolumn ; return DATET
 MONEY {palabra=yytext(); linea = yyline ; col = yycolumn ; return MONEY;} 
 MODIFY {palabra=yytext(); linea = yyline ; col = yycolumn ; return MODIFY;} 
 NAME {palabra=yytext(); linea = yyline ; col = yycolumn ; return NAME;} 
+DISABLE {palabra=yytext(); linea = yyline ; col = yycolumn ; return DISABLE;} 
+REBUILD {palabra=yytext(); linea = yyline ; col = yycolumn ; return REBUILD;} 
+UNUSABLE {palabra=yytext(); linea = yyline ; col = yycolumn ; return UNUSABLE;} 
+USABLE {palabra=yytext(); linea = yyline ; col = yycolumn ; return USABLE;} 
+
+
 
 0|1|"NULL" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return BIT_NUM;}
 
