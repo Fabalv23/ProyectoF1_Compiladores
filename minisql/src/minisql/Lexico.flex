@@ -388,7 +388,7 @@ USABLE {palabra=yytext(); linea = yyline ; col = yycolumn ; return USABLE;}
 
 
 {L}({L}|{D})* {palabra=yytext() ; linea = yyline ; col = yycolumn ; return IDENTIFICADOR;}
-
+"["{L}({L}|{D})*"]" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return IDENTIFICADOR;}
 
 ({D})+ {palabra=yytext() ; linea = yyline ; col = yycolumn ; return INT_NUM;}
 

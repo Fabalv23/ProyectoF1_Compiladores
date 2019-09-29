@@ -52,6 +52,86 @@ public class analisis_lexico_descendente {
         switch (actual) {
 //SENTENCIAS DML
 
+            case UPDATE:
+                cont++;
+                cambio_token(cont);
+                update(token_siguiente);
+                if (token_siguiente != null) {
+
+                    switch (token_siguiente) {
+                        case PUNTO_COMA:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.GO) {
+                                cont++;
+                                cambio_token(cont);
+                                System.out.println("CADENA ANALIZADA CORRECTAMENTE");
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "GO");
+                            }
+
+                            if (token_siguiente != null) {
+                                analisis(token_siguiente);
+                            } else {
+
+                            }
+
+                            break;
+
+                        default:
+                            if (token_siguiente == Tokens.CREATE || token_siguiente == Tokens.ALTER || token_siguiente == Tokens.SELECT || token_siguiente == Tokens.INSERT || token_siguiente == Tokens.UPDATE || token_siguiente == Tokens.DROP || token_siguiente == Tokens.TRUNCATE || token_siguiente == Tokens.DELETE) {
+                                error_sintaxis(token_siguiente, cont, "PUNTO y COMA");
+                            }
+                            analisis(token_siguiente);
+
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "PUNTO y COMA");
+                }
+
+                break;
+
+            case DELETE:
+                cont++;
+                cambio_token(cont);
+                delete(token_siguiente);
+                if (token_siguiente != null) {
+
+                    switch (token_siguiente) {
+                        case PUNTO_COMA:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.GO) {
+                                cont++;
+                                cambio_token(cont);
+                                System.out.println("CADENA ANALIZADA CORRECTAMENTE");
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "GO");
+                            }
+
+                            if (token_siguiente != null) {
+                                analisis(token_siguiente);
+                            } else {
+
+                            }
+
+                            break;
+
+                        default:
+                            if (token_siguiente == Tokens.CREATE || token_siguiente == Tokens.ALTER || token_siguiente == Tokens.SELECT || token_siguiente == Tokens.INSERT || token_siguiente == Tokens.UPDATE || token_siguiente == Tokens.DROP || token_siguiente == Tokens.TRUNCATE || token_siguiente == Tokens.DELETE) {
+                                error_sintaxis(token_siguiente, cont, "PUNTO y COMA");
+                            }
+                            analisis(token_siguiente);
+
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "PUNTO y COMA");
+                }
+
+                break;
+
             case INSERT:
                 cont++;
                 cambio_token(cont);
@@ -290,6 +370,362 @@ public class analisis_lexico_descendente {
 
                 }
                 break;
+        }
+
+    }
+
+    public void update(Tokens c) {
+
+        switch (c) {
+
+            case TOP:
+                cont++;
+                cambio_token(cont);
+                top(token_siguiente);
+
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.PUNTO) {
+                        objeto_nombre(token_siguiente);
+
+                        if (token_siguiente == Tokens.SET) {
+
+                            set(token_siguiente);
+                            where(token_siguiente);
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "SET");
+                        }
+
+                    } else if (token_siguiente == Tokens.SET) {
+                        set(token_siguiente);
+                        where(token_siguiente);
+                    }
+
+                }
+                break;
+
+            case IDENTIFICADOR:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PUNTO) {
+                    objeto_nombre(token_siguiente);
+
+                    if (token_siguiente == Tokens.SET) {
+
+                        set(token_siguiente);
+                        where(token_siguiente);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "SET");
+                    }
+
+                } else if (token_siguiente == Tokens.SET) {
+                    set(token_siguiente);
+                    where(token_siguiente);
+                }
+
+                break;
+
+        }
+
+    }
+
+    public void set(Tokens a) {
+
+        switch (a) {
+            case SET:
+                cont++;
+                cambio_token(cont);
+
+                mas_asignaciones(token_siguiente);
+
+                break;
+
+        }
+
+    }
+
+    public void mas_asignaciones(Tokens a) {
+
+        switch (a) {
+            case IDENTIFICADOR:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.ASIGNAR) {
+                    cont++;
+                    cambio_token(cont);
+
+                    operaciones(token_siguiente);
+
+                    if (token_siguiente == Tokens.COMA) {
+
+                        cont++;
+                        cambio_token(cont);
+
+                        mas_asignaciones(token_siguiente);
+                    }
+
+                }
+
+                break;
+
+        }
+
+    }
+
+    //Cualquier operacion aritmetica
+    public void operaciones(Tokens o) {
+
+        switch (o) {
+
+            case PARENTESIS_ABIERTO:
+                cont++;
+                cambio_token(cont);
+
+                operaciones(token_siguiente);
+
+                if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.SUMA || token_siguiente == Tokens.RESTA || token_siguiente == Tokens.MULTIPLICACION || token_siguiente == Tokens.DIVISION || token_siguiente == Tokens.PORCENTAJE) {
+                        cont++;
+                        cambio_token(cont);
+
+                        operaciones(token_siguiente);
+
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, ")");
+                }
+
+                break;
+
+            case IDENTIFICADOR:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.SUMA || token_siguiente == Tokens.RESTA || token_siguiente == Tokens.MULTIPLICACION || token_siguiente == Tokens.DIVISION || token_siguiente == Tokens.PORCENTAJE) {
+                    cont++;
+                    cambio_token(cont);
+
+                    operaciones(token_siguiente);
+
+                }
+
+                break;
+
+            case STRING:
+                cont++;
+                cambio_token(cont);
+
+                break;
+
+            case INT_NUM:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.SUMA || token_siguiente == Tokens.RESTA || token_siguiente == Tokens.MULTIPLICACION || token_siguiente == Tokens.DIVISION || token_siguiente == Tokens.PORCENTAJE) {
+                    cont++;
+                    cambio_token(cont);
+
+                    operaciones(token_siguiente);
+
+                }
+
+                break;
+
+            case FLOAT_NUM:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.SUMA || token_siguiente == Tokens.RESTA || token_siguiente == Tokens.MULTIPLICACION || token_siguiente == Tokens.DIVISION || token_siguiente == Tokens.PORCENTAJE) {
+                    cont++;
+                    cambio_token(cont);
+
+                    operaciones(token_siguiente);
+
+                }
+
+                break;
+
+            case BIT_NUM:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.SUMA || token_siguiente == Tokens.RESTA || token_siguiente == Tokens.MULTIPLICACION || token_siguiente == Tokens.DIVISION || token_siguiente == Tokens.PORCENTAJE) {
+                    cont++;
+                    cambio_token(cont);
+
+                    operaciones(token_siguiente);
+
+                }
+
+                break;
+
+        }
+
+    }
+
+  
+
+    public void delete(Tokens s) {
+
+        switch (s) {
+            case TOP:
+                cont++;
+                cambio_token(cont);
+                top(token_siguiente);
+                if (token_siguiente == Tokens.FROM) {
+                    delete(Tokens.FROM);
+                }
+                break;
+
+            case FROM:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.PUNTO) {
+                        objeto_nombre(token_siguiente);
+                        where(token_siguiente);
+                    } else if (token_siguiente == Tokens.WHERE) {
+                        where(token_siguiente);
+                    }
+
+                }
+
+                break;
+        }
+
+    }
+
+    public void where(Tokens a) {
+
+        switch (a) {
+
+            case WHERE:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.BETWEEN || token_siguiente == Tokens.LIKE || token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        if (token_siguiente == Tokens.BETWEEN || token_siguiente == Tokens.LIKE) {
+
+                            switch (token_siguiente) {
+                                case BETWEEN:
+                                    cont++;
+                                    cambio_token(cont);
+
+                                    if (token_siguiente == Tokens.INT_NUM) {
+                                        cont++;
+                                        cambio_token(cont);
+                                        if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                            cont++;
+                                            cambio_token(cont);
+                                            if (token_siguiente == Tokens.INT_NUM) {
+                                                cont++;
+                                                cambio_token(cont);
+                                            }
+                                        }
+                                    } else {
+                                        error_sintaxis(token_siguiente, cont, "VALOR");
+                                    }
+
+                                    break;
+
+                                case LIKE:
+                                    cont++;
+                                    cambio_token(cont);
+                                    if (token_siguiente == Tokens.STRING) {
+                                        cont++;
+                                        cambio_token(cont);
+                                    } else {
+                                        error_sintaxis(token_siguiente, cont, "STRING");
+                                    }
+
+                                    break;
+
+                            }
+                            if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                mas_de_un_check(token_siguiente);
+                            }
+
+                        } else {
+
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                    mas_de_un_check(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "valor");
+                            }
+                        }
+
+                    }
+
+                    break;
+
+                }
+
+        }
+    }
+
+    public void top(Tokens a) {
+
+        switch (a) {
+            case PARENTESIS_ABIERTO:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.INT_NUM) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                        if (token_siguiente == Tokens.PERCENT) {
+                            cont++;
+                            cambio_token(cont);
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "INT");
+                }
+
+                break;
+
+            case INT_NUM:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PERCENT) {
+                    cont++;
+                    cambio_token(cont);
+                }
+
+                break;
+
         }
 
     }
@@ -895,6 +1331,11 @@ public class analisis_lexico_descendente {
                         cambio_token(cont);
                         if (token_siguiente == Tokens.PUNTO) {
                             objeto_nombre(token_siguiente);
+                            if (token_siguiente == Tokens.COMA) {
+                                cont++;
+                                cambio_token(cont);
+                                mas_de_un_objeto(token_siguiente);
+                            }
                         } else if (token_siguiente == Tokens.COMA) {
                             mas_de_un_objeto(token_siguiente);
                         }
@@ -996,14 +1437,24 @@ public class analisis_lexico_descendente {
                     if (token_siguiente == Tokens.PUNTO) {
                         objeto_nombre(token_siguiente);
 
-                        if (token_siguiente == Tokens.ON || token_siguiente == Tokens.PUNTO) {
-                            drop_relational_or_xml_or_spatial_index(token_siguiente);
+                        if (token_siguiente == Tokens.COMA) {
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                drop_relational_or_xml_or_spatial_index(token_siguiente);
+                            }
                         }
 
                     } else if (token_siguiente == Tokens.COMA) {
                         cont++;
                         cambio_token(cont);
-                        drop_relational_or_xml_or_spatial_index(token_siguiente);
+                        if (token_siguiente == Tokens.IDENTIFICADOR) {
+                            cont++;
+                            cambio_token(cont);
+                            drop_relational_or_xml_or_spatial_index(token_siguiente);
+                        }
                     }
 
                 } else {
@@ -1012,7 +1463,7 @@ public class analisis_lexico_descendente {
 
                 break;
 
-            case PUNTO:
+            case COMA:
 
                 cont++;
                 cambio_token(cont);
@@ -1023,14 +1474,24 @@ public class analisis_lexico_descendente {
                     if (token_siguiente == Tokens.PUNTO) {
                         objeto_nombre(token_siguiente);
 
-                        if (token_siguiente == Tokens.ON || token_siguiente == Tokens.PUNTO) {
-                            drop_relational_or_xml_or_spatial_index(token_siguiente);
+                        if (token_siguiente == Tokens.COMA) {
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                drop_relational_or_xml_or_spatial_index(token_siguiente);
+                            }
                         }
 
                     } else if (token_siguiente == Tokens.COMA) {
                         cont++;
                         cambio_token(cont);
-                        drop_relational_or_xml_or_spatial_index(token_siguiente);
+                        if (token_siguiente == Tokens.IDENTIFICADOR) {
+                            cont++;
+                            cambio_token(cont);
+                            drop_relational_or_xml_or_spatial_index(token_siguiente);
+                        }
                     }
 
                 } else {
@@ -1901,22 +2362,65 @@ public class analisis_lexico_descendente {
                     cont++;
                     cambio_token(cont);
 
-                    if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
-                        cont++;
-                        cambio_token(cont);
+                    if (token_siguiente == Tokens.BETWEEN || token_siguiente == Tokens.LIKE || token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        if (token_siguiente == Tokens.BETWEEN || token_siguiente == Tokens.LIKE) {
 
-                        if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
-                            cont++;
-                            cambio_token(cont);
+                            switch (token_siguiente) {
+                                case BETWEEN:
+                                    cont++;
+                                    cambio_token(cont);
 
+                                    if (token_siguiente == Tokens.INT_NUM) {
+                                        cont++;
+                                        cambio_token(cont);
+                                        if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                            cont++;
+                                            cambio_token(cont);
+                                            if (token_siguiente == Tokens.INT_NUM) {
+                                                cont++;
+                                                cambio_token(cont);
+                                            }
+                                        }
+                                    } else {
+                                        error_sintaxis(token_siguiente, cont, "VALOR");
+                                    }
+
+                                    break;
+
+                                case LIKE:
+                                    cont++;
+                                    cambio_token(cont);
+                                    if (token_siguiente == Tokens.STRING) {
+                                        cont++;
+                                        cambio_token(cont);
+                                    } else {
+                                        error_sintaxis(token_siguiente, cont, "STRING");
+                                    }
+
+                                    break;
+
+                            }
                             if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
                                 mas_de_un_check(token_siguiente);
                             }
 
                         } else {
-                            error_sintaxis(token_siguiente, cont, "valor");
-                        }
 
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                    mas_de_un_check(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "valor");
+                            }
+                        }
                     } else {
                         error_sintaxis(token_siguiente, cont, "OPERADOR LOGICO");
                     }
@@ -1935,22 +2439,64 @@ public class analisis_lexico_descendente {
                     cont++;
                     cambio_token(cont);
 
-                    if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
-                        cont++;
-                        cambio_token(cont);
+                    if (token_siguiente == Tokens.BETWEEN || token_siguiente == Tokens.LIKE || token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        if (token_siguiente == Tokens.BETWEEN || token_siguiente == Tokens.LIKE) {
 
-                        if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
-                            cont++;
-                            cambio_token(cont);
+                            switch (token_siguiente) {
+                                case BETWEEN:
+                                    cont++;
+                                    cambio_token(cont);
 
+                                    if (token_siguiente == Tokens.INT_NUM) {
+                                        cont++;
+                                        cambio_token(cont);
+                                        if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                            cont++;
+                                            cambio_token(cont);
+                                            if (token_siguiente == Tokens.INT_NUM) {
+                                                cont++;
+                                                cambio_token(cont);
+                                            }
+                                        }
+                                    } else {
+                                        error_sintaxis(token_siguiente, cont, "VALOR");
+                                    }
+
+                                    break;
+
+                                case LIKE:
+                                    cont++;
+                                    cambio_token(cont);
+                                    if (token_siguiente == Tokens.STRING) {
+                                        cont++;
+                                        cambio_token(cont);
+                                    } else {
+                                        error_sintaxis(token_siguiente, cont, "STRING");
+                                    }
+
+                                    break;
+
+                            }
                             if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
                                 mas_de_un_check(token_siguiente);
                             }
-
                         } else {
-                            error_sintaxis(token_siguiente, cont, "VALOR");
-                        }
 
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                    mas_de_un_check(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "valor");
+                            }
+                        }
                     } else {
                         error_sintaxis(token_siguiente, cont, "OPERADOR LOGICO");
                     }
@@ -1969,22 +2515,65 @@ public class analisis_lexico_descendente {
                     cont++;
                     cambio_token(cont);
 
-                    if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
-                        cont++;
-                        cambio_token(cont);
+                    if (token_siguiente == Tokens.BETWEEN || token_siguiente == Tokens.LIKE || token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        if (token_siguiente == Tokens.BETWEEN || token_siguiente == Tokens.LIKE) {
 
-                        if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
-                            cont++;
-                            cambio_token(cont);
+                            switch (token_siguiente) {
+                                case BETWEEN:
+                                    cont++;
+                                    cambio_token(cont);
 
+                                    if (token_siguiente == Tokens.INT_NUM) {
+                                        cont++;
+                                        cambio_token(cont);
+                                        if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                            cont++;
+                                            cambio_token(cont);
+                                            if (token_siguiente == Tokens.INT_NUM) {
+                                                cont++;
+                                                cambio_token(cont);
+                                            }
+                                        }
+                                    } else {
+                                        error_sintaxis(token_siguiente, cont, "VALOR");
+                                    }
+
+                                    break;
+
+                                case LIKE:
+                                    cont++;
+                                    cambio_token(cont);
+                                    if (token_siguiente == Tokens.STRING) {
+                                        cont++;
+                                        cambio_token(cont);
+                                    } else {
+                                        error_sintaxis(token_siguiente, cont, "STRING");
+                                    }
+
+                                    break;
+
+                            }
                             if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
                                 mas_de_un_check(token_siguiente);
                             }
 
                         } else {
-                            error_sintaxis(token_siguiente, cont, "VALOR");
-                        }
 
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                    mas_de_un_check(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "valor");
+                            }
+                        }
                     } else {
                         error_sintaxis(token_siguiente, cont, "OPERADOR LOGICO");
                     }
@@ -2003,22 +2592,64 @@ public class analisis_lexico_descendente {
                     cont++;
                     cambio_token(cont);
 
-                    if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
-                        cont++;
-                        cambio_token(cont);
+                    if (token_siguiente == Tokens.BETWEEN || token_siguiente == Tokens.LIKE || token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        if (token_siguiente == Tokens.BETWEEN || token_siguiente == Tokens.LIKE) {
 
-                        if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
-                            cont++;
-                            cambio_token(cont);
+                            switch (token_siguiente) {
+                                case BETWEEN:
+                                    cont++;
+                                    cambio_token(cont);
 
+                                    if (token_siguiente == Tokens.INT_NUM) {
+                                        cont++;
+                                        cambio_token(cont);
+                                        if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                            cont++;
+                                            cambio_token(cont);
+                                            if (token_siguiente == Tokens.INT_NUM) {
+                                                cont++;
+                                                cambio_token(cont);
+                                            }
+                                        }
+                                    } else {
+                                        error_sintaxis(token_siguiente, cont, "VALOR");
+                                    }
+
+                                    break;
+
+                                case LIKE:
+                                    cont++;
+                                    cambio_token(cont);
+                                    if (token_siguiente == Tokens.STRING) {
+                                        cont++;
+                                        cambio_token(cont);
+                                    } else {
+                                        error_sintaxis(token_siguiente, cont, "STRING");
+                                    }
+
+                                    break;
+
+                            }
                             if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
                                 mas_de_un_check(token_siguiente);
                             }
-
                         } else {
-                            error_sintaxis(token_siguiente, cont, "VALOR");
-                        }
 
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                    mas_de_un_check(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "valor");
+                            }
+                        }
                     } else {
                         error_sintaxis(token_siguiente, cont, "OPERADOR LOGICO");
                     }
@@ -2048,30 +2679,74 @@ public class analisis_lexico_descendente {
                         cont++;
                         cambio_token(cont);
 
-                        if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
-                            cont++;
-                            cambio_token(cont);
+                        if (token_siguiente == Tokens.BETWEEN || token_siguiente == Tokens.LIKE || token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                            if (token_siguiente == Tokens.BETWEEN || token_siguiente == Tokens.LIKE) {
 
-                            if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
-                                cont++;
-                                cambio_token(cont);
+                                switch (token_siguiente) {
+                                    case BETWEEN:
+                                        cont++;
+                                        cambio_token(cont);
+
+                                        if (token_siguiente == Tokens.INT_NUM) {
+                                            cont++;
+                                            cambio_token(cont);
+                                            if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                                cont++;
+                                                cambio_token(cont);
+                                                if (token_siguiente == Tokens.INT_NUM) {
+                                                    cont++;
+                                                    cambio_token(cont);
+                                                }
+                                            }
+                                        } else {
+                                            error_sintaxis(token_siguiente, cont, "VALOR");
+                                        }
+
+                                        break;
+
+                                    case LIKE:
+                                        cont++;
+                                        cambio_token(cont);
+                                        if (token_siguiente == Tokens.STRING) {
+                                            cont++;
+                                            cambio_token(cont);
+                                        } else {
+                                            error_sintaxis(token_siguiente, cont, "STRING");
+                                        }
+
+                                        break;
+
+                                }
 
                                 if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
                                     mas_de_un_check(token_siguiente);
                                 }
 
-                                if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                            } else {
+
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
                                     cont++;
                                     cambio_token(cont);
 
+                                    if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                        mas_de_un_check(token_siguiente);
+                                    }
+
+                                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                                        cont++;
+                                        cambio_token(cont);
+
+                                    } else {
+                                        error_sintaxis(token_siguiente, cont, ")");
+                                    }
+
                                 } else {
-                                    error_sintaxis(token_siguiente, cont, ")");
+                                    error_sintaxis(token_siguiente, cont, "VALOR");
                                 }
-
-                            } else {
-                                error_sintaxis(token_siguiente, cont, "VALOR");
                             }
-
                         } else {
                             error_sintaxis(token_siguiente, cont, "OPERADOR LOGICO");
                         }
