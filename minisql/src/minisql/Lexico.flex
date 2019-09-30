@@ -9,9 +9,8 @@ L=[a-zA-Z_]
 D=[0-9]
 espacio=[ ,\t,\r,\n]
 Char = [^\r\n]
-S=[']
-C = [","]
-
+S = [\[]
+A = [\]]
 
 %{
     public String palabra;
@@ -353,6 +352,7 @@ USABLE {palabra=yytext(); linea = yyline ; col = yycolumn ; return USABLE;}
 
 
 
+
 0|1|"NULL" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return BIT_NUM;}
 
 
@@ -387,8 +387,7 @@ USABLE {palabra=yytext(); linea = yyline ; col = yycolumn ; return USABLE;}
 "##" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return NUMERALES;}
 
 
-{L}({L}|{D})* {palabra=yytext() ; linea = yyline ; col = yycolumn ; return IDENTIFICADOR;}
-"["{L}({L}|{D})*"]" {palabra=yytext() ; linea = yyline ; col = yycolumn ; return IDENTIFICADOR;}
+{L}({L}|{D})*| {S}({L}({L}|{D})*){A} {palabra=yytext() ; linea = yyline ; col = yycolumn ; return IDENTIFICADOR;}
 
 ({D})+ {palabra=yytext() ; linea = yyline ; col = yycolumn ; return INT_NUM;}
 

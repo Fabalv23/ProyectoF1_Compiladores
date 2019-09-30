@@ -18,6 +18,8 @@ public class analisis_lexico_descendente {
         this.tokens_a_evaluar_detalle = lista2;
     }
 
+    public int view_sub = 0;
+
     public Tokens token_actual = null;
     public Tokens token_siguiente = null;
     public ArrayList<Tokens> tokens_a_evaluar = new ArrayList<>();
@@ -47,10 +49,1929 @@ public class analisis_lexico_descendente {
 
     }
 
+    public void select(Tokens a) {
+
+        switch (a) {
+            case MULTIPLICACION:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.COMA) {
+                    cont++;
+                    cambio_token(cont);
+                    columna(token_siguiente);
+                    from(token_siguiente);
+                    if (token_siguiente != null) {
+                        joins(token_siguiente);
+                        if (token_siguiente != null) {
+                            where(token_siguiente);//condicionales
+                            if (token_siguiente != null) {
+                                group(token_siguiente);//agrupado
+                                if (token_siguiente != null) {
+                                    teniendo(token_siguiente);//teniendo
+                                    if (token_siguiente != null) {
+                                        order(token_siguiente);//orden
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                } else {
+                    from(token_siguiente);
+                    if (token_siguiente != null) {
+                        joins(token_siguiente);
+                        if (token_siguiente != null) {
+                            where(token_siguiente);//condicionales
+                            if (token_siguiente != null) {
+                                group(token_siguiente);//agrupado
+                                if (token_siguiente != null) {
+                                    teniendo(token_siguiente);//teniendo
+                                    if (token_siguiente != null) {
+                                        order(token_siguiente);//orden
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+                break;
+
+            case DISTINCT:
+                cont++;
+                cambio_token(cont);
+                columna(token_siguiente);
+                from(token_siguiente);
+                if (token_siguiente != null) {
+                    joins(token_siguiente);
+                    if (token_siguiente != null) {
+                        where(token_siguiente);//condicionales
+                        if (token_siguiente != null) {
+                            group(token_siguiente);//agrupado
+                            if (token_siguiente != null) {
+                                teniendo(token_siguiente);//teniendo
+                                if (token_siguiente != null) {
+                                    order(token_siguiente);//orden
+                                }
+                            }
+                        }
+
+                    }
+                }
+                break;
+
+            case ALL:
+                cont++;
+                cambio_token(cont);
+                columna(token_siguiente);
+                from(token_siguiente);
+                if (token_siguiente != null) {
+                    joins(token_siguiente);
+                    if (token_siguiente != null) {
+                        where(token_siguiente);//condicionales
+                        if (token_siguiente != null) {
+                            group(token_siguiente);//agrupado
+                            if (token_siguiente != null) {
+                                teniendo(token_siguiente);//teniendo
+                                if (token_siguiente != null) {
+                                    order(token_siguiente);//orden
+                                }
+                            }
+                        }
+
+                    }
+                }
+                break;
+
+            case TOP:
+                cont++;
+                cambio_token(cont);
+                top(token_siguiente);
+                columna(token_siguiente);
+                from(token_siguiente);
+                if (token_siguiente != null) {
+                    joins(token_siguiente);
+                    if (token_siguiente != null) {
+                        where(token_siguiente);//condicionales
+                        if (token_siguiente != null) {
+                            group(token_siguiente);//agrupado
+                            if (token_siguiente != null) {
+                                teniendo(token_siguiente);//teniendo
+                                if (token_siguiente != null) {
+                                    order(token_siguiente);//orden
+                                }
+                            }
+                        }
+
+                    }
+                }
+                break;
+
+            default:
+                columna(token_siguiente);
+                from(token_siguiente);
+                if (token_siguiente != null) {
+                    joins(token_siguiente);
+                    if (token_siguiente != null) {
+                        where(token_siguiente);//condicionales
+                        if (token_siguiente != null) {
+                            group(token_siguiente);//agrupado
+                            if (token_siguiente != null) {
+                                teniendo(token_siguiente);//teniendo
+                                if (token_siguiente != null) {
+                                    order(token_siguiente);//orden
+                                }
+                            }
+                        }
+
+                    }
+                }
+                break;
+
+        }
+
+    }
+
+    public void group(Tokens g) {
+
+        switch (g) {
+
+            case GROUP:
+
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.BY) {
+
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.IDENTIFICADOR) {
+
+                        cont++;
+                        cambio_token(cont);
+                        if (token_siguiente == Tokens.PUNTO) {
+                            objeto_nombre(token_siguiente);
+                        }
+
+                        if (token_siguiente == Tokens.COMA) {
+                            mas_group(token_siguiente);
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                    }
+
+                }
+
+                break;
+
+        }
+
+    }
+
+    public void mas_group(Tokens m) {
+        switch (m) {
+            case COMA:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.PUNTO) {
+                        objeto_nombre(token_siguiente);
+                    }
+
+                    if (token_siguiente == Tokens.COMA) {
+                        mas_group(token_siguiente);
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+
+                break;
+        }
+
+    }
+
+    public void teniendo(Tokens t) {
+
+        switch (t) {
+            case HAVING:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.IDENTIFICADOR || token_siguiente == Tokens.SUM || token_siguiente == Tokens.COUNT || token_siguiente == Tokens.AVG || token_siguiente == Tokens.MIN || token_siguiente == Tokens.MAX) {
+                    teniendo_funciones(token_siguiente);
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "AGREGACION");
+                }
+
+                break;
+
+        }
+
+    }
+
+    public void order_teniendo_funciones(Tokens tf) {
+
+        switch (tf) {
+            case SUM:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                }
+
+                break;
+
+            case AVG:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                }
+
+                break;
+
+            case COUNT:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                }
+
+                break;
+
+            case MIN:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                }
+
+                break;
+
+            case MAX:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                }
+
+                break;
+        }
+
+    }
+
+    public void teniendo_funciones(Tokens tf) {
+
+        switch (tf) {
+
+            case IDENTIFICADOR:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PUNTO) {
+                    objeto_nombre(token_siguiente);
+                }
+
+                if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                        cont++;
+                        cambio_token(cont);
+
+                        if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR || token_siguiente == Tokens.SUM || token_siguiente == Tokens.COUNT || token_siguiente == Tokens.AVG || token_siguiente == Tokens.MIN || token_siguiente == Tokens.MAX) {
+                                teniendo_funciones(token_siguiente);
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "FUNCION");
+                            }
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "DATO");
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "OPERADOR");
+                }
+
+                break;
+
+            case SUM:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+                    if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        cont++;
+                        cambio_token(cont);
+
+                        if (token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.SUM || token_siguiente == Tokens.COUNT || token_siguiente == Tokens.AVG || token_siguiente == Tokens.MIN || token_siguiente == Tokens.MAX) {
+                                    teniendo_funciones(token_siguiente);
+                                } else {
+                                    error_sintaxis(token_siguiente, cont, "FUNCION");
+                                }
+                            }
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "DATO");
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "OPERADOR");
+                    }
+
+                }
+
+                break;
+
+            case AVG:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                    if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        cont++;
+                        cambio_token(cont);
+
+                        if (token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.SUM || token_siguiente == Tokens.COUNT || token_siguiente == Tokens.AVG || token_siguiente == Tokens.MIN || token_siguiente == Tokens.MAX) {
+                                    teniendo_funciones(token_siguiente);
+                                } else {
+                                    error_sintaxis(token_siguiente, cont, "FUNCION");
+                                }
+                            }
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "DATO");
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "OPERADOR");
+                    }
+
+                }
+
+                break;
+
+            case COUNT:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                    if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        cont++;
+                        cambio_token(cont);
+
+                        if (token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.SUM || token_siguiente == Tokens.COUNT || token_siguiente == Tokens.AVG || token_siguiente == Tokens.MIN || token_siguiente == Tokens.MAX) {
+                                    teniendo_funciones(token_siguiente);
+                                } else {
+                                    error_sintaxis(token_siguiente, cont, "FUNCION");
+                                }
+                            }
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "DATO");
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "OPERADOR");
+                    }
+
+                }
+
+                break;
+
+            case MIN:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                    if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        cont++;
+                        cambio_token(cont);
+
+                        if (token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.SUM || token_siguiente == Tokens.COUNT || token_siguiente == Tokens.AVG || token_siguiente == Tokens.MIN || token_siguiente == Tokens.MAX) {
+                                    teniendo_funciones(token_siguiente);
+                                } else {
+                                    error_sintaxis(token_siguiente, cont, "FUNCION");
+                                }
+                            }
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "DATO");
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "OPERADOR");
+                    }
+
+                }
+
+                break;
+
+            case MAX:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                    if (token_siguiente == Tokens.MAYOR_QUE || token_siguiente == Tokens.MENOR_QUE || token_siguiente == Tokens.MAYOR_IGUAL || token_siguiente == Tokens.MENOR_IGUAL || token_siguiente == Tokens.DIFERENTE_DE || token_siguiente == Tokens.IGUAL_IGUAL || token_siguiente == Tokens.ASIGNAR) {
+                        cont++;
+                        cambio_token(cont);
+
+                        if (token_siguiente == Tokens.INT_NUM || token_siguiente == Tokens.FLOAT_NUM || token_siguiente == Tokens.BIT_NUM) {
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.AND || token_siguiente == Tokens.OR || token_siguiente == Tokens.AND_OP || token_siguiente == Tokens.OR_OP) {
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.SUM || token_siguiente == Tokens.COUNT || token_siguiente == Tokens.AVG || token_siguiente == Tokens.MIN || token_siguiente == Tokens.MAX) {
+                                    teniendo_funciones(token_siguiente);
+                                } else {
+                                    error_sintaxis(token_siguiente, cont, "FUNCION");
+                                }
+                            }
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "DATO");
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "OPERADOR");
+                    }
+
+                }
+
+                break;
+        }
+
+    }
+
+    public void order(Tokens o) {
+
+        switch (o) {
+            case ORDER:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.BY) {
+
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.IDENTIFICADOR) {
+
+                        cont++;
+                        cambio_token(cont);
+                        if (token_siguiente == Tokens.PUNTO) {
+                            objeto_nombre(token_siguiente);
+                        }
+
+                        if (token_siguiente == Tokens.ASC || token_siguiente == Tokens.DESC) {
+                            cont++;
+                            cambio_token(cont);
+                        }
+
+                        if (token_siguiente == Tokens.COMA) {
+                            mas_order(token_siguiente);
+                        }
+
+                    } else if (token_siguiente == Tokens.SUM || token_siguiente == Tokens.COUNT || token_siguiente == Tokens.AVG || token_siguiente == Tokens.MIN || token_siguiente == Tokens.MAX) {
+                        order_teniendo_funciones(token_siguiente);
+                        if (token_siguiente == Tokens.ASC || token_siguiente == Tokens.DESC) {
+                            cont++;
+                            cambio_token(cont);
+                        }
+
+                        if (token_siguiente == Tokens.COMA) {
+                            mas_order(token_siguiente);
+                        }
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                    }
+
+                }
+
+                break;
+
+        }
+
+    }
+
+    public void mas_order(Tokens m) {
+        switch (m) {
+            case COMA:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.PUNTO) {
+                        objeto_nombre(token_siguiente);
+                    }
+
+                    if (token_siguiente == Tokens.ASC || token_siguiente == Tokens.DESC) {
+                        cont++;
+                        cambio_token(cont);
+                    }
+
+                    if (token_siguiente == Tokens.COMA) {
+                        mas_order(token_siguiente);
+                    }
+
+                } else if (token_siguiente == Tokens.SUM || token_siguiente == Tokens.COUNT || token_siguiente == Tokens.AVG || token_siguiente == Tokens.MIN || token_siguiente == Tokens.MAX) {
+                    order_teniendo_funciones(token_siguiente);
+                    if (token_siguiente == Tokens.ASC || token_siguiente == Tokens.DESC) {
+                        cont++;
+                        cambio_token(cont);
+                    }
+
+                    if (token_siguiente == Tokens.COMA) {
+                        mas_order(token_siguiente);
+                    }
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+
+                break;
+        }
+
+    }
+
+    public void joins(Tokens j) {
+
+        switch (j) {
+
+            case INNER:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.JOIN) {
+                    joins(token_siguiente);
+                } else {
+                    error_sintaxis(token_siguiente, cont, "JOIN");
+                }
+                break;
+
+            case LEFT:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.OUTER) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.JOIN) {
+                        joins(token_siguiente);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "JOIN");
+                    }
+                } else if (token_siguiente == Tokens.JOIN) {
+                    joins(token_siguiente);
+                } else {
+                    error_sintaxis(token_siguiente, cont, "JOIN");
+                }
+
+                break;
+
+            case RIGHT:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.OUTER) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.JOIN) {
+                        joins(token_siguiente);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "JOIN");
+                    }
+                } else if (token_siguiente == Tokens.JOIN) {
+                    joins(token_siguiente);
+                } else {
+                    error_sintaxis(token_siguiente, cont, "JOIN");
+                }
+
+                break;
+            case FULL:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.OUTER) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.JOIN) {
+                        joins(token_siguiente);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "JOIN");
+                    }
+                } else if (token_siguiente == Tokens.JOIN) {
+                    joins(token_siguiente);
+                } else {
+                    error_sintaxis(token_siguiente, cont, "JOIN");
+                }
+
+                break;
+            case JOIN:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.PUNTO) {
+                        objeto_nombre(token_siguiente);
+                    }
+
+                    switch (token_siguiente) {
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case AS:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                            }
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.ON) {
+                        cont++;
+                        cambio_token(cont);
+
+                        if (token_siguiente == Tokens.IDENTIFICADOR) {
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+
+                            if (token_siguiente == Tokens.ASIGNAR) {
+
+                                cont++;
+                                cambio_token(cont);
+
+                                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                    cont++;
+                                    cambio_token(cont);
+
+                                    if (token_siguiente == Tokens.PUNTO) {
+                                        objeto_nombre(token_siguiente);
+                                    }
+
+                                    if (token_siguiente == Tokens.JOIN || token_siguiente == Tokens.LEFT || token_siguiente == Tokens.JOIN || token_siguiente == Tokens.INNER || token_siguiente == Tokens.FULL) {
+                                        joins(token_siguiente);
+                                    }
+
+                                } else {
+                                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "=");
+                            }
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "ON");
+                    }
+
+                }
+
+                break;
+
+        }
+
+    }
+
+    public void from(Tokens f) {
+
+        switch (f) {
+            case FROM:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.PUNTO) {
+                        objeto_nombre(token_siguiente);
+                    }
+                    if (token_siguiente == null) {
+                        return;
+                    }
+                    switch (token_siguiente) {
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case AS:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                            }
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.COMA) {
+                        mas_de_un_from(token_siguiente);
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+
+                break;
+
+        }
+
+    }
+
+    public void mas_de_un_from(Tokens f) {
+        switch (f) {
+
+            case COMA:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente == Tokens.IDENTIFICADOR) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.PUNTO) {
+                        objeto_nombre(token_siguiente);
+                    }
+
+                    switch (token_siguiente) {
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case AS:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                            }
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.COMA) {
+                        mas_de_un_from(token_siguiente);
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                }
+
+        }
+
+    }
+
+    public void columna(Tokens c) {
+
+        switch (c) {
+            case STRING:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.ASIGNAR) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.IDENTIFICADOR || token_siguiente == Tokens.STRING) {
+
+                        switch (token_siguiente) {
+                            case IDENTIFICADOR:
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                                break;
+
+                            case STRING:
+                                cont++;
+                                cambio_token(cont);
+                                break;
+
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "STRING");
+                    }
+
+                }
+
+                if (token_siguiente == Tokens.AS) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.IDENTIFICADOR) {
+                        cont++;
+                        cambio_token(cont);
+                    }
+                }
+
+                if (token_siguiente == Tokens.COMA) {
+                    cont++;
+                    cambio_token(cont);
+                    columna(token_siguiente);
+                }
+
+                break;
+
+            case BIT_NUM:
+
+                operaciones_2(token_siguiente);
+
+                if (token_siguiente == Tokens.AS) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.IDENTIFICADOR) {
+                        cont++;
+                        cambio_token(cont);
+                    }
+                }
+
+                if (token_siguiente == Tokens.COMA) {
+                    cont++;
+                    cambio_token(cont);
+                    columna(token_siguiente);
+                }
+                break;
+
+            case INT_NUM:
+                operaciones_2(token_siguiente);
+
+                if (token_siguiente == Tokens.AS) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.IDENTIFICADOR) {
+                        cont++;
+                        cambio_token(cont);
+                    }
+                }
+
+                if (token_siguiente == Tokens.COMA) {
+                    cont++;
+                    cambio_token(cont);
+                    columna(token_siguiente);
+                }
+                break;
+
+            case FLOAT_NUM:
+                operaciones_2(token_siguiente);
+
+                if (token_siguiente == Tokens.AS) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.IDENTIFICADOR) {
+                        cont++;
+                        cambio_token(cont);
+                    }
+                }
+                if (token_siguiente == Tokens.COMA) {
+                    cont++;
+                    cambio_token(cont);
+                    columna(token_siguiente);
+                }
+
+                break;
+
+            case IDENTIFICADOR:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PUNTO) {
+                    objeto_nombre(token_siguiente);
+                }
+
+                if (token_siguiente == Tokens.SUMA || token_siguiente == Tokens.RESTA || token_siguiente == Tokens.MULTIPLICACION || token_siguiente == Tokens.DIVISION || token_siguiente == Tokens.PORCENTAJE || token_siguiente == Tokens.ASIGNAR) {
+                    cont++;
+                    cambio_token(cont);
+                    operaciones_2(token_siguiente);
+                }
+
+                if (token_siguiente == Tokens.AS) {
+                    cont++;
+                    cambio_token(cont);
+                    if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.IDENTIFICADOR) {
+                        cont++;
+                        cambio_token(cont);
+                    }
+                }
+
+                if (token_siguiente == Tokens.COMA) {
+                    cont++;
+                    cambio_token(cont);
+                    columna(token_siguiente);
+                }
+
+                break;
+
+            case SUM:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+                    if (token_siguiente == Tokens.AS) {
+                        cont++;
+                        cambio_token(cont);
+                        if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.IDENTIFICADOR) {
+                            cont++;
+                            cambio_token(cont);
+                        }
+                    }
+
+                    if (token_siguiente == Tokens.COMA) {
+                        cont++;
+                        cambio_token(cont);
+                        columna(token_siguiente);
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, "(");
+                }
+
+                break;
+
+            case AVG:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                    if (token_siguiente == Tokens.AS) {
+                        cont++;
+                        cambio_token(cont);
+                        if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.IDENTIFICADOR) {
+                            cont++;
+                            cambio_token(cont);
+                        }
+                    }
+
+                    if (token_siguiente == Tokens.COMA) {
+                        cont++;
+                        cambio_token(cont);
+                        columna(token_siguiente);
+                    }
+
+                }
+
+                break;
+
+            case COUNT:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                    if (token_siguiente == Tokens.AS) {
+                        cont++;
+                        cambio_token(cont);
+                        if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.IDENTIFICADOR) {
+                            cont++;
+                            cambio_token(cont);
+                        }
+                    }
+
+                    if (token_siguiente == Tokens.COMA) {
+                        cont++;
+                        cambio_token(cont);
+                        columna(token_siguiente);
+                    }
+                }
+
+                break;
+
+            case MIN:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                    if (token_siguiente == Tokens.AS) {
+                        cont++;
+                        cambio_token(cont);
+                        if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.IDENTIFICADOR) {
+                            cont++;
+                            cambio_token(cont);
+                        }
+                    }
+
+                    if (token_siguiente == Tokens.COMA) {
+                        cont++;
+                        cambio_token(cont);
+                        columna(token_siguiente);
+                    }
+                }
+
+                break;
+
+            case MAX:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    switch (token_siguiente) {
+                        case BIT_NUM:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case MULTIPLICACION:
+                            cont++;
+                            cambio_token(cont);
+
+                            break;
+
+                        case DISTINCT:
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.IDENTIFICADOR) {
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.PUNTO) {
+                                    objeto_nombre(token_siguiente);
+                                }
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                            }
+                            break;
+
+                        case IDENTIFICADOR:
+                            cont++;
+                            cambio_token(cont);
+                            if (token_siguiente == Tokens.PUNTO) {
+                                objeto_nombre(token_siguiente);
+                            }
+                            break;
+
+                        default:
+                            error_sintaxis(token_siguiente, cont, "VALOR PARA AGRUPACION");
+                            break;
+                    }
+
+                    if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                        cont++;
+                        cambio_token(cont);
+                    } else {
+                        error_sintaxis(token_siguiente, cont, ")");
+                    }
+
+                    if (token_siguiente == Tokens.AS) {
+                        cont++;
+                        cambio_token(cont);
+                        if (token_siguiente == Tokens.STRING || token_siguiente == Tokens.IDENTIFICADOR) {
+                            cont++;
+                            cambio_token(cont);
+                        }
+                    }
+
+                    if (token_siguiente == Tokens.COMA) {
+                        cont++;
+                        cambio_token(cont);
+                        columna(token_siguiente);
+                    }
+                }
+
+                break;
+
+        }
+
+    }
+
     public void analisis(Tokens actual) {
 
         switch (actual) {
 //SENTENCIAS DML
+
+            case SELECT:
+                cont++;
+                cambio_token(cont);
+                select(token_siguiente);
+                if (view_sub == 1) {
+
+                } else {
+                    if (token_siguiente != null) {
+
+                        switch (token_siguiente) {
+                            case PUNTO_COMA:
+                                cont++;
+                                cambio_token(cont);
+                                if (token_siguiente == Tokens.GO) {
+                                    cont++;
+                                    cambio_token(cont);
+                                    System.out.println("CADENA ANALIZADA CORRECTAMENTE");
+                                } else {
+                                    error_sintaxis(token_siguiente, cont, "GO");
+                                }
+
+                                if (token_siguiente != null) {
+                                    analisis(token_siguiente);
+                                } else {
+
+                                }
+
+                                break;
+
+                            default:
+                                if (token_siguiente == Tokens.CREATE || token_siguiente == Tokens.ALTER || token_siguiente == Tokens.SELECT || token_siguiente == Tokens.INSERT || token_siguiente == Tokens.UPDATE || token_siguiente == Tokens.DROP || token_siguiente == Tokens.TRUNCATE || token_siguiente == Tokens.DELETE) {
+                                    error_sintaxis(token_siguiente, cont, "PUNTO y COMA");
+                                }
+                                analisis(token_siguiente);
+
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "PUNTO y COMA");
+                    }
+                }
+                break;
 
             case UPDATE:
                 cont++;
@@ -202,7 +2123,8 @@ public class analisis_lexico_descendente {
                             break;
 
                         default:
-                            if (token_siguiente == Tokens.CREATE || token_siguiente == Tokens.ALTER || token_siguiente == Tokens.SELECT || token_siguiente == Tokens.INSERT || token_siguiente == Tokens.UPDATE || token_siguiente == Tokens.DROP || token_siguiente == Tokens.TRUNCATE || token_siguiente == Tokens.DELETE) {
+
+                            if (token_siguiente == Tokens.GO || token_siguiente == Tokens.CREATE || token_siguiente == Tokens.ALTER || token_siguiente == Tokens.SELECT || token_siguiente == Tokens.INSERT || token_siguiente == Tokens.UPDATE || token_siguiente == Tokens.DROP || token_siguiente == Tokens.TRUNCATE || token_siguiente == Tokens.DELETE) {
                                 error_sintaxis(token_siguiente, cont, "PUNTO y COMA");
                             }
                             analisis(token_siguiente);
@@ -475,6 +2397,100 @@ public class analisis_lexico_descendente {
 
     }
 
+    public void operaciones_2(Tokens o) {
+
+        switch (o) {
+
+            case PARENTESIS_ABIERTO:
+                cont++;
+                cambio_token(cont);
+
+                operaciones(token_siguiente);
+
+                if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.ASIGNAR || token_siguiente == Tokens.SUMA || token_siguiente == Tokens.RESTA || token_siguiente == Tokens.MULTIPLICACION || token_siguiente == Tokens.DIVISION || token_siguiente == Tokens.PORCENTAJE) {
+                        cont++;
+                        cambio_token(cont);
+
+                        operaciones_2(token_siguiente);
+
+                    }
+
+                } else {
+                    error_sintaxis(token_siguiente, cont, ")");
+                }
+
+                break;
+
+            case IDENTIFICADOR:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.ASIGNAR || token_siguiente == Tokens.SUMA || token_siguiente == Tokens.RESTA || token_siguiente == Tokens.MULTIPLICACION || token_siguiente == Tokens.DIVISION || token_siguiente == Tokens.PORCENTAJE) {
+                    cont++;
+                    cambio_token(cont);
+
+                    operaciones_2(token_siguiente);
+
+                }
+
+                break;
+
+            case STRING:
+                cont++;
+                cambio_token(cont);
+
+                break;
+
+            case INT_NUM:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.ASIGNAR || token_siguiente == Tokens.SUMA || token_siguiente == Tokens.RESTA || token_siguiente == Tokens.MULTIPLICACION || token_siguiente == Tokens.DIVISION || token_siguiente == Tokens.PORCENTAJE) {
+                    cont++;
+                    cambio_token(cont);
+
+                    operaciones_2(token_siguiente);
+
+                }
+
+                break;
+
+            case FLOAT_NUM:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.ASIGNAR || token_siguiente == Tokens.SUMA || token_siguiente == Tokens.RESTA || token_siguiente == Tokens.MULTIPLICACION || token_siguiente == Tokens.DIVISION || token_siguiente == Tokens.PORCENTAJE) {
+                    cont++;
+                    cambio_token(cont);
+
+                    operaciones_2(token_siguiente);
+
+                }
+
+                break;
+
+            case BIT_NUM:
+                cont++;
+                cambio_token(cont);
+
+                if (token_siguiente == Tokens.ASIGNAR || token_siguiente == Tokens.SUMA || token_siguiente == Tokens.RESTA || token_siguiente == Tokens.MULTIPLICACION || token_siguiente == Tokens.DIVISION || token_siguiente == Tokens.PORCENTAJE) {
+                    cont++;
+                    cambio_token(cont);
+
+                    operaciones_2(token_siguiente);
+
+                }
+
+                break;
+
+        }
+
+    }
+
     //Cualquier operacion aritmetica
     public void operaciones(Tokens o) {
 
@@ -569,8 +2585,6 @@ public class analisis_lexico_descendente {
         }
 
     }
-
-  
 
     public void delete(Tokens s) {
 
@@ -1149,6 +3163,78 @@ public class analisis_lexico_descendente {
 
             case CONSTRAINT:
                 add_table_constraint(token_siguiente);
+                if (token_siguiente == Tokens.COMA) {
+
+                    cont++;
+                    cambio_token(cont);
+                    add_column(token_siguiente);
+                }
+                break;
+
+            case PRIMARY:
+                cont++;
+                cambio_token(cont);
+                if (token_siguiente != Tokens.KEY) {
+                    error_sintaxis(token_siguiente, cont, "KEY");
+                } else {
+                    cont++;
+                    cambio_token(cont);
+
+                    if (token_siguiente == Tokens.PARENTESIS_ABIERTO) {
+                        cont++;
+                        cambio_token(cont);
+
+                        if (token_siguiente == Tokens.IDENTIFICADOR) {
+                            cont++;
+                            cambio_token(cont);
+
+                            if (token_siguiente == Tokens.COMA) {
+                                mas_de_un_identificador(token_siguiente);
+
+                                if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                                    cont++;
+                                    cambio_token(cont);
+
+                                } else {
+                                    error_sintaxis(token_siguiente, cont, ")");
+                                }
+
+                            } else if (token_siguiente == Tokens.PARENTESIS_CERRADO) {
+                                cont++;
+                                cambio_token(cont);
+
+                            } else {
+                                error_sintaxis(token_siguiente, cont, ")");
+                            }
+
+                        } else {
+                            error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                        }
+
+                    } else {
+                        error_sintaxis(token_siguiente, cont, "(");
+                    }
+
+                }
+
+                if (token_siguiente == Tokens.COMA) {
+
+                    cont++;
+                    cambio_token(cont);
+                    add_column(token_siguiente);
+                }
+
+                break;
+
+            case FOREIGN:
+                constraint(Tokens.FOREIGN);
+
+                if (token_siguiente == Tokens.COMA) {
+
+                    cont++;
+                    cambio_token(cont);
+                    add_column(token_siguiente);
+                }
                 break;
 
             default:
@@ -1829,41 +3915,20 @@ public class analisis_lexico_descendente {
 
                 if (token_siguiente == Tokens.PUNTO) {
                     objeto_nombre(token_siguiente);
+                }
 
-                    if (token_siguiente == Tokens.IDENTIFICADOR) {
-                        cont++;
-                        cambio_token(cont);
-                        if (token_siguiente == Tokens.AS) {
-                            cont++;
-                            cambio_token(cont);
-                            if (token_siguiente == Tokens.SELECT) {
-                                analisis(token_siguiente);
-                            } else {
-                                error_sintaxis(token_siguiente, cont, "SELECT");
-                            }
-                        } else {
-                            error_sintaxis(token_siguiente, cont, "AS");
-                        }
-                    } else {
-                        error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
-                    }
-
-                } else if (token_siguiente == Tokens.IDENTIFICADOR) {
+                if (token_siguiente == Tokens.AS) {
                     cont++;
                     cambio_token(cont);
-                    if (token_siguiente == Tokens.AS) {
-                        cont++;
-                        cambio_token(cont);
-                        if (token_siguiente == Tokens.SELECT) {
-                            analisis(token_siguiente);
-                        } else {
-                            error_sintaxis(token_siguiente, cont, "SELECT");
-                        }
+                    if (token_siguiente == Tokens.SELECT) {
+                        view_sub = 1;
+                        analisis(token_siguiente);
+                        view_sub = 0;
                     } else {
-                        error_sintaxis(token_siguiente, cont, "AS");
+                        error_sintaxis(token_siguiente, cont, "SELECT");
                     }
                 } else {
-                    error_sintaxis(token_siguiente, cont, "IDENTIFICADOR");
+                    error_sintaxis(token_siguiente, cont, "AS");
                 }
 
                 break;
