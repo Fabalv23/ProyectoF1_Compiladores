@@ -37,6 +37,13 @@ public class analisis_lexico_descendente {
 
     }
 
+    
+    public void limpiar(){
+        this.tokens_a_evaluar = new ArrayList<>();
+        this.Errores = new ArrayList<>();
+        this.tokens_a_evaluar_detalle = new ArrayList<>();
+    }
+    
     public void Validar_Cambio(Tokens siguiente, int cambio) {
 
         if (tokens_a_evaluar.get(cont) == siguiente) {

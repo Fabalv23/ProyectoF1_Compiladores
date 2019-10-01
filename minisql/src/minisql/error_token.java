@@ -25,7 +25,7 @@ public class error_token {
 
     @Override
     public String toString() {
-        return "error_token{" + "token=" + token + ", linea=" + linea + ", columna=" + columna + ", detalle_error=" + detalle_error + '}';
+        return "SINTAXIS ERROR "+detalle_error + " cercano a "+token+ " en la linea "+linea+" y columna "+columna;                        
     }
     
     

@@ -26,11 +26,11 @@ import jflex.*;
  * @author fabia
  */
 public class Inicio extends javax.swing.JFrame {
-    
+
     public String errores = "";
-    
+
     public String Tokens = "";
-    
+
     ArrayList<Tokens> valores_insertados = new ArrayList<>();
     ArrayList<detalle_token> valores_insertados_detalle = new ArrayList<>();
 
@@ -39,7 +39,7 @@ public class Inicio extends javax.swing.JFrame {
      */
     public Inicio() {
         initComponents();
-        
+
     }
 
     //Se definen las variables para manipular el archivo
@@ -172,19 +172,19 @@ public class Inicio extends javax.swing.JFrame {
             archivosql = dialogo.getSelectedFile();
             rutaArchivo = archivosql.getPath();
             nombre_archivo = archivosql.getName();
-            
+
             if (nombre_archivo != "") {
                 nombre_archivo_salida = nombre_archivo.substring(0, nombre_archivo.indexOf("."));
                 nombre_archivo_salida = nombre_archivo_salida + ".out";
             }
-            
+
             archivo_a_crear = ruta_salida + nombre_archivo_salida;
-            
+
             ruta_origen = rutaArchivo;
             jTextField1.setText(rutaArchivo);
             jTextField2.setText(archivo_a_crear);
         }
-        
+
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -193,15 +193,15 @@ public class Inicio extends javax.swing.JFrame {
 
         File archivo = new File(archivo_a_crear);
         PrintWriter escribir;
-        
+
         Reader lector;
         try {
             lector = new BufferedReader(new FileReader(ruta_origen));
-            
+
             Lexico lexer = new Lexico(lector);
             try {
                 escribir = new PrintWriter(archivo);
-                
+
                 String resultado = "";
                 while (true) {
                     Tokens tokens = lexer.yylex();
@@ -219,44 +219,60 @@ public class Inicio extends javax.swing.JFrame {
 //                        abrirarchivo();
 
                         analisis_lexico_descendente dsa = new analisis_lexico_descendente(valores_insertados, valores_insertados_detalle);
-                        
+
                         dsa.analisis(valores_insertados.get(0));
-                        
-                        for (error_token prueba : dsa.Errores) {
-                            
-                            System.out.println(prueba.toString());
-                            
+
+                        if (dsa.Errores.isEmpty() && errores.length() == 0) {
+                            JOptionPane.showMessageDialog(this, "ARCHIVO ANALIZADO CORRECTAMENTE");
+                        } else {
+
+                            for (error_token prueba : dsa.Errores) {
+
+                                errores += prueba.toString() + "\n";
+
+                            }
+
+                            Resultados r = new Resultados(resultado, errores);
+                            r.show();
+
                         }
-                        
-                        
-                           System.out.println("YA");
-                         
+
+                        System.out.println("YA");
+                        valores_insertados.clear();
+                        valores_insertados_detalle.clear();
                         Tokens = "";
-                        errores = "";                        
+                        errores = "";
+                        dsa.limpiar();
                         return;
                     }
                     switch (tokens) {
                         case ERROR:
                             resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR SIMBOLO NO RECONOCIDO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR SIMBOLO NO RECONOCIDO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            valores_insertados.add(tokens);
+                            valores_insertados_detalle.add(new detalle_token(tokens, Integer.toString(lexer.linea), Integer.toString(lexer.col)));
                             break;
-                        
+
                         case ERROR_COMENTARIO:
                             resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE COMENTARIO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE COMENTARIO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            valores_insertados.add(tokens);
+                            valores_insertados_detalle.add(new detalle_token(tokens, Integer.toString(lexer.linea), Integer.toString(lexer.col)));
                             break;
-                        
+
                         case ERROR_STRING:
                             resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE STRING" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE STRING" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
+                            valores_insertados.add(tokens);
+                            valores_insertados_detalle.add(new detalle_token(tokens, Integer.toString(lexer.linea), Integer.toString(lexer.col)));
                             break;
-                        
+
                         case IDENTIFICADOR:
-                            
+
                             if (lexer.palabra.length() > 31) {
-                                
+
                                 String truncado = "";
-                                
+
                                 truncado = lexer.palabra.substring(0, 31);
 
 //                                JOptionPane.showMessageDialog(null, "Identificador mayor a 31 caracteres \n Original: " + lexer.palabra + "\n Reemplazo: " + truncado,
@@ -268,16 +284,16 @@ public class Inicio extends javax.swing.JFrame {
                                 valores_insertados.add(tokens);
                                 valores_insertados_detalle.add(new detalle_token(tokens, Integer.toString(lexer.linea), Integer.toString(lexer.col)));
                                 break;
-                                
+
                             } else {
-                                
+
                                 resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                                 Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                                 valores_insertados.add(tokens);
                                 valores_insertados_detalle.add(new detalle_token(tokens, Integer.toString(lexer.linea), Integer.toString(lexer.col)));
                                 break;
                             }
-                        
+
                         default:
                             resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
                             Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
@@ -476,7 +492,7 @@ public class Inicio extends javax.swing.JFrame {
 
                     }
                 }
-                
+
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -485,23 +501,23 @@ public class Inicio extends javax.swing.JFrame {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
 
     }//GEN-LAST:event_jButton2ActionPerformed
-    
+
     public void abrirarchivo() {
-        
+
         try {
-            
+
             File objetofile = new File(archivo_a_crear);
             Desktop.getDesktop().open(objetofile);
-            
+
         } catch (IOException ex) {
             System.out.println(ex);
         }
-        
+
     }
-    
+
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
@@ -510,12 +526,12 @@ public class Inicio extends javax.swing.JFrame {
         generarFlex(ruta);
 
     }//GEN-LAST:event_jButton3ActionPerformed
-    
+
     public static void generarFlex(String ruta) {
         File archivo = new File(ruta);
-        
+
         jflex.Main.generate(archivo);
-        
+
         JOptionPane.showMessageDialog(null, "Programa compilado exitosamente", "Mensaje de exito ", HEIGHT);
     }
 
