@@ -13,6 +13,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringReader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +22,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import jflex.*;
+import java_cup.runtime.*;
 
 /**
  *
@@ -44,7 +47,7 @@ public class Inicio extends javax.swing.JFrame {
 
     //Se definen las variables para manipular el archivo
     String nombre_archivo, ruta_origen, nombre_archivo_salida, archivo_a_crear;
-
+    File origen_datos;
     //Se define la ruta donde se almacenaran los archivos out
     String ruta_salida = "C:\\Users\\fabia\\Desktop\\Archivos_Out_minisql\\";
 
@@ -172,7 +175,7 @@ public class Inicio extends javax.swing.JFrame {
             archivosql = dialogo.getSelectedFile();
             rutaArchivo = archivosql.getPath();
             nombre_archivo = archivosql.getName();
-
+                origen_datos = archivosql;
             if (nombre_archivo != "") {
                 nombre_archivo_salida = nombre_archivo.substring(0, nombre_archivo.indexOf("."));
                 nombre_archivo_salida = nombre_archivo_salida + ".out";
@@ -190,318 +193,44 @@ public class Inicio extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-
-        File archivo = new File(archivo_a_crear);
+        
         PrintWriter escribir;
 
         Reader lector;
         try {
-            lector = new BufferedReader(new FileReader(ruta_origen));
-
-            Lexico lexer = new Lexico(lector);
             try {
-                escribir = new PrintWriter(archivo);
+               
+                FileReader archivo12 = new FileReader(origen_datos);
 
+                BufferedReader contenido = new BufferedReader(archivo12);
+
+                String texto = "";
                 String resultado = "";
-                while (true) {
-                    Tokens tokens = lexer.yylex();
-                    if (tokens == null) {
-//                        resultado += "Archivo procesado correctamente";
-//                        escribir.print(resultado);
-//                        escribir.close();
-//
-//                        Resultados r = new Resultados(Tokens, errores);
-//                        r.res1 = Tokens;
-//                        r.res2 = errores;
-//
-//                        r.show();
-//
-//                        abrirarchivo();
 
-                        analisis_lexico_descendente dsa = new analisis_lexico_descendente(valores_insertados, valores_insertados_detalle);
+                while ((texto = contenido.readLine()) != null) {
+                    resultado = resultado + texto+"\n";
+                }
 
-                        dsa.analisis(valores_insertados.get(0));
+                parser s = new parser(new minisql.LexicoCup(new StringReader(resultado)));
 
-                        if (dsa.Errores.isEmpty() && errores.length() == 0) {
-                            JOptionPane.showMessageDialog(this, "ARCHIVO ANALIZADO CORRECTAMENTE");
-                        } else {
-
-                            for (error_token prueba : dsa.Errores) {
-
-                                errores += prueba.toString() + "\n";
-
-                            }
-
-                            Resultados r = new Resultados(resultado, errores);
-                            r.show();
-
-                        }
-
-                        System.out.println("YA");
-                        valores_insertados.clear();
-                        valores_insertados_detalle.clear();
-                        Tokens = "";
-                        errores = "";
-                        dsa.limpiar();
-                        return;
-                    }
-                    switch (tokens) {
-                        case ERROR:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR SIMBOLO NO RECONOCIDO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-                            errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR SIMBOLO NO RECONOCIDO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-                            valores_insertados.add(tokens);
-                            valores_insertados_detalle.add(new detalle_token(tokens, Integer.toString(lexer.linea), Integer.toString(lexer.col)));
-                            break;
-
-                        case ERROR_COMENTARIO:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE COMENTARIO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-                            errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE COMENTARIO" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-                            valores_insertados.add(tokens);
-                            valores_insertados_detalle.add(new detalle_token(tokens, Integer.toString(lexer.linea), Integer.toString(lexer.col)));
-                            break;
-
-                        case ERROR_STRING:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE STRING" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-                            errores += "TOKEN: " + lexer.palabra + " TIPO: " + "ERROR FALTA CIERRE STRING" + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-                            valores_insertados.add(tokens);
-                            valores_insertados_detalle.add(new detalle_token(tokens, Integer.toString(lexer.linea), Integer.toString(lexer.col)));
-                            break;
-
-                        case IDENTIFICADOR:
-
-                            if (lexer.palabra.length() > 31) {
-
-                                String truncado = "";
-
-                                truncado = lexer.palabra.substring(0, 31);
-
-//                                JOptionPane.showMessageDialog(null, "Identificador mayor a 31 caracteres \n Original: " + lexer.palabra + "\n Reemplazo: " + truncado,
-//                                        "Mensaje de Error ", HEIGHT);
-                                resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " Original con ERROR  \n";
-                                errores += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " Original con ERROR  \n";
-                                resultado += "TOKEN: " + truncado + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-                                Tokens += "TOKEN: " + truncado + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-                                valores_insertados.add(tokens);
-                                valores_insertados_detalle.add(new detalle_token(tokens, Integer.toString(lexer.linea), Integer.toString(lexer.col)));
-                                break;
-
-                            } else {
-
-                                resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-                                Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-                                valores_insertados.add(tokens);
-                                valores_insertados_detalle.add(new detalle_token(tokens, Integer.toString(lexer.linea), Integer.toString(lexer.col)));
-                                break;
-                            }
-
-                        default:
-                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-                            valores_insertados.add(tokens);
-                            valores_insertados_detalle.add(new detalle_token(tokens, Integer.toString(lexer.linea), Integer.toString(lexer.col)));
-                            break;
-//                        case RESERVADAS:
-//
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case BIT:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case FLOAT:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case INT:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case Comentario_LineaUnica:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case SUMA:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length())+ " \n";
-//                            break;
-//
-//                        case RESTA:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length())+ " \n";
-//                            break;
-//
-//                        case MULTIPLICACION:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case DIVISION:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case PORCENTAJE:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case MENOR_QUE:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case MENOR_IGUAL:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case MAYOR_QUE:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case MAYOR_IGUAL:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case ASIGNAR:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case IGUAL_IGUAL:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case DIFERENTE_DE:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case AND:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case OR:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case ADMIRACION_CERRADO:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case PUNTO_COMA:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case PUNTO:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case COMA:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case CORCHETE_ABIERTO:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case CORCHETE_CERRADO:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case PARENTESIS_ABIERTO:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case PARENTESIS_CERRADO:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case LLAVE_ABIERTA:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case LLAVE_CERRADA:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case CORCHETES:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case PARENTESIS:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case LLAVES:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case ARROBA:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case NUMERAL:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case NUMERALES:
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            break;
-//
-//                        case STRING:
-//
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//
-//                            break;
-//
-//                        case COMENTARIO_MULTILINEA:
-//
-//                            resultado += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//                            Tokens += "TOKEN: " + lexer.palabra + " TIPO: " + tokens + " Fila: " + lexer.linea + "  Columna Inicio: " + lexer.col + "  Columna Final: " + ((lexer.col) + lexer.palabra.length()) + " \n";
-//
-//                            break;
-
-                    }
+                try {
+                    s.parse();                    
+                    System.out.print(s.errores);
+                    System.out.print(s.cont);
+                } catch (Exception E) {
+                    System.out.print(s.errores);
                 }
 
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
                 Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (Exception E) {
 
+        }
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -522,7 +251,7 @@ public class Inicio extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
 
-        String ruta = "C:\\Users\\fabia\\Desktop\\Url 2do Ciclo 2019\\Compiladores\\Proyecto_F1\\Github\\ProyectoF1_Compiladores\\minisql\\src\\minisql\\Lexico.flex";
+        String ruta = "C:\\Users\\fabia\\Desktop\\Url 2do Ciclo 2019\\Compiladores\\Proyecto_F1\\Github\\ProyectoF1_Compiladores\\minisql\\src\\minisql\\LexicoCup.flex";
         generarFlex(ruta);
 
     }//GEN-LAST:event_jButton3ActionPerformed

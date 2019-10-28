@@ -5,6 +5,9 @@ import static minisql.Tokens.*;
 %line
 %column
 %type Tokens
+%cup
+%cupsys Tokens
+%unicode
 L=[a-zA-Z_]
 D=[0-9]
 espacio=[ ,\t,\r,\n]
@@ -21,7 +24,6 @@ A = [\]]
 %%
 
 "," {palabra=yytext() ; linea = yyline ; col = yycolumn ; return COMA;}
-
 ADD {palabra=yytext(); linea = yyline ; col = yycolumn ; return ADD;} 
 EXTERNAL {palabra=yytext(); linea = yyline ; col = yycolumn ; return EXTERNAL;} 
 PROCEDURE {palabra=yytext(); linea = yyline ; col = yycolumn ; return PROCEDURE;} 
