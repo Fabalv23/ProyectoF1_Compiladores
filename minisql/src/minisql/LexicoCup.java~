@@ -2353,7 +2353,7 @@ class LexicoCup implements java_cup.runtime.Scanner {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { System.out.println("Este es un error lexico: "+yytext()+
-    ", en la linea: "+yyline+", en la columna: "+yycolumn);
+    ", en la linea: "+(yyline+1)+", en la columna: "+yycolumn);
             } 
             // fall through
           case 368: break;

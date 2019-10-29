@@ -62,6 +62,7 @@ RESTRICT {return new Symbol(sym.RESTRICT,yycolumn,yyline,yytext());}
 BETWEEN {return new Symbol(sym.BETWEEN,yycolumn,yyline,yytext());}
 FUNCTION {return new Symbol(sym.FUNCTION,yycolumn,yyline,yytext());}
 RETURN {return new Symbol(sym.RETURN,yycolumn,yyline,yytext());}
+RETURNS {return new Symbol(sym.RETURNS,yycolumn,yyline,yytext());}
 BREAK {return new Symbol(sym.BREAK,yycolumn,yyline,yytext());}
 GOTO {return new Symbol(sym.GOTO,yycolumn,yyline,yytext());}
 REVERT {return new Symbol(sym.REVERT,yycolumn,yyline,yytext());}

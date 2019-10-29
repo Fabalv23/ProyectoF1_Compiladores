@@ -41,7 +41,8 @@ terminal IDENTITY,KEY,FOREIGN,REFERENCES,NOT,CHECK,CONSTRAINT,CLAUSE,REPLICATION
 
 terminal UNIQUE,CLUSTERED,NONCLUSTERED,INCLUDE,LOGIN,FOR,CHAR,VARCHAR,TEXT,IMAGE,VARBINARY,DATE,DATETIME,DATETIME2,SMALLDATETIME,TIME,DATETIMEOFFSET,TIMESTAMP,FLOAT,MONEY,REAL,BIT,DECIMAL,NUMERIC;
 terminal ALTER,CURRENT,MODIFY,REBUILD,DISABLE,REORGANIZE,RESUME,PAUSE,ABORT,PASSWORD,COLUMN,ADD;
-terminal PROC,PROCEDURE,ARROBA,OUT,OUTPUT,READONLY,ENCRYPTION,RECOMPILE,EXECUTE,BEGIN,END,DECLARE,EXEC;
+terminal PROC,PROCEDURE,ARROBA,OUT,OUTPUT,READONLY,ENCRYPTION,RECOMPILE,EXECUTE,BEGIN,END,DECLARE,EXEC,FUNCTION,RETURNS,RETURN;
+terminal TRAN,TRANSACTION,MARK,COMMIT,ROLLBACK,SAVE;
 
 non terminal update,inicio,querys, sentencia,empty,operadores,fin,objeto_nombre1,objeto_nombre2, eliminar, opciones_delete,objeto_nombre,condicionales,expresion,porcentaje,condicionales1,otra_condicion,operadores_logicos,data_tipo;
 non terminal asignaciones,asignaciones1,asignaciones2,opciones_update,E,T,F,NUM,err,FLOTANTE,VALORES_NUMEROS,truncate,tipo_objeto,drop,if_op,tabla,tabla2,index,index2;
@@ -54,10 +55,13 @@ non terminal create,opciones_crear,database_create,extras_database,filespec,mas_
 non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,add_column,add_column1,add_column2,tipo_dato,constraint,constraint1,constraint2,expresion_logica,declara_constraint;
 non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,tipo_alter_base,index_alter,nombre_index,accion_index,table_alter,accion_alter,tipo_add,drop_column,user_alter,set_item,set_item1;
 non terminal declares,declares2,sets,sets2,VARIABLES,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
-non terminal exec,enviar_datos,mandar_mas;
+non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop;
+non terminal begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point;
+
 
 precedence left WHERE;
 precedence left PARENTESIS_ABIERTO;
+precedence left BEGIN;
 
 start with inicio;
 
@@ -66,8 +70,28 @@ empty ::=;
 inicio ::= querys ;
 querys ::= querys sentencia | sentencia;
 
-sentencia ::= eliminar fin|update fin|truncate fin|drop fin|insert fin|select fin|create fin|alter fin|procedure fin|sets fin|declares fin|exec fin|error;
+sentencia ::= eliminar fin|update fin|truncate fin|drop fin|insert fin|select fin|create fin|alter fin
+             |procedure fin|sets fin|declares fin|exec fin|functions fin|begin_transaction|save_point|error;
 
+
+
+begin_transaction ::= trans transaction_name with_trans fin querys fin_transaction;
+trans ::= BEGIN TRAN| BEGIN TRANSACTION;
+transaction_name ::= VARIABLES|objeto_nombre|empty;
+with_trans ::= WITH MARK description|empty;
+description ::= STRING|empty;
+fin_transaction ::= COMMIT fin| COMMIT TRAN transaction_name fin|COMMIT TRANSACTION transaction_name fin
+                    |ROLLBACK fin|ROLLBACK TRAN transaction_name fin | ROLLBACK TRANSACTION transaction_name fin;
+save_point ::= SAVE trans transaction_name fin;
+
+
+
+functions ::= CREATE alterar FUNCTION objeto_nombre PARENTESIS_ABIERTO parametros PARENTESIS_CERRADO RETURNS tipo_retorno with_procedure as BEGIN interno_funcion RETURN E fin END{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
+as ::= AS|empty;
+tipo_retorno ::= tipo_dato | VARIABLES TABLE PARENTESIS_ABIERTO add_column PARENTESIS_CERRADO|TABLE; 
+llamar_funciones ::= objeto_nombre PARENTESIS_ABIERTO enviar_datos PARENTESIS_CERRADO;
+
+interno_funcion ::= querys|empty;
 
 exec ::= EXECUTE objeto_nombre enviar_datos{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :}|EXEC objeto_nombre enviar_datos{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
 enviar_datos ::= VARIABLES ASIGNAR data_tipo mandar_mas|data_tipo mandar_mas|empty;
@@ -88,20 +112,10 @@ parametros1 ::= ARROBA IDENTIFICADOR tipo_dato tipo_parametro parametros2;
 parametros2 ::= COMA parametros1|empty;
 tipo_parametro ::= OUT|OUTPUT|READONLY|empty;
 with_procedure ::= WITH procedure_option|empty;
-procedure_option ::=   ENCRYPTION | RECOMPILE | EXECUTE AS CLAUSE;
+procedure_option ::=   ENCRYPTION | RECOMPILE | EXECUTE AS IDENTIFICADOR;
 replication ::= FOR REPLICATION|empty;
 empezar ::= BEGIN|empty;
 final ::= END | empty;
-
-
-
-
-
-
-
-
-
-
 
 alter ::= ALTER opciones{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};           
 opciones ::= DATABASE database_alter | INDEX index_alter | TABLE table_alter | USER user_alter| VIEW view_create;
@@ -117,7 +131,8 @@ accion_index ::= REBUILD|DISABLE|REORGANIZE|SET| RESUME|PAUSE|ABORT;
 table_alter ::= objeto_nombre accion_alter;
 accion_alter ::= ALTER COLUMN add_column|ADD tipo_add|DROP drop_column;
 tipo_add ::= add_column;
-drop_column ::= CONSTRAINT objeto_nombre | COLUMN objeto_nombre | INDEX objeto_nombre;
+drop_column ::= CONSTRAINT objeto_nombre mas_drop | COLUMN objeto_nombre mas_drop | INDEX objeto_nombre mas_drop|objeto_nombre mas_drop;
+mas_drop ::= COMA drop_column|empty;
 
 user_alter ::= IDENTIFICADOR WITH set_item;
 set_item ::= set_item1 set_item2;
@@ -141,7 +156,7 @@ mas_file ::= COMA PARENTESIS_ABIERTO filespec PARENTESIS_CERRADO mas_file|empty;
 opciones_index ::= UNIQUE | CLUSTERED | NONCLUSTERED|empty;
 index_create ::= objeto_nombre ON objeto_nombre PARENTESIS_ABIERTO column_index PARENTESIS_CERRADO mas_index;
 column_index ::= objeto_nombre mas_de_un_objeto;
-mas_index ::= INCLUDE PARENTESIS_ABIERTO column_index PARENTESIS_CERRADO | empty;
+mas_index ::= INCLUDE PARENTESIS_ABIERTO column_index PARENTESIS_CERRADO |ON objeto_nombre PARENTESIS_ABIERTO column_index PARENTESIS_CERRADO mas_index| empty;
 
 view_create ::= objeto_nombre column_view AS select;
 column_view ::= PARENTESIS_ABIERTO column_view1 PARENTESIS_CERRADO|empty;
@@ -177,15 +192,6 @@ expresion_logica ::= otra_condicion;
 aux2 ::= constraint1|CONSTRAINT objeto_nombre constraint1;
 
 
-
-
-
-
-
-
-
-
-
 select ::= SELECT option_select FROM origen joins condicionales agrupado teniendo orden{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};           
 
 
@@ -195,7 +201,7 @@ columna ::= columna1 alias_columna columna2;
 columna1 ::= funciones | E|objeto_nombre ASIGNAR E;
 columna2 ::= COMA option_select|empty;
 data_tipo_operacion ::= data_tipo|objeto_nombre;
-funciones ::= SUM PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|AVG PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|COUNT PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|MIN PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|MAX PARENTESIS_ABIERTO valor PARENTESIS_CERRADO;
+funciones ::= SUM PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|AVG PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|COUNT PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|MIN PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|MAX PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|llamar_funciones;
 valor ::= BIT_NUM | MULTIPLICACION | puede objeto_nombre;
 puede ::= DISTINCT|empty;
 alias_columna ::= AS STRING|AS IDENTIFICADOR|empty;
@@ -255,7 +261,7 @@ drop ::= DROP tipo_objeto{: System.out.println("Sentencia analizada correctament
 
 if_op ::= IF EXISTS|empty;
 
-tipo_objeto ::= TABLE if_op tabla| index | database;
+tipo_objeto ::= TABLE if_op tabla| index | database|PROCEDURE objeto_nombre|FUNCTION objeto_nombre;
 
 tabla ::= objeto_nombre tabla2;
 
@@ -293,7 +299,7 @@ VALORES_NUMEROS ::= NUM | FLOTANTE;
 
 
 
-eliminar ::= DELETE opciones_delete FROM objeto_nombre condicionales {: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++;:};            
+eliminar ::= DELETE opciones_delete FROM objeto_nombre mas_de_un_objeto condicionales {: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++;:};            
              
             
 fin ::= PUNTO_COMA
