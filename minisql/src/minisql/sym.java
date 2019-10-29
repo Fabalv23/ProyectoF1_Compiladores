@@ -25,6 +25,7 @@ public class sym {
   public static final int NAMES = 77;
   public static final int VARCHAR = 100;
   public static final int INTO = 48;
+  public static final int INSENSITIVE = 152;
   public static final int WHERE = 11;
   public static final int PARENTESIS_ABIERTO = 5;
   public static final int PUNTO = 7;
@@ -35,6 +36,7 @@ public class sym {
   public static final int MODIFY = 119;
   public static final int IDENTITY = 83;
   public static final int ADD = 128;
+  public static final int CURSOR = 151;
   public static final int HAVING = 67;
   public static final int BIT = 114;
   public static final int NULL = 44;
@@ -62,6 +64,7 @@ public class sym {
   public static final int BY = 66;
   public static final int BIT_NUM = 24;
   public static final int LOGIN = 97;
+  public static final int NEXT = 155;
   public static final int RETURNS = 143;
   public static final int GROUP = 65;
   public static final int PROCEDURE = 130;
@@ -86,6 +89,7 @@ public class sym {
   public static final int EXISTS = 42;
   public static final int ALTER = 117;
   public static final int OUTER = 64;
+  public static final int OPEN = 156;
   public static final int DATABASE = 40;
   public static final int RESTA = 32;
   public static final int SELECT = 50;
@@ -100,6 +104,7 @@ public class sym {
   public static final int SUM = 52;
   public static final int DATE = 104;
   public static final int FILE = 78;
+  public static final int SCROLL = 153;
   public static final int NOT = 87;
   public static final int OUT = 132;
   public static final int PERCENT = 10;
@@ -135,6 +140,7 @@ public class sym {
   public static final int MAYOR_IGUAL = 17;
   public static final int REFERENCES = 86;
   public static final int IDENTIFICADOR = 27;
+  public static final int FETCH = 154;
   public static final int COLLATE = 74;
   public static final int MULTIPLICACION = 33;
   public static final int REPLICATION = 91;
@@ -310,7 +316,13 @@ public class sym {
   "MARK",
   "COMMIT",
   "ROLLBACK",
-  "SAVE"
+  "SAVE",
+  "CURSOR",
+  "INSENSITIVE",
+  "SCROLL",
+  "FETCH",
+  "NEXT",
+  "OPEN"
   };
 }
 

@@ -42,7 +42,7 @@ terminal IDENTITY,KEY,FOREIGN,REFERENCES,NOT,CHECK,CONSTRAINT,CLAUSE,REPLICATION
 terminal UNIQUE,CLUSTERED,NONCLUSTERED,INCLUDE,LOGIN,FOR,CHAR,VARCHAR,TEXT,IMAGE,VARBINARY,DATE,DATETIME,DATETIME2,SMALLDATETIME,TIME,DATETIMEOFFSET,TIMESTAMP,FLOAT,MONEY,REAL,BIT,DECIMAL,NUMERIC;
 terminal ALTER,CURRENT,MODIFY,REBUILD,DISABLE,REORGANIZE,RESUME,PAUSE,ABORT,PASSWORD,COLUMN,ADD;
 terminal PROC,PROCEDURE,ARROBA,OUT,OUTPUT,READONLY,ENCRYPTION,RECOMPILE,EXECUTE,BEGIN,END,DECLARE,EXEC,FUNCTION,RETURNS,RETURN;
-terminal TRAN,TRANSACTION,MARK,COMMIT,ROLLBACK,SAVE;
+terminal TRAN,TRANSACTION,MARK,COMMIT,ROLLBACK,SAVE,CURSOR,INSENSITIVE,SCROLL,FETCH,NEXT,OPEN;
 
 non terminal update,inicio,querys, sentencia,empty,operadores,fin,objeto_nombre1,objeto_nombre2, eliminar, opciones_delete,objeto_nombre,condicionales,expresion,porcentaje,condicionales1,otra_condicion,operadores_logicos,data_tipo;
 non terminal asignaciones,asignaciones1,asignaciones2,opciones_update,E,T,F,NUM,err,FLOTANTE,VALORES_NUMEROS,truncate,tipo_objeto,drop,if_op,tabla,tabla2,index,index2;
@@ -56,7 +56,7 @@ non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,a
 non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,tipo_alter_base,index_alter,nombre_index,accion_index,table_alter,accion_alter,tipo_add,drop_column,user_alter,set_item,set_item1;
 non terminal declares,declares2,sets,sets2,VARIABLES,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
 non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop;
-non terminal begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point;
+non terminal begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch;
 
 
 precedence left WHERE;
@@ -71,7 +71,16 @@ inicio ::= querys ;
 querys ::= querys sentencia | sentencia;
 
 sentencia ::= eliminar fin|update fin|truncate fin|drop fin|insert fin|select fin|create fin|alter fin
-             |procedure fin|sets fin|declares fin|exec fin|functions fin|begin_transaction|save_point|error;
+             |procedure fin|sets fin|declares fin|exec fin|functions fin|begin_transaction|save_point|cursor fin|error;
+
+
+
+cursor ::= DECLARE objeto_nombre tipo_cursor CURSOR FOR select abrir_cursor;
+abrir_cursor ::=  OPEN objeto_nombre FETCH NEXT FROM tipo_fetch|empty;
+tipo_cursor ::= INSENSITIVE|SCROLL|empty;
+tipo_fetch ::= objeto_nombre | objeto_nombre INTO VARIABLES mas_variables;
+mas_variables ::= COMA VARIABLES mas_variables|empty;
+
 
 
 
@@ -326,7 +335,7 @@ operadores_logicos ::= AND
 data_tipo ::= STRING
 		|VALORES_NUMEROS          
                 |NULL
-                |VARIABLES                
+                |VARIABLES                    
 		;
 
 VARIABLES ::= ARROBA IDENTIFICADOR;
