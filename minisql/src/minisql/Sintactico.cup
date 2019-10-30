@@ -21,12 +21,23 @@ parser code
 }
 
 public void unrecovered_syntax_error(Symbol s){ 
-   report_error("Error de sintaxis. Linea: " + (s.right + 1) +
-		" Columna: " + s.left + ". Texto: \"" + s.value + "\"", null);
+        errores +="Error de sintaxis. Linea: " + (s.right + 1) +" Columna: " + s.left + ". Texto: En alguna sentencia no se termino de cerrar la sentencia \"" + s.value + "\"\n";
     }
 
 
 :};
+
+terminal CORCHETE_ABIERTO,CORCHETE_CERRADO,ADMIRACION_CERRADO,LLAVE_ABIERTA,LLAVE_CERRADA,NUMERAL,ERROR_STRING,CORCHETES,AT,TO,NO,OF,ERROR_COMENTARIO,AND_OP,OR_OP,PARENTESIS,LLAVES,NUMERALES,ADA,ARE,ANY,DAY,PAD,OFF,SQL,GET,DENY,DUMP,DBCC,DISK,EXIT,ELSE,TRUE,TRIM,THEN,READ,ROWS,RULE,NONE,LAST,LOAD,PLAN,ONLY,OVER,CASE,CAST,HOUR,BOTH,BULK,SOME,YEAR,GOTO,ZONE,KILL,WORK,WHEN,NCHAR,LEVEL,LOCAL,LOWER,PRINT,PRIOR,PIVOT,CROSS,CLOSE,UNION,UPPER,USAGE,USING,FALSE,FOUND,FIRST,BREAK,INPUT,SPACE,SQLCA,GRANT,MATCH,MERGE,MONTH,WRITE,WHILE,VALUE,ACTION,DOUBLE,DOMAIN,EXCEPT,ERRLVL,ESCAPE,REVERT,REVOKE,NULLIF,LINENO,PASCAL,PUBLIC,OPTION,USABLE,BACKUP,BROWSE,SECOND,SCHEMA,GLOBAL,MODULE,MINUTE,EXTRACT,TRIGGER,TSEQUAL,RESTORE,NATURAL,NOCHECK,LEADING,PARTIAL,PREPARE,OPENXML,OFFSETS,CATALOG,CASCADE,CONNECT,CONVERT,COMPUTE,UNPIVOT,UNKNOWN,FORTRAN,INTEGER,SETUSER,SECTION,SESSION,SQLCODE,WAITFOR,VARYING,ALLOCATE,ABSOLUTE,DEFERRED,DESCRIBE,EXTERNAL,TEXTSIZE,TRAILING,READTEXT,RELATIVE,RESTRICT,ROWCOUNT,NATIONAL,LANGUAGE,PRESERVE,POSITION,OVERLAPS;
+
+
+terminal CASCADED,COALESCE,CONTAINS,CONTINUE,UNUSABLE,FREETEXT,HOLDLOCK,INTERVAL,SHUTDOWN,SMALLINT,SQLERROR,SQLSTATE,WHENEVER,ASSERTION,EXCEPTION,TEMPORARY,TRANSLATE,RAISERROR,PRECISION,OPENQUERY,COLLATION,CHARACTER,INDICATOR,INTERSECT,INITIALLY,ISOLATION,IMMEDIATE,SUBSTRING,WRITETEXT,DEALLOCATE,DEFERRABLE,DESCRIPTOR,DISCONNECT,ROWGUIDCOL,PRIVILEGES,OPENROWSET,CONNECTION,CHECKPOINT,UPDATETEXT,FILLFACTOR,BIT_LENGTH,STATISTICS,SQLWARNING,DIAGNOSTICS,DISTRIBUTED,TABLESAMPLE,TRANSLATION,TRY_CONVERT,RECONFIGURE,CONSTRAINTS,CHAR_LENGHT,INDENTITYCOL,SYSTEM_USER;
+
+
+terminal SEMANTICSIMILARITYDETAILSTABLE,SEMANTICSIMILARITYTABLE,SEMANTICKEYPHRASETABLE,CURRENT_TIMESTAMP,CHARACTER_LENGTH,IDENTITY_INSERT,TIMEZONE_MINUTE,OPENDATASOURCE,SECURITYAUDIT,FREETEXTTABLE,CONTAINSTABLE,CORRESPONDING,TIMEZONE_HOUR,AUTHORIZATION,SESSION_USER,CURRENT_USER;
+
+terminal CURRENT_TIME,CURRENT_DATE,OCTET_LENGTH,CHAR_LENGTH,IDENTITYCOL;
+
+
 
 terminal DELETE, FROM, TOP, PARENTESIS_ABIERTO, PARENTESIS_CERRADO;
 
@@ -36,8 +47,8 @@ terminal EXISTS,ON,NULL,PORCENTAJE;
 terminal INSERT,VALUES,INTO,DEFAULT;
 terminal SELECT,DISTINCT,SUM,AVG,COUNT,MIN,MAX,AS,ALL;
 terminal JOIN,INNER,LEFT,RIGHT,FULL,OUTER,GROUP,BY,HAVING,ORDER,ASC,DESC;
-terminal CREATE,USER,PRIMARY,COLLATE,WITH,NAME,NAMES,FILE,FILENAME,SIZE,VIEW,NOCOUNT;
-terminal IDENTITY,KEY,FOREIGN,REFERENCES,NOT,CHECK,CONSTRAINT,CLAUSE,REPLICATION,IS;
+terminal CREATE,USER,PRIMARY,COLLATE,WITH,NAME,NAMES,FILE,FILENAME,SIZE,VIEW,NOCOUNT,USE;
+terminal IDENTITY,KEY,FOREIGN,REFERENCES,NOT,CHECK,CONSTRAINT,CLAUSE,REPLICATION,IS,DEC,IN;
 
 terminal UNIQUE,CLUSTERED,NONCLUSTERED,INCLUDE,LOGIN,FOR,CHAR,VARCHAR,TEXT,IMAGE,VARBINARY,DATE,DATETIME,DATETIME2,SMALLDATETIME,TIME,DATETIMEOFFSET,TIMESTAMP,FLOAT,MONEY,REAL,BIT,DECIMAL,NUMERIC;
 terminal ALTER,CURRENT,MODIFY,REBUILD,DISABLE,REORGANIZE,RESUME,PAUSE,ABORT,PASSWORD,COLUMN,ADD;
@@ -55,7 +66,7 @@ non terminal create,opciones_crear,database_create,extras_database,filespec,mas_
 non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,add_column,add_column1,add_column2,tipo_dato,constraint,constraint1,constraint2,expresion_logica,declara_constraint;
 non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,tipo_alter_base,index_alter,nombre_index,accion_index,table_alter,accion_alter,tipo_add,drop_column,user_alter,set_item,set_item1;
 non terminal declares,declares2,sets,sets2,VARIABLES,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
-non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop;
+non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
 non terminal begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch;
 
 
@@ -71,7 +82,7 @@ inicio ::= querys ;
 querys ::= querys sentencia | sentencia;
 
 sentencia ::= eliminar fin|update fin|truncate fin|drop fin|insert fin|select fin|create fin|alter fin
-             |procedure fin|sets fin|declares fin|exec fin|functions fin|begin_transaction|save_point|cursor fin|error;
+             |procedure fin|sets fin|declares fin|exec fin|functions fin|begin_transaction|save_point|cursor fin|USE objeto_nombre fin|error;
 
 
 
@@ -140,7 +151,7 @@ accion_index ::= REBUILD|DISABLE|REORGANIZE|SET| RESUME|PAUSE|ABORT;
 table_alter ::= objeto_nombre accion_alter;
 accion_alter ::= ALTER COLUMN add_column|ADD tipo_add|DROP drop_column;
 tipo_add ::= add_column;
-drop_column ::= CONSTRAINT objeto_nombre mas_drop | COLUMN objeto_nombre mas_drop | INDEX objeto_nombre mas_drop|objeto_nombre mas_drop;
+drop_column ::= CONSTRAINT if_op objeto_nombre mas_drop | COLUMN objeto_nombre mas_drop | INDEX if_op objeto_nombre mas_drop|objeto_nombre mas_drop;
 mas_drop ::= COMA drop_column|empty;
 
 user_alter ::= IDENTIFICADOR WITH set_item;
@@ -164,7 +175,9 @@ mas_file ::= COMA PARENTESIS_ABIERTO filespec PARENTESIS_CERRADO mas_file|empty;
 
 opciones_index ::= UNIQUE | CLUSTERED | NONCLUSTERED|empty;
 index_create ::= objeto_nombre ON objeto_nombre PARENTESIS_ABIERTO column_index PARENTESIS_CERRADO mas_index;
-column_index ::= objeto_nombre mas_de_un_objeto;
+column_index ::= objeto_nombre tipo_index_orden mas_de_columnindex;
+mas_de_columnindex ::= COMA column_index|empty;
+tipo_index_orden ::= ASC|DESC|empty;
 mas_index ::= INCLUDE PARENTESIS_ABIERTO column_index PARENTESIS_CERRADO |ON objeto_nombre PARENTESIS_ABIERTO column_index PARENTESIS_CERRADO mas_index| empty;
 
 view_create ::= objeto_nombre column_view AS select;
@@ -184,7 +197,7 @@ add_column1 ::= objeto_nombre tipo_dato constraint|aux2;
 add_column2 ::= COMA add_column | empty;
 tipo_dato ::= CHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO| VARCHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO |TEXT
               |IMAGE|VARBINARY|VARBINARY PARENTESIS_ABIERTO MAX PARENTESIS_CERRADO| DATE | DATETIME | DATETIME2 | SMALLDATETIME | TIME | DATETIMEOFFSET
-              | TIMESTAMP| FLOAT PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO|MONEY|REAL|BIT|INT|DECIMAL PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO|NUMERIC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO;
+              | TIMESTAMP| FLOAT PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO|MONEY|REAL|BIT|INT|DECIMAL PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO|DEC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO|NUMERIC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO;
 
 
 constraint ::= constraint1 constraint2|empty;
@@ -251,26 +264,11 @@ mas_valores2 ::= COMA data_tipo mas_valores2|empty;
 mas_valores ::= COMA valores|empty;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 drop ::= DROP tipo_objeto{: System.out.println("Sentencia analizada correctamente. Sin errores.");cont++; :};           
 
 if_op ::= IF EXISTS|empty;
 
-tipo_objeto ::= TABLE if_op tabla| index | database|PROCEDURE objeto_nombre|FUNCTION objeto_nombre;
+tipo_objeto ::= TABLE if_op tabla| index | database|PROCEDURE objeto_nombre|FUNCTION objeto_nombre|USER if_op objeto_nombre mas_de_un_objeto;
 
 tabla ::= objeto_nombre tabla2;
 
@@ -305,9 +303,6 @@ NUM ::= INT_NUM | BIT_NUM;
 FLOTANTE ::= FLOAT_NUM;
 VALORES_NUMEROS ::= NUM | FLOTANTE;
 
-
-
-
 eliminar ::= DELETE opciones_delete FROM objeto_nombre mas_de_un_objeto condicionales {: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++;:};            
              
             
@@ -323,7 +318,7 @@ opciones_delete ::=TOP expresion porcentaje|empty;
 expresion ::= PARENTESIS_ABIERTO NUM PARENTESIS_CERRADO | NUM
 			;
 porcentaje ::=PERCENT|empty;
-condicionales ::=WHERE objeto_nombre operadores data_tipo condicionales1 |empty;
+condicionales ::=WHERE objeto_nombre operadores E condicionales1 |empty;
 
 condicionales1  ::=operadores_logicos otra_condicion|empty;
 

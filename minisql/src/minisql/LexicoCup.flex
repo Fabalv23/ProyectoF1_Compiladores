@@ -210,7 +210,6 @@ PRECISION {return new Symbol(sym.PRECISION,yycolumn,yyline,yytext());}
 WITH {return new Symbol(sym.WITH,yycolumn,yyline,yytext());}
 EXECUTE {return new Symbol(sym.EXECUTE,yycolumn,yyline,yytext());}
 PRIMARY {return new Symbol(sym.PRIMARY,yycolumn,yyline,yytext());}
-"WITHINGROUP" {return new Symbol(sym."WITHINGROUP",yycolumn,yyline,yytext());}
 EXISTS {return new Symbol(sym.EXISTS,yycolumn,yyline,yytext());}
 PRINT {return new Symbol(sym.PRINT,yycolumn,yyline,yytext());}
 WRITETEXT {return new Symbol(sym.WRITETEXT,yycolumn,yyline,yytext());}
@@ -337,7 +336,6 @@ DOMAIN {return new Symbol(sym.DOMAIN,yycolumn,yyline,yytext());}
 ONLY {return new Symbol(sym.ONLY,yycolumn,yyline,yytext());}
 WHENEVER {return new Symbol(sym.WHENEVER,yycolumn,yyline,yytext());}
 WORK {return new Symbol(sym.WORK,yycolumn,yyline,yytext());}
-END-EXEC {return new Symbol(sym.END-EXEC,yycolumn,yyline,yytext());}
 WRITE {return new Symbol(sym.WRITE,yycolumn,yyline,yytext());}
 YEAR {return new Symbol(sym.YEAR,yycolumn,yyline,yytext());}
 OUTPUT {return new Symbol(sym.OUTPUT,yycolumn,yyline,yytext());}

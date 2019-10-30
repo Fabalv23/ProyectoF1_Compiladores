@@ -214,11 +214,20 @@ public class Inicio extends javax.swing.JFrame {
                 parser s = new parser(new minisql.LexicoCup(new StringReader(resultado)));
 
                 try {
-                    s.parse();                    
-                    System.out.print(s.errores);
-                    System.out.print(s.cont);
+                    s.parse();         
+                    
+                    if (s.errores=="") {
+                        JOptionPane.showMessageDialog(null, "Programa ANALIZADO exitosamente", "Mensaje de exito ", HEIGHT);
+                    }else{
+                        Resultados r = new Resultados("",s.errores);
+                        r.show();
+                    }
+                    
+                    
+                    
                 } catch (Exception E) {
-                    System.out.print(s.errores);
+                     Resultados r = new Resultados("",s.errores+E);
+                     r.show();
                 }
 
             } catch (FileNotFoundException ex) {
