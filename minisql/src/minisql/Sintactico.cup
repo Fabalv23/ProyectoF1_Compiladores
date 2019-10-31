@@ -1,0 +1,358 @@
+
+package minisql;
+
+
+
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    private Symbol s;
+    public int cont = 0;
+    public String errores="";
+    
+    public void syntax_error(Symbol s){
+         errores +="Error de sintaxis. Linea: " + (s.right + 1) +" Columna: " + s.left + ". Texto: \"" + s.value + "\"\n";
+    }
+
+    public Symbol getS(){
+        return this.s;
+}
+
+public void unrecovered_syntax_error(Symbol s){ 
+        errores +="Error de sintaxis. Linea: " + (s.right + 1) +" Columna: " + s.left + ". Texto: En alguna sentencia no se termino de cerrar la sentencia \"" + s.value + "\"\n";
+    }
+
+
+:};
+
+terminal CORCHETE_ABIERTO,CORCHETE_CERRADO,ADMIRACION_CERRADO,LLAVE_ABIERTA,LLAVE_CERRADA,NUMERAL,ERROR_STRING,CORCHETES,AT,TO,NO,OF,ERROR_COMENTARIO,AND_OP,OR_OP,PARENTESIS,LLAVES,NUMERALES,ADA,ARE,ANY,DAY,PAD,OFF,SQL,GET,DENY,DUMP,DBCC,DISK,EXIT,ELSE,TRUE,TRIM,THEN,READ,ROWS,RULE,NONE,LAST,LOAD,PLAN,ONLY,OVER,CASE,CAST,HOUR,BOTH,BULK,SOME,YEAR,GOTO,ZONE,KILL,WORK,WHEN,NCHAR,LEVEL,LOCAL,LOWER,PRINT,PRIOR,PIVOT,CROSS,CLOSE,UNION,UPPER,USAGE,USING,FALSE,FOUND,FIRST,BREAK,INPUT,SPACE,SQLCA,GRANT,MATCH,MERGE,MONTH,WRITE,WHILE,VALUE,ACTION,DOUBLE,DOMAIN,EXCEPT,ERRLVL,ESCAPE,REVERT,REVOKE,NULLIF,LINENO,PASCAL,PUBLIC,OPTION,USABLE,BACKUP,BROWSE,SECOND,SCHEMA,GLOBAL,MODULE,MINUTE,EXTRACT,TRIGGER,TSEQUAL,RESTORE,NATURAL,NOCHECK,LEADING,PARTIAL,PREPARE,OPENXML,OFFSETS,CATALOG,CASCADE,CONNECT,CONVERT,COMPUTE,UNPIVOT,UNKNOWN,FORTRAN,INTEGER,SETUSER,SECTION,SESSION,SQLCODE,WAITFOR,VARYING,ALLOCATE,ABSOLUTE,DEFERRED,DESCRIBE,EXTERNAL,TEXTSIZE,TRAILING,READTEXT,RELATIVE,RESTRICT,ROWCOUNT,NATIONAL,LANGUAGE,PRESERVE,POSITION,OVERLAPS;
+
+
+terminal CASCADED,COALESCE,CONTAINS,CONTINUE,UNUSABLE,FREETEXT,HOLDLOCK,INTERVAL,SHUTDOWN,SMALLINT,SQLERROR,SQLSTATE,WHENEVER,ASSERTION,EXCEPTION,TEMPORARY,TRANSLATE,RAISERROR,PRECISION,OPENQUERY,COLLATION,CHARACTER,INDICATOR,INTERSECT,INITIALLY,ISOLATION,IMMEDIATE,SUBSTRING,WRITETEXT,DEALLOCATE,DEFERRABLE,DESCRIPTOR,DISCONNECT,ROWGUIDCOL,PRIVILEGES,OPENROWSET,CONNECTION,CHECKPOINT,UPDATETEXT,FILLFACTOR,BIT_LENGTH,STATISTICS,SQLWARNING,DIAGNOSTICS,DISTRIBUTED,TABLESAMPLE,TRANSLATION,TRY_CONVERT,RECONFIGURE,CONSTRAINTS,CHAR_LENGHT,INDENTITYCOL,SYSTEM_USER;
+
+
+terminal SEMANTICSIMILARITYDETAILSTABLE,SEMANTICSIMILARITYTABLE,SEMANTICKEYPHRASETABLE,CURRENT_TIMESTAMP,CHARACTER_LENGTH,IDENTITY_INSERT,TIMEZONE_MINUTE,OPENDATASOURCE,SECURITYAUDIT,FREETEXTTABLE,CONTAINSTABLE,CORRESPONDING,TIMEZONE_HOUR,AUTHORIZATION,SESSION_USER,CURRENT_USER;
+
+terminal CURRENT_TIME,CURRENT_DATE,OCTET_LENGTH,CHAR_LENGTH,IDENTITYCOL;
+
+
+
+terminal DELETE, FROM, TOP, PARENTESIS_ABIERTO, PARENTESIS_CERRADO;
+
+terminal PUNTO,PUNTO_COMA,GO, PERCENT, WHERE, AND, OR, STRING, MAYOR_QUE, MENOR_QUE,MAYOR_IGUAL,MENOR_IGUAL,DIFERENTE_DE,IGUAL_IGUAL,LIKE,BETWEEN;
+terminal INT_NUM,BIT_NUM,INT,FLOAT_NUM,IDENTIFICADOR,ASIGNAR,SET,COMA,SUMA,RESTA,MULTIPLICACION,DIVISION,UPDATE,TRUNCATE,TABLE,DROP,INDEX,DATABASE,IF;
+terminal EXISTS,ON,NULL,PORCENTAJE;
+terminal INSERT,VALUES,INTO,DEFAULT;
+terminal SELECT,DISTINCT,SUM,AVG,COUNT,MIN,MAX,AS,ALL;
+terminal JOIN,INNER,LEFT,RIGHT,FULL,OUTER,GROUP,BY,HAVING,ORDER,ASC,DESC;
+terminal CREATE,USER,PRIMARY,COLLATE,WITH,NAME,NAMES,FILE,FILENAME,SIZE,VIEW,NOCOUNT,USE;
+terminal IDENTITY,KEY,FOREIGN,REFERENCES,NOT,CHECK,CONSTRAINT,CLAUSE,REPLICATION,IS,DEC,IN;
+
+terminal UNIQUE,CLUSTERED,NONCLUSTERED,INCLUDE,LOGIN,FOR,CHAR,VARCHAR,TEXT,IMAGE,VARBINARY,DATE,DATETIME,DATETIME2,SMALLDATETIME,TIME,DATETIMEOFFSET,TIMESTAMP,FLOAT,MONEY,REAL,BIT,DECIMAL,NUMERIC;
+terminal ALTER,CURRENT,MODIFY,REBUILD,DISABLE,REORGANIZE,RESUME,PAUSE,ABORT,PASSWORD,COLUMN,ADD;
+terminal PROC,PROCEDURE,ARROBA,OUT,OUTPUT,READONLY,ENCRYPTION,RECOMPILE,EXECUTE,BEGIN,END,DECLARE,EXEC,FUNCTION,RETURNS,RETURN;
+terminal TRAN,TRANSACTION,MARK,COMMIT,ROLLBACK,SAVE,CURSOR,INSENSITIVE,SCROLL,FETCH,NEXT,OPEN;
+
+non terminal update,inicio,querys, sentencia,empty,operadores,fin,objeto_nombre1,objeto_nombre2, eliminar, opciones_delete,objeto_nombre,condicionales,expresion,porcentaje,condicionales1,otra_condicion,operadores_logicos,data_tipo;
+non terminal asignaciones,asignaciones1,asignaciones2,opciones_update,E,T,F,NUM,err,FLOTANTE,VALORES_NUMEROS,truncate,tipo_objeto,drop,if_op,tabla,tabla2,index,index2;
+non terminal drop_relational_or_xml_or_spatial_index,drop_relational_or_xml_or_spatial_index2,drop_backward_compatible_index,drop_backward_compatible_index2;
+non terminal database,mas_de_un_objeto;
+non terminal insert,into,campos,campos2,mas_de_un_identificador,valores,valores2,mas_valores2,mas_valores;
+non terminal operacion_logica,opcion_alias,select,option_select,seleccion,columna,columna1,columna2,data_tipo_operacion,funciones,valor,puede,alias_columna,operacion,operacion_matematica,operador,origen,origen1,alias_tabla;
+non terminal joins,tipo_join,tipo_join1,joins1,agrupado,teniendo,teniendo1,teniendo2,orden,tipo_orden,orden2;
+non terminal create,opciones_crear,database_create,extras_database,filespec,mas_file,opciones_index,index_create,column_index,mas_index,view_create,column_view,column_view1;
+non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,add_column,add_column1,add_column2,tipo_dato,constraint,constraint1,constraint2,expresion_logica,declara_constraint;
+non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,tipo_alter_base,index_alter,nombre_index,accion_index,table_alter,accion_alter,tipo_add,drop_column,user_alter,set_item,set_item1;
+non terminal declares,declares2,sets,sets2,VARIABLES,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
+non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
+non terminal begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch;
+
+
+precedence left WHERE;
+precedence left PARENTESIS_ABIERTO;
+precedence left BEGIN;
+
+start with inicio;
+
+
+empty ::=;
+inicio ::= querys ;
+querys ::= querys sentencia | sentencia;
+
+sentencia ::= eliminar fin|update fin|truncate fin|drop fin|insert fin|select fin|create fin|alter fin
+             |procedure fin|sets fin|declares fin|exec fin|functions fin|begin_transaction|save_point|cursor fin|USE objeto_nombre fin|error;
+
+
+
+cursor ::= DECLARE objeto_nombre tipo_cursor CURSOR FOR select abrir_cursor;
+abrir_cursor ::=  OPEN objeto_nombre FETCH NEXT FROM tipo_fetch|empty;
+tipo_cursor ::= INSENSITIVE|SCROLL|empty;
+tipo_fetch ::= objeto_nombre | objeto_nombre INTO VARIABLES mas_variables;
+mas_variables ::= COMA VARIABLES mas_variables|empty;
+
+
+
+
+begin_transaction ::= trans transaction_name with_trans fin querys fin_transaction;
+trans ::= BEGIN TRAN| BEGIN TRANSACTION;
+transaction_name ::= VARIABLES|objeto_nombre|empty;
+with_trans ::= WITH MARK description|empty;
+description ::= STRING|empty;
+fin_transaction ::= COMMIT fin| COMMIT TRAN transaction_name fin|COMMIT TRANSACTION transaction_name fin
+                    |ROLLBACK fin|ROLLBACK TRAN transaction_name fin | ROLLBACK TRANSACTION transaction_name fin;
+save_point ::= SAVE trans transaction_name fin;
+
+
+
+functions ::= CREATE alterar FUNCTION objeto_nombre PARENTESIS_ABIERTO parametros PARENTESIS_CERRADO RETURNS tipo_retorno with_procedure as BEGIN interno_funcion RETURN E fin END{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
+as ::= AS|empty;
+tipo_retorno ::= tipo_dato | VARIABLES TABLE PARENTESIS_ABIERTO add_column PARENTESIS_CERRADO|TABLE; 
+llamar_funciones ::= objeto_nombre PARENTESIS_ABIERTO enviar_datos PARENTESIS_CERRADO;
+
+interno_funcion ::= querys|empty;
+
+exec ::= EXECUTE objeto_nombre enviar_datos{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :}|EXEC objeto_nombre enviar_datos{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
+enviar_datos ::= VARIABLES ASIGNAR data_tipo mandar_mas|data_tipo mandar_mas|empty;
+mandar_mas ::= COMA enviar_datos|empty;
+
+sets ::= SET VARIABLES ASIGNAR data_tipo sets2 | SET NOCOUNT ON sets2;
+sets2 ::= COMA VARIABLES ASIGNAR data_tipo sets2|empty;
+
+declares ::= DECLARE VARIABLES tipo_dato declares2;
+declares2 ::= COMA VARIABLES tipo_dato declares2|empty;
+
+
+procedure ::= CREATE alterar proc objeto_nombre parametros with_procedure replication AS empezar querys final{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
+alterar ::= OR ALTER|empty;
+proc ::= PROC|PROCEDURE;
+parametros ::= parametros1|empty;
+parametros1 ::= ARROBA IDENTIFICADOR tipo_dato tipo_parametro parametros2;
+parametros2 ::= COMA parametros1|empty;
+tipo_parametro ::= OUT|OUTPUT|READONLY|empty;
+with_procedure ::= WITH procedure_option|empty;
+procedure_option ::=   ENCRYPTION | RECOMPILE | EXECUTE AS IDENTIFICADOR;
+replication ::= FOR REPLICATION|empty;
+empezar ::= BEGIN|empty;
+final ::= END | empty;
+
+alter ::= ALTER opciones{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};           
+opciones ::= DATABASE database_alter | INDEX index_alter | TABLE table_alter | USER user_alter| VIEW view_create;
+database_alter ::= nombre_actual tipo_alter_base;
+nombre_actual ::= CURRENT|IDENTIFICADOR;
+tipo_alter_base ::= MODIFY NAME ASIGNAR IDENTIFICADOR | COLLATE IDENTIFICADOR;
+
+
+index_alter ::= nombre_index ON objeto_nombre accion_index;
+nombre_index ::= IDENTIFICADOR | ALL;
+accion_index ::= REBUILD|DISABLE|REORGANIZE|SET| RESUME|PAUSE|ABORT;
+
+table_alter ::= objeto_nombre accion_alter;
+accion_alter ::= ALTER COLUMN add_column|ADD tipo_add|DROP drop_column;
+tipo_add ::= add_column;
+drop_column ::= CONSTRAINT if_op objeto_nombre mas_drop | COLUMN objeto_nombre mas_drop | INDEX if_op objeto_nombre mas_drop|objeto_nombre mas_drop;
+mas_drop ::= COMA drop_column|empty;
+
+user_alter ::= IDENTIFICADOR WITH set_item;
+set_item ::= set_item1 set_item2;
+set_item1 ::= NAME ASIGNAR IDENTIFICADOR | NULL|LOGIN ASIGNAR IDENTIFICADOR | PASSWORD ASIGNAR STRING;
+set_item2 ::= COMA set_item1|empty;
+
+
+
+
+
+
+create ::= CREATE opciones_crear{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};           
+opciones_crear ::= DATABASE database_create | opciones_index INDEX index_create | TABLE table_create | USER user | VIEW view_create;
+database_create ::= objeto_nombre extras_database;
+extras_database ::= ON PRIMARY PARENTESIS_ABIERTO filespec PARENTESIS_CERRADO mas_file | COLLATE IDENTIFICADOR | WITH | empty;
+
+filespec ::= NAME ASIGNAR STRING mas_file2  | NAMES ASIGNAR STRING mas_file2| FILE ASIGNAR STRING mas_file2 | FILENAME ASIGNAR STRING mas_file2 | SIZE ASIGNAR INT_NUM mas_file2|empty;
+mas_file2 ::= COMA filespec|empty;
+mas_file ::= COMA PARENTESIS_ABIERTO filespec PARENTESIS_CERRADO mas_file|empty;
+
+opciones_index ::= UNIQUE | CLUSTERED | NONCLUSTERED|empty;
+index_create ::= objeto_nombre ON objeto_nombre PARENTESIS_ABIERTO column_index PARENTESIS_CERRADO mas_index;
+column_index ::= objeto_nombre tipo_index_orden mas_de_columnindex;
+mas_de_columnindex ::= COMA column_index|empty;
+tipo_index_orden ::= ASC|DESC|empty;
+mas_index ::= INCLUDE PARENTESIS_ABIERTO column_index PARENTESIS_CERRADO |ON objeto_nombre PARENTESIS_ABIERTO column_index PARENTESIS_CERRADO mas_index| empty;
+
+view_create ::= objeto_nombre column_view AS select;
+column_view ::= PARENTESIS_ABIERTO column_view1 PARENTESIS_CERRADO|empty;
+column_view1 ::= objeto_nombre mas_de_un_objeto;
+
+
+
+
+
+user ::= IDENTIFICADOR FOR LOGIN IDENTIFICADOR;
+
+table_create ::= objeto_nombre PARENTESIS_ABIERTO add_column PARENTESIS_CERRADO extra_create_table;
+extra_create_table ::= ON objeto_nombre|ON PRIMARY|empty;
+add_column ::= add_column1 add_column2;
+add_column1 ::= objeto_nombre tipo_dato constraint|aux2;
+add_column2 ::= COMA add_column | empty;
+tipo_dato ::= CHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO| VARCHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO |TEXT
+              |IMAGE|VARBINARY|VARBINARY PARENTESIS_ABIERTO MAX PARENTESIS_CERRADO| DATE | DATETIME | DATETIME2 | SMALLDATETIME | TIME | DATETIMEOFFSET
+              | TIMESTAMP| FLOAT PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO|MONEY|REAL|BIT|INT|DECIMAL PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO|DEC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO|NUMERIC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO;
+
+
+constraint ::= constraint1 constraint2|empty;
+constraint1 ::= IDENTITY PARENTESIS_ABIERTO NUM COMA NUM PARENTESIS_CERRADO| NULL | UNIQUE extra_unique | PRIMARY KEY extra_primary
+               |FOREIGN KEY PARENTESIS_ABIERTO objeto_nombre PARENTESIS_CERRADO REFERENCES objeto_nombre PARENTESIS_ABIERTO objeto_nombre PARENTESIS_CERRADO | NOT NULL 
+                | CHECK PARENTESIS_ABIERTO expresion_logica PARENTESIS_CERRADO | DEFAULT data_tipo;
+extra_unique ::= PARENTESIS_ABIERTO objeto_nombre mas_de_un_objeto PARENTESIS_CERRADO|empty;
+
+extra_primary ::= opciones_index PARENTESIS_ABIERTO objeto_nombre mas_de_un_objeto tipo_orden PARENTESIS_CERRADO|constraint1;
+constraint2 ::= constraint1|empty;
+expresion_logica ::= otra_condicion;
+
+
+aux2 ::= constraint1|CONSTRAINT objeto_nombre constraint1;
+
+
+select ::= SELECT option_select FROM origen joins condicionales agrupado teniendo orden{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};           
+
+
+option_select ::= MULTIPLICACION | seleccion columna;
+seleccion ::= DISTINCT|ALL|TOP expresion | empty;
+columna ::= columna1 alias_columna columna2;
+columna1 ::= funciones | E|objeto_nombre ASIGNAR E;
+columna2 ::= COMA option_select|empty;
+data_tipo_operacion ::= data_tipo|objeto_nombre;
+funciones ::= SUM PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|AVG PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|COUNT PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|MIN PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|MAX PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|llamar_funciones;
+valor ::= BIT_NUM | MULTIPLICACION | puede objeto_nombre;
+puede ::= DISTINCT|empty;
+alias_columna ::= AS STRING|AS IDENTIFICADOR|empty;
+operacion ::= operacion_matematica | operacion_logica;
+operacion_matematica ::= E;
+operacion_logica ::= data_tipo_operacion operadores data_tipo_operacion;
+operador ::= SUMA|RESTA|MULTIPLICACION|DIVISION|PORCENTAJE;
+
+origen ::= objeto_nombre alias_tabla origen1;
+origen1 ::= COMA origen| empty;
+alias_tabla ::= AS STRING |AS IDENTIFICADOR|IDENTIFICADOR |empty;
+
+
+
+joins ::= tipo_join JOIN objeto_nombre alias_tabla ON objeto_nombre ASIGNAR objeto_nombre joins|empty;
+tipo_join ::= INNER|LEFT tipo_join1 | RIGHT tipo_join1 | FULL tipo_join1|empty;
+tipo_join1 ::= OUTER|empty;
+
+agrupado ::= GROUP BY objeto_nombre mas_de_un_objeto|empty;
+
+teniendo ::= HAVING teniendo1|empty;
+teniendo1 ::= funciones operadores data_tipo teniendo2|objeto_nombre operadores data_tipo teniendo2;
+teniendo2 ::= operadores_logicos teniendo1|empty;
+
+orden ::= ORDER BY objeto_nombre tipo_orden orden2|ORDER BY funciones tipo_orden orden2|empty;
+tipo_orden ::= ASC|DESC|empty;
+orden2 ::= COMA orden|empty;
+
+
+insert ::= INSERT into objeto_nombre campos VALUES valores{: System.out.println("Sentencia analizada correctamente. Sin errores.");cont++; :}|INSERT into objeto_nombre campos DEFAULT VALUES{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++;:};        
+into ::= INTO|empty;
+campos ::= PARENTESIS_ABIERTO campos2 PARENTESIS_CERRADO|empty;
+campos2 ::= IDENTIFICADOR mas_de_un_identificador;
+mas_de_un_identificador ::= COMA IDENTIFICADOR mas_de_un_identificador|empty;
+valores ::= PARENTESIS_ABIERTO valores2 PARENTESIS_CERRADO mas_valores;
+valores2 ::= data_tipo mas_valores2;
+mas_valores2 ::= COMA data_tipo mas_valores2|empty;
+mas_valores ::= COMA valores|empty;
+
+
+drop ::= DROP tipo_objeto{: System.out.println("Sentencia analizada correctamente. Sin errores.");cont++; :};           
+
+if_op ::= IF EXISTS|empty;
+
+tipo_objeto ::= TABLE if_op tabla| index | database|PROCEDURE objeto_nombre|FUNCTION objeto_nombre|USER if_op objeto_nombre mas_de_un_objeto;
+
+tabla ::= objeto_nombre tabla2;
+
+tabla2 ::= COMA tabla | empty;
+
+index ::= INDEX if_op objeto_nombre index2;
+index2 ::= drop_relational_or_xml_or_spatial_index|drop_backward_compatible_index;
+
+drop_relational_or_xml_or_spatial_index ::= ON objeto_nombre drop_relational_or_xml_or_spatial_index2;
+drop_relational_or_xml_or_spatial_index2 ::= COMA objeto_nombre drop_relational_or_xml_or_spatial_index | empty;
+
+drop_backward_compatible_index ::= objeto_nombre mas_de_un_objeto;
+drop_backward_compatible_index2 ::= mas_de_un_objeto| empty;
+	
+database ::= DATABASE if_op objeto_nombre mas_de_un_objeto;
+
+mas_de_un_objeto ::= COMA objeto_nombre mas_de_un_objeto| empty;
+
+truncate ::= TRUNCATE TABLE objeto_nombre{: System.out.println("Sentencia analizada correctamente. Sin errores.");cont++; :};   
+
+update ::= UPDATE opciones_delete objeto_nombre SET objeto_nombre ASIGNAR asignaciones condicionales{: System.out.println("Sentencia analizada correctamente. Sin errores.");cont++; :};           
+asignaciones ::= asignaciones1 asignaciones2;
+
+asignaciones2 ::= COMA objeto_nombre ASIGNAR asignaciones condicionales | empty;
+
+asignaciones1 ::= E;
+
+E ::= E SUMA T | E RESTA T | T;
+T ::= T MULTIPLICACION F | T DIVISION F | F;
+F ::= PARENTESIS_ABIERTO E PARENTESIS_CERRADO|objeto_nombre|data_tipo;
+NUM ::= INT_NUM | BIT_NUM;
+FLOTANTE ::= FLOAT_NUM;
+VALORES_NUMEROS ::= NUM | FLOTANTE;
+
+eliminar ::= DELETE opciones_delete FROM objeto_nombre mas_de_un_objeto condicionales {: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++;:};            
+             
+            
+fin ::= PUNTO_COMA
+          | GO
+          ;
+
+
+
+
+
+opciones_delete ::=TOP expresion porcentaje|empty;
+expresion ::= PARENTESIS_ABIERTO NUM PARENTESIS_CERRADO | NUM
+			;
+porcentaje ::=PERCENT|empty;
+condicionales ::=WHERE objeto_nombre operadores E condicionales1 |empty;
+
+condicionales1  ::=operadores_logicos otra_condicion|empty;
+
+otra_condicion ::=empty|objeto_nombre operadores data_tipo condicionales1				
+				;
+operadores_logicos ::= AND
+			| OR
+			;
+data_tipo ::= STRING
+		|VALORES_NUMEROS          
+                |NULL
+                |VARIABLES                    
+		;
+
+VARIABLES ::= ARROBA IDENTIFICADOR;
+
+operadores ::= MAYOR_QUE
+		| MENOR_QUE
+		| MAYOR_IGUAL
+		| MENOR_IGUAL		
+                | DIFERENTE_DE
+		| LIKE
+		| BETWEEN NUM AND INT_NUM		
+                | ASIGNAR
+                | IS
+		;
+objeto_nombre ::= IDENTIFICADOR objeto_nombre1;
+
+objeto_nombre1 ::=empty|PUNTO objeto_nombre
+                ;
+
+objeto_nombre2 ::= PUNTO IDENTIFICADOR|empty;
+
+
+
+
+
