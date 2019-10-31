@@ -35,7 +35,7 @@ terminal CASCADED,COALESCE,CONTAINS,CONTINUE,UNUSABLE,FREETEXT,HOLDLOCK,INTERVAL
 
 terminal SEMANTICSIMILARITYDETAILSTABLE,SEMANTICSIMILARITYTABLE,SEMANTICKEYPHRASETABLE,CURRENT_TIMESTAMP,CHARACTER_LENGTH,IDENTITY_INSERT,TIMEZONE_MINUTE,OPENDATASOURCE,SECURITYAUDIT,FREETEXTTABLE,CONTAINSTABLE,CORRESPONDING,TIMEZONE_HOUR,AUTHORIZATION,SESSION_USER,CURRENT_USER;
 
-terminal CURRENT_TIME,CURRENT_DATE,OCTET_LENGTH,CHAR_LENGTH,IDENTITYCOL;
+terminal CURRENT_TIME,CURRENT_DATE,OCTET_LENGTH,CHAR_LENGTH,IDENTITYCOL,NVARCHAR;
 
 
 
@@ -67,7 +67,7 @@ non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,a
 non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,tipo_alter_base,index_alter,nombre_index,accion_index,table_alter,accion_alter,tipo_add,drop_column,user_alter,set_item,set_item1;
 non terminal declares,declares2,sets,sets2,VARIABLES,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
 non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
-non terminal begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch;
+non terminal fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch;
 
 
 precedence left WHERE;
@@ -106,11 +106,11 @@ save_point ::= SAVE trans transaction_name fin;
 
 
 
-functions ::= CREATE alterar FUNCTION objeto_nombre PARENTESIS_ABIERTO parametros PARENTESIS_CERRADO RETURNS tipo_retorno with_procedure as BEGIN interno_funcion RETURN E fin END{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
+functions ::= CREATE alterar FUNCTION objeto_nombre PARENTESIS_ABIERTO parametros PARENTESIS_CERRADO RETURNS tipo_retorno with_procedure as BEGIN interno_funcion RETURN E fin_function END{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
 as ::= AS|empty;
 tipo_retorno ::= tipo_dato | VARIABLES TABLE PARENTESIS_ABIERTO add_column PARENTESIS_CERRADO|TABLE; 
 llamar_funciones ::= objeto_nombre PARENTESIS_ABIERTO enviar_datos PARENTESIS_CERRADO;
-
+fin_function ::= fin|empty;
 interno_funcion ::= querys|empty;
 
 exec ::= EXECUTE objeto_nombre enviar_datos{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :}|EXEC objeto_nombre enviar_datos{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
@@ -188,16 +188,16 @@ column_view1 ::= objeto_nombre mas_de_un_objeto;
 
 
 
-user ::= IDENTIFICADOR FOR LOGIN IDENTIFICADOR;
+user ::= IDENTIFICADOR| IDENTIFICADOR FOR LOGIN IDENTIFICADOR;
 
 table_create ::= objeto_nombre PARENTESIS_ABIERTO add_column PARENTESIS_CERRADO extra_create_table;
 extra_create_table ::= ON objeto_nombre|ON PRIMARY|empty;
 add_column ::= add_column1 add_column2;
 add_column1 ::= objeto_nombre tipo_dato constraint|aux2;
 add_column2 ::= COMA add_column | empty;
-tipo_dato ::= CHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO| VARCHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO |TEXT
+tipo_dato ::= CHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO| VARCHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO |NVARCHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO|TEXT
               |IMAGE|VARBINARY|VARBINARY PARENTESIS_ABIERTO MAX PARENTESIS_CERRADO| DATE | DATETIME | DATETIME2 | SMALLDATETIME | TIME | DATETIMEOFFSET
-              | TIMESTAMP| FLOAT PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO|MONEY|REAL|BIT|INT|DECIMAL PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO|DEC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO|NUMERIC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO;
+              | TIMESTAMP| FLOAT PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO|INT PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO|MONEY|REAL|BIT|INT|DECIMAL PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO|DEC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO|NUMERIC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO;
 
 
 constraint ::= constraint1 constraint2|empty;
@@ -250,7 +250,7 @@ teniendo2 ::= operadores_logicos teniendo1|empty;
 
 orden ::= ORDER BY objeto_nombre tipo_orden orden2|ORDER BY funciones tipo_orden orden2|empty;
 tipo_orden ::= ASC|DESC|empty;
-orden2 ::= COMA orden|empty;
+orden2 ::= COMA objeto_nombre tipo_orden orden|empty;
 
 
 insert ::= INSERT into objeto_nombre campos VALUES valores{: System.out.println("Sentencia analizada correctamente. Sin errores.");cont++; :}|INSERT into objeto_nombre campos DEFAULT VALUES{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++;:};        
@@ -268,7 +268,7 @@ drop ::= DROP tipo_objeto{: System.out.println("Sentencia analizada correctament
 
 if_op ::= IF EXISTS|empty;
 
-tipo_objeto ::= TABLE if_op tabla| index | database|PROCEDURE objeto_nombre|FUNCTION objeto_nombre|USER if_op objeto_nombre mas_de_un_objeto;
+tipo_objeto ::= TABLE if_op tabla| index | database|PROCEDURE objeto_nombre|FUNCTION objeto_nombre|USER if_op objeto_nombre mas_de_un_objeto|VIEW if_op objeto_nombre;
 
 tabla ::= objeto_nombre tabla2;
 
@@ -343,7 +343,7 @@ operadores ::= MAYOR_QUE
 		| LIKE
 		| BETWEEN NUM AND INT_NUM		
                 | ASIGNAR
-                | IS
+                | IS                 
 		;
 objeto_nombre ::= IDENTIFICADOR objeto_nombre1;
 

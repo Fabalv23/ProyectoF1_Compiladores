@@ -397,6 +397,8 @@ USABLE {return new Symbol(sym.USABLE,yycolumn,yyline,yytext());}
 
 {L}({L}|{D})*| {S}({L}({L}|{D})*){A} {return new Symbol(sym.IDENTIFICADOR,yycolumn,yyline,yytext());}
 
+
+
 ({D})+ {return new Symbol(sym.INT_NUM,yycolumn,yyline,yytext());}
 
 
