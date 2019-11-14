@@ -102,7 +102,7 @@ with_trans ::= WITH MARK description|empty;
 description ::= STRING|empty;
 fin_transaction ::= COMMIT fin| COMMIT TRAN transaction_name fin|COMMIT TRANSACTION transaction_name fin
                     |ROLLBACK fin|ROLLBACK TRAN transaction_name fin | ROLLBACK TRANSACTION transaction_name fin;
-save_point ::= SAVE trans transaction_name fin;
+save_point ::= SAVE TRAN transaction_name fin;
 
 
 
