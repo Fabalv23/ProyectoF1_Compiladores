@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import jflex.*;
+import JFlex.*;
 import java_cup.runtime.*;
 
 /**
@@ -268,7 +268,7 @@ public class Inicio extends javax.swing.JFrame {
     public static void generarFlex(String ruta) {
         File archivo = new File(ruta);
 
-        jflex.Main.generate(archivo);
+        JFlex.Main.generate(archivo);
 
         JOptionPane.showMessageDialog(null, "Programa compilado exitosamente", "Mensaje de exito ", HEIGHT);
     }

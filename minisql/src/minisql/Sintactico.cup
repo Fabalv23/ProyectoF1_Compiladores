@@ -1,4 +1,3 @@
-
 package minisql;
 
 
@@ -6,12 +5,83 @@ package minisql;
 
 import java_cup.runtime.Symbol;
 
+import java.util.LinkedList;
+import java.util.Stack;
 parser code
 {:
+
+ 
+    
     private Symbol s;
     public int cont = 0;
     public String errores="";
+    public LinkedList<Tabla> Lista_tablas = new LinkedList<Tabla>();
+
+    public LinkedList<Tabla_alias> Lista_tablas_alias = new LinkedList<Tabla_alias>();
+    public LinkedList<Campo> Lista_aux_group_by = new LinkedList<Campo>();
+    public LinkedList<Campo> Lista_aux_having = new LinkedList<Campo>();
+   public LinkedList<Campo> Lista_select = new LinkedList<Campo>();
+   public String ambito="";
+
+
+    public LinkedList<Funcion> Lista_funciones = new LinkedList<Funcion>();
+    Stack<String> transacciones=new Stack<>();
+    public LinkedList<Variable> Lista_variables  = new LinkedList<Variable>();
+
+
+ public int buscar_variable(String id,String ambito)
+    {       
+        int index=-1;
+        int i=0;
+        for (Variable var : Lista_variables ) {            
+            if(var.getNombre()==id && var.getAmbito()==ambito){
+            index=i;
+            }
+            i++;
+        }
+        return index;
+    }
     
+    public int buscar_funcion(String id,String ambito)
+    {       
+        int index=-1;
+        int i=0;
+        for (Funcion var : Lista_funciones ) {            
+            if(var.getNombre()==id && var.getAmbito()==ambito){
+            index=i;
+            }
+            i++;
+        }
+        return index;
+    }
+    
+    public int buscar_Tabla(String id,String ambito)
+    {       
+        int index=-1;
+        int i=0;
+        for (Tabla var : Lista_tablas ) {            
+            if(var.getNombre()==id && var.getAmbito()==ambito){
+            index=i;
+            }
+            i++;
+        }
+        return index;
+    }
+    
+     public int buscar_Tabla_alias(String id,String ambito)
+    {       
+        int index=-1;
+        int i=0;
+        for (Tabla_alias var : Lista_tablas_alias ) {            
+            if(var.getNombre()==id && var.getAmbito()==ambito){
+            index=i;
+            }
+            i++;
+        }
+        return index;
+    }    
+
+
     public void syntax_error(Symbol s){
          errores +="Error de sintaxis. Linea: " + (s.right + 1) +" Columna: " + s.left + ". Texto: \"" + s.value + "\"\n";
     }
