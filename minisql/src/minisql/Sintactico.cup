@@ -187,8 +187,8 @@ exec ::= EXECUTE objeto_nombre enviar_datos{: System.out.println("Sentencia anal
 enviar_datos ::= VARIABLES ASIGNAR data_tipo mandar_mas|data_tipo mandar_mas|empty;
 mandar_mas ::= COMA enviar_datos|empty;
 
-sets ::= SET VARIABLES ASIGNAR data_tipo sets2 | SET NOCOUNT ON sets2;
-sets2 ::= COMA VARIABLES ASIGNAR data_tipo sets2|empty;
+sets ::= SET VARIABLES ASIGNAR E sets2 | SET NOCOUNT ON sets2;
+sets2 ::= COMA VARIABLES ASIGNAR E sets2|empty;
 
 declares ::= DECLARE VARIABLES tipo_dato declares2;
 declares2 ::= COMA VARIABLES tipo_dato declares2|empty;
