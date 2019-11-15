@@ -21,7 +21,7 @@ parser code
     public LinkedList<Campo> Lista_aux_group_by = new LinkedList<Campo>();
     public LinkedList<Campo> Lista_aux_having = new LinkedList<Campo>();
    public LinkedList<Campo> Lista_select = new LinkedList<Campo>();
-   public LinkedList<String> errores = new LinkedList<String>();
+   public LinkedList<String> errores_semanticos = new LinkedList<String>();
    public String ambito="";
 
 
@@ -138,7 +138,6 @@ non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,a
 non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,tipo_alter_base,index_alter,nombre_index,accion_index,table_alter,accion_alter,tipo_add,drop_column,user_alter,set_item,set_item1;
 non terminal declares,declares2,sets,sets2,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
 non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
-non terminal fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT , OPTIONAL_COMMIT_OPTIONS , BEGIN_TRANSACTION_STATEMENT , OPTIONAL_TRANSACTION_NAME , TRANSACTION_OPTIONS;
 non terminal String[] VALORES_NUMEROS,FLOTANTE,NUM,F,T,E,VARIABLES,data_tipo;
 non terminal from,fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT , OPTIONAL_COMMIT_OPTIONS , BEGIN_TRANSACTION_STATEMENT , OPTIONAL_TRANSACTION_NAME , TRANSACTION_OPTIONS;
 
@@ -365,7 +364,7 @@ asignaciones2 ::= COMA objeto_nombre ASIGNAR asignaciones condicionales | empty;
 asignaciones1 ::= E;
 
 E ::= E SUMA T | E RESTA T | T;
-T ::= T:t MULTIPLICACION F:f
+T ::= T:t MULTIPLICACION F:f{:
 RESULT=new String[2];
 if(t[1].equals("string")||t[1].equals("null")||t[1].equals("error")){
  
@@ -385,7 +384,7 @@ errores.add("error semantico en linea "+f.rigth+" en columa"+f.left+"el tipo deb
 if(f[1].equals("float")||t[1].equals("float")){
 
 
-int valor=Integer.valueOf(f[0])*Integer.valueOf(t[0]);
+float valor=Float.valueOf(t[0])*Float.valueOf(f[0]);
 
 
 RESULT[0]=new String(String.valueOf(valor));
@@ -393,14 +392,16 @@ RESULT[1]=new String("float");
 
 }else{
 
+
 int valor=Integer.valueOf(f[0])*Integer.valueOf(t[0]);
 RESULT[0]=new String(String.valueOf(valor));
-RESULT[1]=new String("float");
-}
+RESULT[1]=new String("int");
 
 }
 
-} 
+}
+
+} :}
 
 
  | T:t DIVISION F:f
