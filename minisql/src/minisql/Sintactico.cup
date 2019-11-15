@@ -370,14 +370,14 @@ if(t[1].equals("string")||t[1].equals("null")||t[1].equals("error")){
  
 RESULT[0]=new String("error");
 RESULT[1]=new String("error");
-errores.add("error semantico en linea "+t.rigth+" en columa"+t.left+"el tipo deberia de ser int o float");
+errores_semanticos.add("error semantico en linea "+tright+" en columa"+tleft+"el tipo deberia de ser int o float");
 }else{
 
 if(f[1].equals("string")||f[1].equals("null")||f[1].equals("error")){
 
 RESULT[0]=new String("error");
 RESULT[1]=new String("error");
-errores.add("error semantico en linea "+f.rigth+" en columa"+f.left+"el tipo deberia de ser int o float");
+errores_semanticos.add("error semantico en linea "+fright+" en columa"+fleft+"el tipo deberia de ser int o float");
 
 }else{
 
