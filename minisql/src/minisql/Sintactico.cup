@@ -95,6 +95,76 @@ public void unrecovered_syntax_error(Symbol s){
         errores +="Error de sintaxis. Linea: " + (s.right + 1) +" Columna: " + s.left + ". Texto: En alguna sentencia no se termino de cerrar la sentencia \"" + s.value + "\"\n";
     }
 
+public String[] operacion(String t[],String f[],String operacion,int tright,int tleft,int fright,int fleft){
+    
+   String[] RESULT=new String[2];
+if(t[1].equals("string")||t[1].equals("null")||t[1].equals("error")){
+ 
+RESULT[0]=new String("error");
+RESULT[1]=new String("error");
+errores_semanticos.add("error semantico en linea "+tright+" en columa"+tleft+"el tipo deberia de ser int o float");
+}else{
+
+if(f[1].equals("string")||f[1].equals("null")||f[1].equals("error")){
+
+RESULT[0]=new String("error");
+RESULT[1]=new String("error");
+errores_semanticos.add("error semantico en linea "+fright+" en columa"+fleft+"el tipo deberia de ser int o float");
+
+}else{
+
+if(f[1].equals("float")||t[1].equals("float")){
+
+float valor=0;
+ if(operacion=="*"){
+ valor=Float.valueOf(t[0])*Float.valueOf(f[0]);
+
+ }else    if(operacion=="+"){
+  valor=Float.valueOf(t[0])+Float.valueOf(f[0]);
+
+ } if(operacion=="-"){
+  valor=Float.valueOf(t[0])-Float.valueOf(f[0]);
+
+ }
+  if(operacion=="/"){
+    valor=Float.valueOf(t[0])/Float.valueOf(f[0]); 
+ }
+
+
+RESULT[0]=new String(String.valueOf(valor));
+RESULT[1]=new String("float");
+
+}else{
+    
+int valor=0;
+ if(operacion=="*"){
+ valor=Integer.valueOf(t[0])*Integer.valueOf(f[0]);
+
+ }else    if(operacion=="+"){
+  valor=Integer.valueOf(t[0])+Integer.valueOf(f[0]);
+
+ } if(operacion=="-"){
+  valor=Integer.valueOf(t[0])-Integer.valueOf(f[0]);
+
+ }
+  if(operacion=="/"){
+    valor=Integer.valueOf(t[0])/Integer.valueOf(f[0]); 
+ }
+
+
+
+
+RESULT[0]=new String(String.valueOf(valor));
+RESULT[1]=new String("int");
+
+}
+
+}
+
+}
+return RESULT;
+    }
+
 
 :};
 
@@ -363,52 +433,30 @@ asignaciones2 ::= COMA objeto_nombre ASIGNAR asignaciones condicionales | empty;
 
 asignaciones1 ::= E;
 
-E ::= E SUMA T | E RESTA T | T;
+E ::= E:e SUMA T:t
+{:
+RESULT=new String[2];
+RESULT=operacion(e,t,"+",eright,eleft,tright,tleft);
+ :}
+| E:e RESTA T:t
+{:
+RESULT=new String[2];
+RESULT=operacion(e,t,"-",eright,eleft,tright,tleft);
+ :}
+ | T:t{:
+RESULT=new String[2];
+RESULT[0]=new String(t[0]);
+RESULT[1]=new String(t[1]);
+ :};
+
 T ::= T:t MULTIPLICACION F:f{:
 RESULT=new String[2];
-if(t[1].equals("string")||t[1].equals("null")||t[1].equals("error")){
- 
-RESULT[0]=new String("error");
-RESULT[1]=new String("error");
-errores_semanticos.add("error semantico en linea "+tright+" en columa"+tleft+"el tipo deberia de ser int o float");
-}else{
-
-if(f[1].equals("string")||f[1].equals("null")||f[1].equals("error")){
-
-RESULT[0]=new String("error");
-RESULT[1]=new String("error");
-errores_semanticos.add("error semantico en linea "+fright+" en columa"+fleft+"el tipo deberia de ser int o float");
-
-}else{
-
-if(f[1].equals("float")||t[1].equals("float")){
-
-
-float valor=Float.valueOf(t[0])*Float.valueOf(f[0]);
-
-
-RESULT[0]=new String(String.valueOf(valor));
-RESULT[1]=new String("float");
-
-}else{
-
-
-int valor=Integer.valueOf(f[0])*Integer.valueOf(t[0]);
-RESULT[0]=new String(String.valueOf(valor));
-RESULT[1]=new String("int");
-
-}
-
-}
-
-} :}
-
-
- | T:t DIVISION F:f
-
-
-
- | F:f{:
+RESULT=operacion(t,f,"*",tright,tleft,fright,fleft);
+ :} | T:t DIVISION F:f
+{:
+RESULT=new String[2];
+RESULT=operacion(t,f,"/",tright,tleft,fright,fleft);
+ :} | F:f{:
 RESULT=new String[2]; 
 RESULT[0]=new String(f[0]);
 RESULT[1]=new String(f[1]);
