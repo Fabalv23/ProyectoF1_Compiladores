@@ -137,7 +137,7 @@ non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,a
 non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,tipo_alter_base,index_alter,nombre_index,accion_index,table_alter,accion_alter,tipo_add,drop_column,user_alter,set_item,set_item1;
 non terminal declares,declares2,sets,sets2,VARIABLES,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
 non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
-non terminal fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch;
+non terminal fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT , OPTIONAL_COMMIT_OPTIONS , BEGIN_TRANSACTION_STATEMENT , OPTIONAL_TRANSACTION_NAME , TRANSACTION_OPTIONS;
 
 
 precedence left WHERE;
@@ -152,7 +152,7 @@ inicio ::= querys ;
 querys ::= querys sentencia | sentencia;
 
 sentencia ::= eliminar fin|update fin|truncate fin|drop fin|insert fin|select fin|create fin|alter fin
-             |procedure fin|sets fin|declares fin|exec fin|functions fin|begin_transaction|save_point|cursor fin|USE objeto_nombre fin|error;
+             |procedure fin|sets fin|declares fin|exec fin|functions fin|BEGIN_TRANSACTION_STATEMENT | COMMIT_STATEMENT | ROLLBACK_STATEMENT | SAVE_STATEMENT|cursor fin|USE objeto_nombre fin|error;
 
 
 
@@ -163,18 +163,13 @@ tipo_fetch ::= objeto_nombre | objeto_nombre INTO VARIABLES mas_variables;
 mas_variables ::= COMA VARIABLES mas_variables|empty;
 
 
-
-
-begin_transaction ::= trans transaction_name with_trans fin querys fin_transaction;
-trans ::= BEGIN TRAN| BEGIN TRANSACTION;
-transaction_name ::= VARIABLES|objeto_nombre|empty;
-with_trans ::= WITH MARK description|empty;
-description ::= STRING|empty;
-fin_transaction ::= COMMIT fin| COMMIT TRAN transaction_name fin|COMMIT TRANSACTION transaction_name fin
-                    |ROLLBACK fin|ROLLBACK TRAN transaction_name fin | ROLLBACK TRANSACTION transaction_name fin;
-save_point ::= SAVE TRAN transaction_name fin;
-
-
+SAVE_STATEMENT ::= SAVE TRANSACTION_OPTIONS objeto_nombre;
+ROLLBACK_STATEMENT ::= ROLLBACK TRANSACTION_OPTIONS OPTIONAL_TRANSACTION_NAME;
+COMMIT_STATEMENT ::= COMMIT OPTIONAL_COMMIT_OPTIONS;
+OPTIONAL_COMMIT_OPTIONS ::= TRANSACTION_OPTIONS OPTIONAL_TRANSACTION_NAME | ;
+BEGIN_TRANSACTION_STATEMENT ::= BEGIN TRANSACTION_OPTIONS OPTIONAL_TRANSACTION_NAME;
+OPTIONAL_TRANSACTION_NAME ::= objeto_nombre | ARROBA objeto_nombre | ;
+TRANSACTION_OPTIONS ::= TRAN | TRANSACTION;
 
 functions ::= CREATE alterar FUNCTION objeto_nombre PARENTESIS_ABIERTO parametros PARENTESIS_CERRADO RETURNS tipo_retorno with_procedure as BEGIN interno_funcion RETURN E fin_function END{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
 as ::= AS|empty;
