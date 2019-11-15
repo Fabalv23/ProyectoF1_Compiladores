@@ -137,7 +137,7 @@ non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,a
 non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,tipo_alter_base,index_alter,nombre_index,accion_index,table_alter,accion_alter,tipo_add,drop_column,user_alter,set_item,set_item1;
 non terminal declares,declares2,sets,sets2,VARIABLES,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
 non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
-non terminal fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT , OPTIONAL_COMMIT_OPTIONS , BEGIN_TRANSACTION_STATEMENT , OPTIONAL_TRANSACTION_NAME , TRANSACTION_OPTIONS;
+non terminal from,fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT , OPTIONAL_COMMIT_OPTIONS , BEGIN_TRANSACTION_STATEMENT , OPTIONAL_TRANSACTION_NAME , TRANSACTION_OPTIONS;
 
 
 precedence left WHERE;
@@ -279,8 +279,8 @@ expresion_logica ::= otra_condicion;
 aux2 ::= constraint1|CONSTRAINT objeto_nombre constraint1;
 
 
-select ::= SELECT option_select FROM origen joins condicionales agrupado teniendo orden{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};           
-
+select ::= SELECT option_select from {: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};           
+from ::=  FROM origen joins condicionales agrupado teniendo orden|empty;
 
 option_select ::= MULTIPLICACION | seleccion columna;
 seleccion ::= DISTINCT|ALL|TOP expresion | empty;
