@@ -21,6 +21,7 @@ parser code
     public LinkedList<Campo> Lista_aux_group_by = new LinkedList<Campo>();
     public LinkedList<Campo> Lista_aux_having = new LinkedList<Campo>();
    public LinkedList<Campo> Lista_select = new LinkedList<Campo>();
+   public LinkedList<String> errores = new LinkedList<String>();
    public String ambito="";
 
 
@@ -125,8 +126,8 @@ terminal ALTER,CURRENT,MODIFY,REBUILD,DISABLE,REORGANIZE,RESUME,PAUSE,ABORT,PASS
 terminal PROC,PROCEDURE,ARROBA,OUT,OUTPUT,READONLY,ENCRYPTION,RECOMPILE,EXECUTE,BEGIN,END,DECLARE,EXEC,FUNCTION,RETURNS,RETURN;
 terminal TRAN,TRANSACTION,MARK,COMMIT,ROLLBACK,SAVE,CURSOR,INSENSITIVE,SCROLL,FETCH,NEXT,OPEN;
 
-non terminal update,inicio,querys, sentencia,empty,operadores,fin,objeto_nombre1,objeto_nombre2, eliminar, opciones_delete,objeto_nombre,condicionales,expresion,porcentaje,condicionales1,otra_condicion,operadores_logicos,data_tipo;
-non terminal asignaciones,asignaciones1,asignaciones2,opciones_update,E,T,F,NUM,err,FLOTANTE,VALORES_NUMEROS,truncate,tipo_objeto,drop,if_op,tabla,tabla2,index,index2;
+non terminal update,inicio,querys, sentencia,empty,operadores,fin,objeto_nombre1,objeto_nombre2, eliminar, opciones_delete,objeto_nombre,condicionales,expresion,porcentaje,condicionales1,otra_condicion,operadores_logicos;
+non terminal asignaciones,asignaciones1,asignaciones2,opciones_update,err,truncate,tipo_objeto,drop,if_op,tabla,tabla2,index,index2;
 non terminal drop_relational_or_xml_or_spatial_index,drop_relational_or_xml_or_spatial_index2,drop_backward_compatible_index,drop_backward_compatible_index2;
 non terminal database,mas_de_un_objeto;
 non terminal insert,into,campos,campos2,mas_de_un_identificador,valores,valores2,mas_valores2,mas_valores;
@@ -135,10 +136,10 @@ non terminal joins,tipo_join,tipo_join1,joins1,agrupado,teniendo,teniendo1,tenie
 non terminal create,opciones_crear,database_create,extras_database,filespec,mas_file,opciones_index,index_create,column_index,mas_index,view_create,column_view,column_view1;
 non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,add_column,add_column1,add_column2,tipo_dato,constraint,constraint1,constraint2,expresion_logica,declara_constraint;
 non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,tipo_alter_base,index_alter,nombre_index,accion_index,table_alter,accion_alter,tipo_add,drop_column,user_alter,set_item,set_item1;
-non terminal declares,declares2,sets,sets2,VARIABLES,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
+non terminal declares,declares2,sets,sets2,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
 non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
 non terminal fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT , OPTIONAL_COMMIT_OPTIONS , BEGIN_TRANSACTION_STATEMENT , OPTIONAL_TRANSACTION_NAME , TRANSACTION_OPTIONS;
-
+non terminal String[] VALORES_NUMEROS,FLOTANTE,NUM,F,T,E,VARIABLES,data_tipo;
 
 precedence left WHERE;
 precedence left PARENTESIS_ABIERTO;
@@ -362,11 +363,104 @@ asignaciones2 ::= COMA objeto_nombre ASIGNAR asignaciones condicionales | empty;
 asignaciones1 ::= E;
 
 E ::= E SUMA T | E RESTA T | T;
-T ::= T MULTIPLICACION F | T DIVISION F | F;
-F ::= PARENTESIS_ABIERTO E PARENTESIS_CERRADO|objeto_nombre|data_tipo;
-NUM ::= INT_NUM | BIT_NUM;
-FLOTANTE ::= FLOAT_NUM;
-VALORES_NUMEROS ::= NUM | FLOTANTE;
+T ::= T:t MULTIPLICACION F:f
+RESULT=new String[2];
+if(t[1].equals("string")||t[1].equals("null")||t[1].equals("error")){
+ 
+RESULT[0]=new String("error");
+RESULT[1]=new String("error");
+errores.add("error semantico en linea "+t.rigth+" en columa"+t.left+"el tipo deberia de ser int o float");
+}else{
+
+if(f[1].equals("string")||f[1].equals("null")||f[1].equals("error")){
+
+RESULT[0]=new String("error");
+RESULT[1]=new String("error");
+errores.add("error semantico en linea "+f.rigth+" en columa"+f.left+"el tipo deberia de ser int o float");
+
+}else{
+
+if(f[1].equals("float")||t[1].equals("float")){
+
+
+int valor=Integer.valueOf(f[0])*Integer.valueOf(t[0]);
+
+
+RESULT[0]=new String(String.valueOf(valor));
+RESULT[1]=new String("float");
+
+}else{
+
+int valor=Integer.valueOf(f[0])*Integer.valueOf(t[0]);
+RESULT[0]=new String(String.valueOf(valor));
+RESULT[1]=new String("float");
+}
+
+}
+
+} 
+
+
+ | T:t DIVISION F:f
+
+
+
+ | F:f{:
+RESULT=new String[2]; 
+RESULT[0]=new String(f[0]);
+RESULT[1]=new String(f[1]);
+:};
+F ::= PARENTESIS_ABIERTO E:e PARENTESIS_CERRADO
+{:
+RESULT=new String[2]; 
+RESULT[0]=new String(e[0]);
+RESULT[1]=new String(e[1]);
+:}
+
+
+|objeto_nombre|data_tipo:dt
+{:
+RESULT=new String[2]; 
+RESULT[0]=new String(dt[0]);
+RESULT[1]=new String(dt[1]);
+:}
+;
+
+NUM ::= INT_NUM:i
+{:
+RESULT=new String[2]; 
+RESULT[0]=new String(i.toString());
+RESULT[1]=new String("int");
+:}
+
+ | BIT_NUM:b
+{:
+RESULT=new String[2]; 
+RESULT[0]=new String(b.toString());
+RESULT[1]=new String("bit");
+:};
+
+
+FLOTANTE ::= FLOAT_NUM:f{:
+
+RESULT=new String[2]; 
+RESULT[0]=new String(f.toString());
+RESULT[1]=new String("float");
+
+:};
+VALORES_NUMEROS ::= NUM:num{:
+
+RESULT=new String[2]; 
+RESULT[0]=new String(num[0]);
+RESULT[1]=new String(num[1]);
+
+:} | FLOTANTE:floa{:
+
+RESULT=new String[2]; 
+RESULT[0]=new String(floa[0]);
+RESULT[1]=new String(floa[1]);
+
+:};
 
 eliminar ::= DELETE opciones_delete FROM objeto_nombre mas_de_un_objeto condicionales {: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++;:};            
              
@@ -392,13 +486,35 @@ otra_condicion ::=empty|objeto_nombre operadores data_tipo condicionales1
 operadores_logicos ::= AND
 			| OR
 			;
-data_tipo ::= STRING
-		|VALORES_NUMEROS          
-                |NULL
+data_tipo ::= STRING:s{:
+RESULT=new String[2]; 
+RESULT[0]=new String(s.toString());
+RESULT[1]=new String("string");
+   
+:}
+		|VALORES_NUMEROS:v{:
+
+RESULT=new String[2]; 
+RESULT[0]=new String(v[0]);
+RESULT[1]=new String(v[1]);
+:}          
+                |NULL:n{:
+
+RESULT=new String[2]; 
+RESULT[0]=new String(n.toString());
+RESULT[1]=new String("null");
+:}     
                 |VARIABLES                    
 		;
 
-VARIABLES ::= ARROBA IDENTIFICADOR;
+VARIABLES ::= ARROBA IDENTIFICADOR:id{:
+
+RESULT=new String[2]; 
+RESULT[0]=new String( Lista_variables.get(buscar_variable(id.toString(),ambito)).getTipo_dato());
+RESULT[1]=new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).getValor());
+   
+
+:};
 
 operadores ::= MAYOR_QUE
 		| MENOR_QUE
