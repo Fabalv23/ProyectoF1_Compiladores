@@ -208,7 +208,8 @@ non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,a
 non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,tipo_alter_base,index_alter,nombre_index,accion_index,table_alter,accion_alter,tipo_add,drop_column,user_alter,set_item,set_item1;
 non terminal declares,declares2,sets,sets2,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
 non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
-non terminal String[] VALORES_NUMEROS,FLOTANTE,NUM,F,T,E,VARIABLES,data_tipo;
+non terminal String[] VALORES_NUMEROS,FLOTANTE,NUM,F,T,E,data_tipo;
+non terminal String VARIABLES;
 non terminal from,fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT , OPTIONAL_COMMIT_OPTIONS , BEGIN_TRANSACTION_STATEMENT , OPTIONAL_TRANSACTION_NAME , TRANSACTION_OPTIONS;
 
 
@@ -254,8 +255,20 @@ exec ::= EXECUTE objeto_nombre enviar_datos{: System.out.println("Sentencia anal
 enviar_datos ::= VARIABLES ASIGNAR data_tipo mandar_mas|data_tipo mandar_mas|empty;
 mandar_mas ::= COMA enviar_datos|empty;
 
-sets ::= SET VARIABLES ASIGNAR E sets2 | SET NOCOUNT ON sets2;
-sets2 ::= COMA VARIABLES ASIGNAR E sets2|empty;
+sets ::= SET VARIABLES:v ASIGNAR E:e {:
+
+Variable va=new Variable();
+if(buscar_variable(v.toString(),ambito)==-1){
+
+va.setTipo_dato(e[1]);
+va.setAmbito(ambito);
+            va.setNombre(v);
+            va.setValor(e[0]);
+}else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" ya existe en el ambito actual");
+}
+
+:};
 
 declares ::= DECLARE VARIABLES tipo_dato declares2;
 declares2 ::= COMA VARIABLES tipo_dato declares2|empty;
@@ -555,15 +568,28 @@ RESULT=new String[2];
 RESULT[0]=new String(n.toString());
 RESULT[1]=new String("null");
 :}     
-                |VARIABLES                    
+                |ARROBA IDENTIFICADOR :id
+{:
+
+RESULT=new String[2]; 
+int i1=buscar_variable(id.toString(),ambito);
+if(i1==-1){
+
+RESULT[0]=new String("error");
+RESULT[1]=new String("error");
+errores_semanticos.add("error semantico en linea "+idright+" en columa"+idleft+"no existe una variable "+id+" en el ambito actual");
+}else {
+RESULT[0]=new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).getValor());
+RESULT[1]=new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).getTipo_dato());
+}
+
+
+:} 
+                  
 		;
 
 VARIABLES ::= ARROBA IDENTIFICADOR:id{:
-
-RESULT=new String[2]; 
-RESULT[0]=new String( Lista_variables.get(buscar_variable(id.toString(),ambito)).getTipo_dato());
-RESULT[1]=new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).getValor());
-   
+RESULT=new String(id.toString());    
 
 :};
 
