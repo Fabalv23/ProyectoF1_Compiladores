@@ -136,19 +136,19 @@ RESULT[1]=new String("float");
 
 }else{
     
-int valor=0;
+float valor=0;
  if(operacion=="*"){
- valor=Integer.valueOf(t[0])*Integer.valueOf(f[0]);
+ valor=Float.valueOf(t[0])*Float.valueOf(f[0]);
 
  }else    if(operacion=="+"){
-  valor=Integer.valueOf(t[0])+Integer.valueOf(f[0]);
+  valor=Float.valueOf(t[0])+Float.valueOf(f[0]);
 
  } if(operacion=="-"){
-  valor=Integer.valueOf(t[0])-Integer.valueOf(f[0]);
+  valor=Float.valueOf(t[0])-Float.valueOf(f[0]);
 
  }
   if(operacion=="/"){
-    valor=Integer.valueOf(t[0])/Integer.valueOf(f[0]); 
+    valor=Float.valueOf(t[0])/Float.valueOf(f[0]); 
  }
 
 
@@ -194,7 +194,7 @@ terminal IDENTITY,KEY,FOREIGN,REFERENCES,NOT,CHECK,CONSTRAINT,CLAUSE,REPLICATION
 terminal UNIQUE,CLUSTERED,NONCLUSTERED,INCLUDE,LOGIN,FOR,CHAR,VARCHAR,TEXT,IMAGE,VARBINARY,DATE,DATETIME,DATETIME2,SMALLDATETIME,TIME,DATETIMEOFFSET,TIMESTAMP,FLOAT,MONEY,REAL,BIT,DECIMAL,NUMERIC;
 terminal ALTER,CURRENT,MODIFY,REBUILD,DISABLE,REORGANIZE,RESUME,PAUSE,ABORT,PASSWORD,COLUMN,ADD;
 terminal PROC,PROCEDURE,ARROBA,OUT,OUTPUT,READONLY,ENCRYPTION,RECOMPILE,EXECUTE,BEGIN,END,DECLARE,EXEC,FUNCTION,RETURNS,RETURN;
-terminal TRAN,TRANSACTION,MARK,COMMIT,ROLLBACK,SAVE,CURSOR,INSENSITIVE,SCROLL,FETCH,NEXT,OPEN;
+terminal TRAN,TRANSACTION,MARK,COMMIT,ROLLBACK,SAVE,CURSOR,INSENSITIVE,SCROLL,FETCH,NEXT,OPEN,CONCAT;
 
 non terminal update,inicio,querys, sentencia,empty,operadores,fin,objeto_nombre1,objeto_nombre2, eliminar, opciones_delete,objeto_nombre,condicionales,expresion,porcentaje,condicionales1,otra_condicion,operadores_logicos;
 non terminal asignaciones,asignaciones1,asignaciones2,opciones_update,err,truncate,tipo_objeto,drop,if_op,tabla,tabla2,index,index2;
@@ -260,14 +260,43 @@ mandar_mas ::= COMA enviar_datos|empty;
 sets ::= SET VARIABLES:v ASIGNAR E:e {:
 
 Variable va=new Variable();
-if(buscar_variable(v.toString(),ambito)==-1){
+int indice=buscar_variable(v.toString(),ambito);
+if(indice!=-1){
 
+
+if(e[1].equals("float")){
+va.setValor(e[0]);
 va.setTipo_dato(e[1]);
 va.setAmbito(ambito);
             va.setNombre(v);
-            va.setValor(e[0]);
+Lista_variables.set(indice, va);
+
+}else if (e[1].equals("int")){
+float convf=Float.valueOf(e[0]);
+int conversion=Math.round(convf);
+String cadena_conv=String.valueOf(conversion);
+va.setValor(cadena_conv);
+va.setTipo_dato(e[1]);
+va.setAmbito(ambito);
+            va.setNombre(v);
+Lista_variables.set(indice, va);
+
+}else if (e[1].equals("error")||e[1].equals("null")){
+  errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"su expresion es nula o devuelve un error");
+
+
+} else if(e[1].equals("string")){
+
+va.setValor(e[0]);
+va.setTipo_dato(e[1]);
+va.setAmbito(ambito);
+            va.setNombre(v);
+Lista_variables.set(indice, va);
+} 
+
+            
 }else{
-errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" ya existe en el ambito actual");
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" la variable no existe");
 }
 
 :};

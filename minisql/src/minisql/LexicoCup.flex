@@ -356,7 +356,7 @@ DISABLE {return new Symbol(sym.DISABLE,yycolumn,yyline,yytext());}
 REBUILD {return new Symbol(sym.REBUILD,yycolumn,yyline,yytext());}
 UNUSABLE {return new Symbol(sym.UNUSABLE,yycolumn,yyline,yytext());}
 USABLE {return new Symbol(sym.USABLE,yycolumn,yyline,yytext());}
-
+CONCAT {return new Symbol(sym.CONCAT,yycolumn,yyline,yytext());}
 
 
 
