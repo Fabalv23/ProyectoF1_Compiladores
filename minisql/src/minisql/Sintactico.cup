@@ -20,6 +20,7 @@ parser code
     public LinkedList<Tabla_alias> Lista_tablas_alias = new LinkedList<Tabla_alias>();
     public LinkedList<Campo> Lista_aux_group_by = new LinkedList<Campo>();
     public LinkedList<Campo> Lista_aux_having = new LinkedList<Campo>();
+    public LinkedList<String> Lista_aux_concatenar = new LinkedList<String>();
    public LinkedList<Campo> Lista_select = new LinkedList<Campo>();
    public LinkedList<String> errores_semanticos = new LinkedList<String>();
    public String ambito="";
@@ -41,6 +42,15 @@ parser code
             i++;
         }
         return index;
+    }
+
+    public String concatenar()
+    {  String retorno="";
+        int i=0;
+        for (String var : Lista_aux_concatenar ) {            
+            retorno+=var;
+        }
+        return retorno;
     }
     
     public int buscar_funcion(String id,String ambito)
@@ -211,7 +221,7 @@ non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_reto
 non terminal String[] VALORES_NUMEROS,FLOTANTE,NUM,F,T,E,data_tipo;
 non terminal String VARIABLES;
 non terminal from,fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT , OPTIONAL_COMMIT_OPTIONS , BEGIN_TRANSACTION_STATEMENT , OPTIONAL_TRANSACTION_NAME , TRANSACTION_OPTIONS;
-
+non terminal String concatenar_string,varios_string,varios_string_prima;
 
 precedence left WHERE;
 precedence left PARENTESIS_ABIERTO;
@@ -260,16 +270,27 @@ sets ::= SET VARIABLES:v ASIGNAR E:e {:
 Variable va=new Variable();
 int indice=buscar_variable(v.toString(),ambito);
 if(indice!=-1){
-
-
+Variable vcomp=Lista_variables.get(indice);
 if(e[1].equals("float")){
+
+if(!vcomp.getTipo_dato().equals("int")||vcomp.getTipo_dato().equals("string")){
+
 va.setValor(e[0]);
 va.setTipo_dato(e[1]);
 va.setAmbito(ambito);
-            va.setNombre(v);
+va.setNombre(v);
 Lista_variables.set(indice, va);
 
+}else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
+
+}
+
 }else if (e[1].equals("int")){
+
+
+if(!vcomp.getTipo_dato().equals("string")){
+
 float convf=Float.valueOf(e[0]);
 int conversion=Math.round(convf);
 String cadena_conv=String.valueOf(conversion);
@@ -279,17 +300,33 @@ va.setAmbito(ambito);
             va.setNombre(v);
 Lista_variables.set(indice, va);
 
+}else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
+
+}
+
+
 }else if (e[1].equals("error")||e[1].equals("null")){
   errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"su expresion es nula o devuelve un error");
 
 
 } else if(e[1].equals("string")){
 
+
+if(vcomp.getTipo_dato().equals("string")){
+
 va.setValor(e[0]);
 va.setTipo_dato(e[1]);
 va.setAmbito(ambito);
             va.setNombre(v);
 Lista_variables.set(indice, va);
+
+}else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
+
+}
+
+
 } 
 
             
@@ -297,7 +334,49 @@ Lista_variables.set(indice, va);
 errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" la variable no existe");
 }
 
+:}|SET VARIABLES:v ASIGNAR concatenar_string
+{:
+
+
+Variable va=new Variable();
+int indice=buscar_variable(v.toString(),ambito);
+
+if(indice==-1){
+
+Variable vcomp=Lista_variables.get(indice);
+if(vcomp.getTipo_dato().equals("string")){
+
+String cadena_conv=concatenar();
+Lista_aux_concatenar.clear();
+va.setValor(cadena_conv);
+va.setTipo_dato("string");
+va.setAmbito(ambito);
+va.setNombre(v);
+Lista_variables.set(indice, va);
+
+}else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un string dentro de un "+vcomp.getTipo_dato());
+
+}
+
+}else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" la variable no existe");
+
+}
+
 :};
+
+concatenar_string ::=CONCAT PARENTESIS_ABIERTO varios_string PARENTESIS_CERRADO;
+
+varios_string ::=  STRING:s varios_string_prima{:
+Lista_aux_concatenar.add(s.toString());
+:};
+
+varios_string_prima ::= COMA STRING:s varios_string_prima {:
+Lista_aux_concatenar.add(s.toString());
+:}|empty ;
+
+
 
 declares ::= DECLARE VARIABLES tipo_dato declares2;
 declares2 ::= COMA VARIABLES tipo_dato declares2|empty;
@@ -530,7 +609,7 @@ RESULT[1]=new String("int");
 {:
 RESULT=new String[2]; 
 RESULT[0]=new String(b.toString());
-RESULT[1]=new String("bit");
+RESULT[1]=new String("int");
 :};
 
 
