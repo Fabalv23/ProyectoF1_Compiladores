@@ -303,20 +303,22 @@ errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el
 :};
 
 declares ::= DECLARE VARIABLES:a tipo_dato:b {: if((buscar_variable(a, ambito)==-1)){
-Variable nuevaVariable = new Variable(); 
-nuevaVariable.setTipo_dato(b) ; 
-nuevaVariable.setAmbito(ambito);
-Lista_variables.add(nuevaVariable);}
-else{
-errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
+                Variable nuevaVariable = new Variable(); 
+                nuevaVariable.setNombre(a);
+                nuevaVariable.setTipo_dato(b) ; 
+                nuevaVariable.setAmbito(ambito);
+                Lista_variables.add(nuevaVariable);}
+        else{
+                errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
 } :};
 declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, ambito)==-1)){
-Variable nuevaVariable = new Variable(); 
-nuevaVariable.setTipo_dato(b) ; 
-nuevaVariable.setAmbito(ambito);
-Lista_variables.add(nuevaVariable);}
-else{
-errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
+                Variable nuevaVariable = new Variable(); 
+                nuevaVariable.setNombre(a);
+                nuevaVariable.setTipo_dato(b) ; 
+                nuevaVariable.setAmbito(ambito);
+                Lista_variables.add(nuevaVariable);}
+        else{
+                errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
 } :} |empty;
 
 procedure ::= CREATE alterar proc objeto_nombre parametros with_procedure replication AS empezar querys final{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
