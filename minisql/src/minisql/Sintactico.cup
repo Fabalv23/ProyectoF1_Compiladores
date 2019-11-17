@@ -28,6 +28,7 @@ parser code
     public LinkedList<Funcion> Lista_funciones = new LinkedList<Funcion>();
     Stack<String> transacciones=new Stack<>();
     public LinkedList<Variable> Lista_variables  = new LinkedList<Variable>();
+    public LinkedList<String> Lista_nombre;
 
 
  public int buscar_variable(String id,String ambito)
@@ -302,7 +303,7 @@ errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el
 
 :};
 
-declares ::= DECLARE VARIABLES:a tipo_dato:b {: if((buscar_variable(a, ambito)==-1)){
+declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, ambito)==-1)){
                 Variable nuevaVariable = new Variable(); 
                 nuevaVariable.setNombre(a);
                 nuevaVariable.setTipo_dato(b) ; 
@@ -650,7 +651,7 @@ operadores ::= MAYOR_QUE
                 | ASIGNAR
                 | IS                 
 		;
-objeto_nombre ::= IDENTIFICADOR objeto_nombre1;
+objeto_nombre ::= IDENTIFICADOR objeto_nombre1 ;
 
 objeto_nombre1 ::=empty|PUNTO objeto_nombre
                 ;
