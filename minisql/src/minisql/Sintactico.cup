@@ -209,8 +209,10 @@ non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,
 non terminal declares,declares2,sets,sets2,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
 non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
 non terminal String[] VALORES_NUMEROS,FLOTANTE,NUM,F,T,E,data_tipo;
+non terminal String[] OPTIONAL_DEFAULT_VALUE;
 non terminal String VARIABLES;
-non terminal from,fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT , OPTIONAL_COMMIT_OPTIONS , BEGIN_TRANSACTION_STATEMENT , OPTIONAL_TRANSACTION_NAME , TRANSACTION_OPTIONS;
+non terminal from,fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT , OPTIONAL_COMMIT_OPTIONS , BEGIN_TRANSACTION_STATEMENT , OPTIONAL_TRANSACTION_NAME , TRANSACTION_OPTIONS
+non terminal USE_STATEMENT;
 
 
 precedence left WHERE;
@@ -225,10 +227,10 @@ inicio ::= querys ;
 querys ::= querys sentencia | sentencia;
 
 sentencia ::= eliminar fin|update fin|truncate fin|drop fin|insert fin|select fin|create fin|alter fin
-             |procedure fin|sets fin|declares fin|exec fin|functions fin|BEGIN_TRANSACTION_STATEMENT | COMMIT_STATEMENT | ROLLBACK_STATEMENT | SAVE_STATEMENT|cursor fin|USE objeto_nombre fin|error;
+             |procedure fin|sets fin|declares fin|exec fin|functions fin|BEGIN_TRANSACTION_STATEMENT fin | COMMIT_STATEMENT fin | ROLLBACK_STATEMENT fin | SAVE_STATEMENT fin | USE_STATEMENT fin |cursor fin|USE objeto_nombre fin|error;
 
 
-
+USE_STATEMENT ::= USE IDENTIFICADOR:a {: ambito = a; :};
 cursor ::= DECLARE objeto_nombre tipo_cursor CURSOR FOR select abrir_cursor;
 abrir_cursor ::=  OPEN objeto_nombre FETCH NEXT FROM tipo_fetch|empty;
 tipo_cursor ::= INSENSITIVE|SCROLL|empty;
@@ -270,9 +272,18 @@ errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el
 
 :};
 
-declares ::= DECLARE VARIABLES tipo_dato declares2;
-declares2 ::= COMA VARIABLES tipo_dato declares2|empty;
+declares ::= DECLARE VARIABLES:a data_tipo:b OPTIONAL_DEFAULT_VALUE:c declares2 {:  if((buscar_variable(a, ambito)==-1) && (c[1].equals(b))) {Variable nuevaVariable = new Variable(a, ambito); nuevaVariable.setTipo_dato(b) ; nuevaVariable.setValor(c[0]); Lista_variables.add(nuevaVariable);} :};
+declares2 ::= COMA VARIABLES data_tipo:b OPTIONAL_DEFAULT_VALUE:c declares2 {: if((buscar_variable(a, ambito)==-1) && (c[1].equals(b))){Variable nuevaVariable = new Variable(a, ambito); nuevaVariable.setTipo_dato(b) ; nuevaVariable.setValor(c[0]); Lista_variables.add(nuevaVariable);} :} |empty;
+OPTIONAL_DEFAULT_VALUE ::= ASIGNAR E:f declares2 {:
 
+    RESULT=new String[2]; 
+    RESULT[0]=new String(f[0]);
+    RESULT[1]=new String(f[1]);
+}else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" ya existe en el ambito actual");
+}
+
+:};
 
 procedure ::= CREATE alterar proc objeto_nombre parametros with_procedure replication AS empezar querys final{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
 alterar ::= OR ALTER|empty;
