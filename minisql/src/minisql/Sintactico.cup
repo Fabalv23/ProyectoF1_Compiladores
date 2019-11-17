@@ -28,7 +28,7 @@ parser code
     public LinkedList<Funcion> Lista_funciones = new LinkedList<Funcion>();
     Stack<String> transacciones=new Stack<>();
     public LinkedList<Variable> Lista_variables  = new LinkedList<Variable>();
-    public LinkedList<String> Lista_nombre;
+    public LinkedList<String> Lista_nombre = new LinkedList<String>();
 
 
  public int buscar_variable(String id,String ambito)
@@ -651,9 +651,18 @@ operadores ::= MAYOR_QUE
                 | ASIGNAR
                 | IS                 
 		;
-objeto_nombre ::= IDENTIFICADOR objeto_nombre1 ;
+objeto_nombre ::= IDENTIFICADOR objeto_nombre1 {: RESULT = new String[4]; 
+                int cont = 0;
+                if(Lista_nombre.size() <= 4)
+                {
+                for(String s: Lista_nombre)
+                {
+                    RESULT[cont] = new String(s);
+                    cont++;
+                }
+                }:};
 
-objeto_nombre1 ::=empty|PUNTO objeto_nombre
+objeto_nombre1 ::= empty {:Lista_nombre = new LinkedList<String>();:} |PUNTO objeto_nombre:id {: Lista_nombre.add(id.toString()); :}
                 ;
 
 objeto_nombre2 ::= PUNTO IDENTIFICADOR|empty;
