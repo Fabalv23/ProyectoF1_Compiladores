@@ -346,7 +346,7 @@ errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el
 Variable va=new Variable();
 int indice=buscar_variable(v.toString(),ambito);
 
-if(indice==-1){
+if(indice1!=-1){
 
 Variable vcomp=Lista_variables.get(indice);
 if(vcomp.getTipo_dato().equals("string")){
