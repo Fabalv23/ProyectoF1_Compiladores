@@ -29,6 +29,7 @@ parser code
     public LinkedList<Funcion> Lista_funciones = new LinkedList<Funcion>();
     Stack<String> transacciones=new Stack<>();
     public LinkedList<Variable> Lista_variables  = new LinkedList<Variable>();
+    public LinkedList<String> Lista_nombre;
 
 
  public int buscar_variable(String id,String ambito)
@@ -214,18 +215,22 @@ non terminal insert,into,campos,campos2,mas_de_un_identificador,valores,valores2
 non terminal operacion_logica,opcion_alias,select,option_select,seleccion,columna,columna1,columna2,data_tipo_operacion,funciones,valor,puede,alias_columna,operacion,operacion_matematica,operador,origen,origen1,alias_tabla;
 non terminal joins,tipo_join,tipo_join1,joins1,agrupado,teniendo,teniendo1,teniendo2,orden,tipo_orden,orden2;
 non terminal create,opciones_crear,database_create,extras_database,filespec,mas_file,opciones_index,index_create,column_index,mas_index,view_create,column_view,column_view1;
-non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,add_column,add_column1,add_column2,tipo_dato,constraint,constraint1,constraint2,expresion_logica,declara_constraint;
+non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,add_column,add_column1,add_column2,constraint,constraint1,constraint2,expresion_logica,declara_constraint;
 non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,tipo_alter_base,index_alter,nombre_index,accion_index,table_alter,accion_alter,tipo_add,drop_column,user_alter,set_item,set_item1;
 non terminal declares,declares2,sets,sets2,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
 non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
 non terminal String[] VALORES_NUMEROS,FLOTANTE,NUM,F,T,E,data_tipo;
-non terminal String VARIABLES;
+non terminal String[] OPTIONAL_DEFAULT_VALUE;
+non terminal String VARIABLES, tipo_dato;
 non terminal from,fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT , OPTIONAL_COMMIT_OPTIONS , BEGIN_TRANSACTION_STATEMENT , OPTIONAL_TRANSACTION_NAME , TRANSACTION_OPTIONS;
 non terminal String concatenar_string,varios_string,varios_string_prima;
+non terminal USE_STATEMENT;
+
 
 precedence left WHERE;
 precedence left PARENTESIS_ABIERTO;
 precedence left BEGIN;
+precedence left PUNTO_COMA, GO;
 
 start with inicio;
 
@@ -235,10 +240,10 @@ inicio ::= querys ;
 querys ::= querys sentencia | sentencia;
 
 sentencia ::= eliminar fin|update fin|truncate fin|drop fin|insert fin|select fin|create fin|alter fin
-             |procedure fin|sets fin|declares fin|exec fin|functions fin|BEGIN_TRANSACTION_STATEMENT | COMMIT_STATEMENT | ROLLBACK_STATEMENT | SAVE_STATEMENT|cursor fin|USE objeto_nombre fin|error;
+             |procedure fin|sets fin|declares fin|exec fin|functions fin|BEGIN_TRANSACTION_STATEMENT fin | COMMIT_STATEMENT fin | ROLLBACK_STATEMENT fin | SAVE_STATEMENT fin | USE_STATEMENT fin |cursor fin|error;
 
 
-
+USE_STATEMENT ::= USE IDENTIFICADOR:a {: ambito = a.toString(); :};
 cursor ::= DECLARE objeto_nombre tipo_cursor CURSOR FOR select abrir_cursor;
 abrir_cursor ::=  OPEN objeto_nombre FETCH NEXT FROM tipo_fetch|empty;
 tipo_cursor ::= INSENSITIVE|SCROLL|empty;
@@ -378,9 +383,24 @@ Lista_aux_concatenar.add(s.toString());
 
 
 
-declares ::= DECLARE VARIABLES tipo_dato declares2;
-declares2 ::= COMA VARIABLES tipo_dato declares2|empty;
-
+declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, ambito)==-1)){
+                Variable nuevaVariable = new Variable(); 
+                nuevaVariable.setNombre(a);
+                nuevaVariable.setTipo_dato(b) ; 
+                nuevaVariable.setAmbito(ambito);
+                Lista_variables.add(nuevaVariable);}
+        else{
+                errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
+} :};
+declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, ambito)==-1)){
+                Variable nuevaVariable = new Variable(); 
+                nuevaVariable.setNombre(a);
+                nuevaVariable.setTipo_dato(b) ; 
+                nuevaVariable.setAmbito(ambito);
+                Lista_variables.add(nuevaVariable);}
+        else{
+                errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
+} :} |empty;
 
 procedure ::= CREATE alterar proc objeto_nombre parametros with_procedure replication AS empezar querys final{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
 alterar ::= OR ALTER|empty;
@@ -453,9 +473,9 @@ extra_create_table ::= ON objeto_nombre|ON PRIMARY|empty;
 add_column ::= add_column1 add_column2;
 add_column1 ::= objeto_nombre tipo_dato constraint|aux2;
 add_column2 ::= COMA add_column | empty;
-tipo_dato ::= CHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO| VARCHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO |NVARCHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO|TEXT
+tipo_dato ::= CHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO| VARCHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO {: RESULT = new String ("string");:} |NVARCHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO|TEXT
               |IMAGE|VARBINARY|VARBINARY PARENTESIS_ABIERTO MAX PARENTESIS_CERRADO| DATE | DATETIME | DATETIME2 | SMALLDATETIME | TIME | DATETIMEOFFSET
-              | TIMESTAMP| FLOAT PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO|INT PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO|MONEY|REAL|BIT|INT|DECIMAL PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO|DEC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO|NUMERIC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO;
+              | TIMESTAMP| FLOAT PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO {:RESULT = new String ("float");:}|INT PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO {:RESULT = new String ("int");:}|MONEY|REAL|BIT|INT{:RESULT = new String ("int");:}|DECIMAL PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO {:RESULT = new String ("float");:}|DEC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO|NUMERIC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO;
 
 
 constraint ::= constraint1 constraint2|empty;
@@ -711,7 +731,7 @@ operadores ::= MAYOR_QUE
                 | ASIGNAR
                 | IS                 
 		;
-objeto_nombre ::= IDENTIFICADOR objeto_nombre1;
+objeto_nombre ::= IDENTIFICADOR objeto_nombre1 ;
 
 objeto_nombre1 ::=empty|PUNTO objeto_nombre
                 ;
