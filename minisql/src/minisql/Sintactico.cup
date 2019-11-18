@@ -18,11 +18,13 @@ parser code
     public LinkedList<Tabla> Lista_tablas = new LinkedList<Tabla>();
 
     public LinkedList<Tabla_alias> Lista_tablas_alias = new LinkedList<Tabla_alias>();
-    public LinkedList<Campo> Lista_aux_group_by = new LinkedList<Campo>();
-    public LinkedList<Campo> Lista_aux_having = new LinkedList<Campo>();
+    public LinkedList<Campo_alias> Lista_aux_group_by = new LinkedList<Campo_alias>();
+    public LinkedList<Campo_alias> Lista_aux_having = new LinkedList<Campo_alias>();
+    public LinkedList<Campo_alias> Lista_aux_order_by = new LinkedList<Campo_alias>();
     public LinkedList<String> Lista_aux_concatenar = new LinkedList<String>();
-   public LinkedList<Campo> Lista_select = new LinkedList<Campo>();
+   public LinkedList<Campo_alias> Lista_select = new LinkedList<Campo_alias>();
    public LinkedList<String> errores_semanticos = new LinkedList<String>();
+
    public String ambito="";
 
 
