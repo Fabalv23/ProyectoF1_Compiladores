@@ -81,7 +81,20 @@ parser code
         }
         return index;
     }
-    
+    public void vaciar_pila_hasta_id(String id)
+    {  String s=""; 
+       
+     s=transacciones.peek();
+     
+       while (!s.equals(id)){
+        transacciones.pop();
+       }
+         transacciones.pop();          
+            
+            
+           
+        
+    }
      public int buscar_Tabla_alias(String id,String ambito)
     {       
         int index=-1;
@@ -253,27 +266,90 @@ tipo_fetch ::= objeto_nombre | objeto_nombre INTO VARIABLES mas_variables;
 mas_variables ::= COMA VARIABLES mas_variables|empty;
 
 
-SAVE_STATEMENT ::= SAVE TRANSACTION_OPTIONS objeto_nombre{:
+SAVE_STATEMENT ::= SAVE TRANSACTION_OPTIONS IDENTIFICADOR:i{:
+
+if(!transacciones.isEmpty()){
+transacciones.push(i.toString());
+}else{
+errores_semanticos.add("error semantico en linea "+iright+" en columa"+ileft+"no hay una transaccion activa");
+
+}
 
 :};
-ROLLBACK_STATEMENT ::= ROLLBACK TRANSACTION_OPTIONS OPTIONAL_TRANSACTION_NAME{:
+ROLLBACK_STATEMENT ::= ROLLBACK TRANSACTION_OPTIONS OPTIONAL_TRANSACTION_NAME:opt{:
+      
+if(opt.equals("")){
+
+if(!transacciones.isEmpty()){
+transacciones.clear();
+}else{
+errores_semanticos.add("error semantico en linea "+optright+" en columa"+optleft+"no hay una transaccion activa");
+}
+
+}else{
+if(!(transacciones.search(opt)==-1)){
+      vaciar_pila_hasta_id(opt);
+          }else{
+   errores_semanticos.add("error semantico en linea "+optright+" en columa"+optleft+"no hay una transaccion activa para el id:"+opt);
+               }
+}
+
 
 :};
-COMMIT_STATEMENT ::= COMMIT OPTIONAL_COMMIT_OPTIONS{:
+
+COMMIT_STATEMENT ::= COMMIT OPTIONAL_COMMIT_OPTIONS:opc{:
+
+if(!transacciones.isEmpty()){
+transacciones.pop();
+}else{
+errores_semanticos.add("error semantico en linea "+opcright+" en columa"+opcleft+"no hay una transaccion activa");
+}
+
 
 :};
-OPTIONAL_COMMIT_OPTIONS ::= TRANSACTION_OPTIONS OPTIONAL_TRANSACTION_NAME{:
 
+OPTIONAL_COMMIT_OPTIONS ::= TRANSACTION_OPTIONS OPTIONAL_TRANSACTION_NAME:opt {:
+RESULT=new String();
+RESULT= new String(opt.toString());
 :} | ;
 
-BEGIN_TRANSACTION_STATEMENT ::= BEGIN TRANSACTION_OPTIONS OPTIONAL_TRANSACTION_NAME{:
-
+BEGIN_TRANSACTION_STATEMENT ::= BEGIN TRANSACTION_OPTIONS OPTIONAL_TRANSACTION_NAME:otp{:
+ transacciones.push(otp);
 :};
-OPTIONAL_TRANSACTION_NAME ::= objeto_nombre{
 
-} | ARROBA objeto_nombre{:
 
-:} | ;
+OPTIONAL_TRANSACTION_NAME ::= IDENTIFICADOR:i{:
+
+RESULT=new String();
+RESULT= new String(i.toString());
+
+:} | ARROBA IDENTIFICADOR:i{:
+int indice = buscar_variable(i.toString(), ambito);       
+
+ if(indice==-1){
+errores_semanticos.add("error semantico en linea "+iright+" en columa"+ileft+"no existe una variable "+i+" en el ambito actual");
+
+}else{
+
+Variable var= Lista_variables.get(indice);
+
+if(var.getTipo_dato().equals("string")){
+
+RESULT=new String();
+RESULT= new String(var.getValor());
+}else{
+errores_semanticos.add("error semantico en linea "+iright+" en columa"+ileft+"la variable tiene que se de tipo string");
+
+}
+
+
+}
+
+
+:} |{:
+RESULT=new String();
+RESULT= new String(" ");:}
+ ;
 TRANSACTION_OPTIONS ::= TRAN | TRANSACTION;
 
 functions ::= CREATE alterar FUNCTION objeto_nombre PARENTESIS_ABIERTO parametros PARENTESIS_CERRADO RETURNS tipo_retorno with_procedure as BEGIN interno_funcion RETURN E fin_function END{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
@@ -832,7 +908,7 @@ operadores_logicos ::= AND
 			;
 data_tipo ::= STRING:s{:
 RESULT=new String[2]; 
-RESULT[0]=new String(s.toString());
+RESULT[0]=new String(s.toString().substring(1, s.toString().length()));
 RESULT[1]=new String("string");
    
 :}
