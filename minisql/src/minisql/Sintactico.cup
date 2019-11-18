@@ -88,6 +88,7 @@ parser code
      
        while (!s.equals(id)){
         transacciones.pop();
+       s=transacciones.peek();
        }
          transacciones.pop();          
             
@@ -278,7 +279,7 @@ errores_semanticos.add("error semantico en linea "+iright+" en columa"+ileft+"no
 :};
 ROLLBACK_STATEMENT ::= ROLLBACK TRANSACTION_OPTIONS OPTIONAL_TRANSACTION_NAME:opt{:
       
-if(opt.equals("")){
+if(opt.equals(" ")){
 
 if(!transacciones.isEmpty()){
 transacciones.clear();
