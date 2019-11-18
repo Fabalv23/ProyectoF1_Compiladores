@@ -262,13 +262,13 @@ TRANSACTION_OPTIONS ::= TRAN | TRANSACTION;
 functions ::= CREATE alterar FUNCTION objeto_nombre PARENTESIS_ABIERTO parametros PARENTESIS_CERRADO RETURNS tipo_retorno with_procedure as BEGIN interno_funcion RETURN E fin_function END{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
 as ::= AS|empty;
 tipo_retorno ::= tipo_dato | VARIABLES TABLE PARENTESIS_ABIERTO add_column PARENTESIS_CERRADO|TABLE; 
-llamar_funciones ::= objeto_nombre PARENTESIS_ABIERTO enviar_datos PARENTESIS_CERRADO;
+llamar_funciones ::= objeto_nombre:a PARENTESIS_ABIERTO enviar_datos:b PARENTESIS_CERRADO;
 fin_function ::= fin|empty;
 interno_funcion ::= querys|empty;
 
 exec ::= EXECUTE objeto_nombre enviar_datos{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :}|EXEC objeto_nombre enviar_datos{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
-enviar_datos ::= VARIABLES ASIGNAR data_tipo mandar_mas|data_tipo mandar_mas|empty;
-mandar_mas ::= COMA enviar_datos|empty;
+enviar_datos ::= VARIABLES:a ASIGNAR data_tipo:b mandar_mas{:  :}|data_tipo:a mandar_mas {:  :}|empty;
+mandar_mas ::= COMA VARIABLES:a ASIGNAR data_tipo:b mandar_mas{:  :} | COMA data_tipo:a mandar_mas{: Lista_nombre.add(a[1].toString()); :} | empty {:Lista_nombre = new LinkedList<String>();:};
 
 sets ::= SET VARIABLES:v ASIGNAR E:e {:
 
@@ -384,6 +384,9 @@ Lista_aux_concatenar.add(s.toString());
 
 
 declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, ambito)==-1)){
+                
+            
+
                 Variable nuevaVariable = new Variable(); 
                 nuevaVariable.setNombre(a);
                 nuevaVariable.setTipo_dato(b) ; 
@@ -391,7 +394,71 @@ declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, 
                 Lista_variables.add(nuevaVariable);}
         else{
                 errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
-} :};
+} :} | DECLARE VARIABLES:v tipo_dato:b ASIGNAR E:e declares2{: if((buscar_variable(v, ambito)==-1)){
+            Variable va = new Variable(); 
+            if(e[1].equals("float")){
+
+            if(!b.equals("int")||b.equals("string")){
+
+            va.setValor(e[0]);
+            va.setTipo_dato(e[1]);
+            va.setAmbito(ambito);
+            va.setNombre(v);
+            Lista_variables.add(va);
+
+            }else{
+            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
+
+            }
+
+            }else if (e[1].equals("int")){
+
+
+            if(!b.equals("string")){
+
+            float convf=Float.valueOf(e[0]);
+            int conversion=Math.round(convf);
+            String cadena_conv=String.valueOf(conversion);
+            va.setValor(cadena_conv);
+            va.setTipo_dato(e[1]);
+            va.setAmbito(ambito);
+                    va.setNombre(v);
+            Lista_variables.add(va);
+
+            }else{
+            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
+
+            }
+
+
+            }else if (e[1].equals("error")||e[1].equals("null")){
+            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"su expresion es nula o devuelve un error");
+
+
+            } else if(e[1].equals("string")){
+
+
+            if(b.equals("string")){
+
+            va.setValor(e[0]);
+            va.setTipo_dato(e[1]);
+            va.setAmbito(ambito);
+                    va.setNombre(v);
+            Lista_variables.add(va);
+
+            }else{
+            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
+
+            }
+
+
+            } 
+
+            }
+            else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" la variable ya existe");
+}
+                 :};
 declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, ambito)==-1)){
                 Variable nuevaVariable = new Variable(); 
                 nuevaVariable.setNombre(a);
@@ -400,7 +467,70 @@ declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, a
                 Lista_variables.add(nuevaVariable);}
         else{
                 errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
-} :} |empty;
+} :} | COMA VARIABLES:v tipo_dato:b ASIGNAR E:e declares2{: if((buscar_variable(v, ambito)==-1)){
+            Variable va = new Variable(); 
+            if(e[1].equals("float")){
+
+            if(!b.equals("int")||b.equals("string")){
+
+            va.setValor(e[0]);
+            va.setTipo_dato(e[1]);
+            va.setAmbito(ambito);
+            va.setNombre(v);
+            Lista_variables.add(va);
+
+            }else{
+            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
+
+            }
+
+            }else if (e[1].equals("int")){
+
+
+            if(!b.equals("string")){
+
+            float convf=Float.valueOf(e[0]);
+            int conversion=Math.round(convf);
+            String cadena_conv=String.valueOf(conversion);
+            va.setValor(cadena_conv);
+            va.setTipo_dato(e[1]);
+            va.setAmbito(ambito);
+                    va.setNombre(v);
+            Lista_variables.add(va);
+
+            }else{
+            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
+
+            }
+
+
+            }else if (e[1].equals("error")||e[1].equals("null")){
+            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"su expresion es nula o devuelve un error");
+
+
+            } else if(e[1].equals("string")){
+
+
+            if(b.equals("string")){
+
+            va.setValor(e[0]);
+            va.setTipo_dato(e[1]);
+            va.setAmbito(ambito);
+                    va.setNombre(v);
+            Lista_variables.add(va);
+
+            }else{
+            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
+
+            }
+
+
+            } 
+
+            }
+            else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" la variable ya existe");
+}:} | empty;
 
 procedure ::= CREATE alterar proc objeto_nombre parametros with_procedure replication AS empezar querys final{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
 alterar ::= OR ALTER|empty;
@@ -742,7 +872,7 @@ objeto_nombre ::= IDENTIFICADOR objeto_nombre1 {: RESULT = new String[4];
                 }
                 }:};
 
-objeto_nombre1 ::= empty {:Lista_nombre = new LinkedList<String>();:} |PUNTO objeto_nombre:id {: Lista_nombre.add(id.toString()); :}
+objeto_nombre1 ::= empty {:Lista_nombre = new LinkedList<String>();:} |PUNTO IDENTIFICADOR:id objeto_nombre1 {: Lista_nombre.add(id.toString()); :}
                 ;
 
 objeto_nombre2 ::= PUNTO IDENTIFICADOR|empty;
