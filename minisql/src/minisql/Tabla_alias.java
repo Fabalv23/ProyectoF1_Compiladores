@@ -13,9 +13,9 @@ import java.util.List;
  * @author godin
  */
 public class Tabla_alias {
-         private String nombre;
-   private String ambito;
-     private List<Campo> campos;
+        private String nombre;
+        private String ambito;
+        private List<Campo> campos;
         private String alias;
 
         

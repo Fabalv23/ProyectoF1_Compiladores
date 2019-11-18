@@ -214,7 +214,7 @@ non terminal asignaciones,asignaciones1,asignaciones2,opciones_update,err,trunca
 non terminal drop_relational_or_xml_or_spatial_index,drop_relational_or_xml_or_spatial_index2,drop_backward_compatible_index,drop_backward_compatible_index2;
 non terminal database,mas_de_un_objeto;
 non terminal insert,into,campos,campos2,mas_de_un_identificador,valores,valores2,mas_valores2,mas_valores;
-non terminal operacion_logica,opcion_alias,select,option_select,seleccion,columna,columna1,columna2,data_tipo_operacion,funciones,valor,puede,alias_columna,operacion,operacion_matematica,operador,origen,origen1,alias_tabla;
+non terminal operacion_logica,opcion_alias,select,option_select,seleccion,columna,columna1,columna2,data_tipo_operacion,funciones,valor,puede,alias_columna,operacion,operacion_matematica,operador,origen,origen1;
 non terminal joins,tipo_join,tipo_join1,joins1,agrupado,teniendo,teniendo1,teniendo2,orden,tipo_orden,orden2;
 non terminal create,opciones_crear,database_create,extras_database,filespec,mas_file,opciones_index,index_create,column_index,mas_index,view_create,column_view,column_view1;
 non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,add_column,add_column1,add_column2,constraint,constraint1,constraint2,expresion_logica,declara_constraint;
@@ -223,7 +223,7 @@ non terminal declares,declares2,sets,sets2,procedure,alterar,proc,parametros,par
 non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
 non terminal String[] VALORES_NUMEROS,FLOTANTE,NUM,F,T,E,data_tipo, objeto_nombre;
 non terminal String[] OPTIONAL_DEFAULT_VALUE;
-non terminal String VARIABLES, tipo_dato, objeto_nombre1,objeto_nombre2;
+non terminal String VARIABLES, tipo_dato, objeto_nombre1,objeto_nombre2,alias_tabla;
 non terminal from,fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT , OPTIONAL_COMMIT_OPTIONS , BEGIN_TRANSACTION_STATEMENT , OPTIONAL_TRANSACTION_NAME , TRANSACTION_OPTIONS;
 non terminal String concatenar_string,varios_string,varios_string_prima;
 non terminal USE_STATEMENT;
@@ -657,9 +657,14 @@ operacion_matematica ::= E;
 operacion_logica ::= data_tipo_operacion operadores data_tipo_operacion;
 operador ::= SUMA|RESTA|MULTIPLICACION|DIVISION|PORCENTAJE;
 
-origen ::= objeto_nombre alias_tabla origen1;
-origen1 ::= COMA origen| empty;
-alias_tabla ::= AS STRING |AS IDENTIFICADOR|IDENTIFICADOR |empty;
+origen ::= objeto_nombre:a alias_tabla:b origen1 {: if(buscar_tabla(a[0], ambito) != -1){
+                Tabla_alias ca = new Tabla_alias(); 
+                ca.setAlias(b);
+                ca.setNombre(a[0]);}
+                else{
+                errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"no existe una tabla "+a[0]+" en el ambito actual"); } :};
+origen1 ::= COMA origen | empty {Lista_tablas_alias = new LinkedList<Tabla_alias>();};
+alias_tabla ::= AS STRING:a {: RESULT = new String(a.toString()); :} |AS IDENTIFICADOR:a {: RESULT = new String(a.toString()); :}|IDENTIFICADOR:a {: RESULT = new String(a.toString()); :}|empty;
 
 
 
