@@ -44,11 +44,11 @@ public class Comparacion {
     }
 
     public Campo_alias getCampo() {
-        return Campo_alias;
+        return Campo;
     }
 
     public void setCampo(Campo_alias Campo) {
-        this.Campo_alias = Campo;
+        this.Campo = Campo;
     }
     
     
