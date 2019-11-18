@@ -23,7 +23,7 @@ public class Tabla {
         int index=-1;
         int i=0;
         for (Campo var : campos ) {            
-            if(var.getNombre()==id ){
+            if(var.getNombre().equals(id) ){
             index=i;
             }
             i++;
