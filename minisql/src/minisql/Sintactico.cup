@@ -733,13 +733,13 @@ operacion_matematica ::= E;
 operacion_logica ::= data_tipo_operacion operadores data_tipo_operacion;
 operador ::= SUMA|RESTA|MULTIPLICACION|DIVISION|PORCENTAJE;
 
-origen ::= objeto_nombre:a alias_tabla:b origen1 {: if(buscar_tabla(a[0], ambito) != -1){
+origen ::= objeto_nombre:a alias_tabla:b origen1 {: if(buscar_Tabla(a[0], ambito) != -1){
                 Tabla_alias ca = new Tabla_alias(); 
                 ca.setAlias(b);
                 ca.setNombre(a[0]);}
                 else{
                 errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"no existe una tabla "+a[0]+" en el ambito actual"); } :};
-origen1 ::= COMA origen | empty {Lista_tablas_alias = new LinkedList<Tabla_alias>();};
+origen1 ::= COMA origen | empty {: Lista_tablas_alias = new LinkedList<Tabla_alias>(); :};
 alias_tabla ::= AS STRING:a {: RESULT = new String(a.toString()); :} |AS IDENTIFICADOR:a {: RESULT = new String(a.toString()); :}|IDENTIFICADOR:a {: RESULT = new String(a.toString()); :}|empty;
 
 

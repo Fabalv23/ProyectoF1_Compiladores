@@ -39,10 +39,6 @@ public class Tabla_alias {
     public void setAlias(String alias) {
         this.alias = alias;
     }
-    
-    public Tabla_alias(List<Campo> campos) {
-        this.campos = new ArrayList<>();
-    }
 
     public String getNombre() {
         return nombre;
