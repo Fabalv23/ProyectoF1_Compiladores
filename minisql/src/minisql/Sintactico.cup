@@ -903,7 +903,7 @@ operadores_logicos ::= AND
 			;
 data_tipo ::= STRING:s{:
 RESULT=new String[2]; 
-RESULT[0]=new String(s.toString().substring(1, s.toString().length()));
+RESULT[0]=new String(s.toString().substring(1, s.toString().length()-1));
 RESULT[1]=new String("string");
    
 :}
