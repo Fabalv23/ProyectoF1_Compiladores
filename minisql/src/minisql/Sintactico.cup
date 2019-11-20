@@ -737,7 +737,8 @@ operador ::= SUMA|RESTA|MULTIPLICACION|DIVISION|PORCENTAJE;
 origen ::= objeto_nombre:a alias_tabla:b origen1 {: if(buscar_Tabla(a[0], ambito) != -1){
                 Tabla_alias ca = new Tabla_alias(); 
                 ca.setAlias(b);
-                ca.setNombre(a[0]);}
+                ca.setNombre(a[0]);
+                Lista_tablas_alias.add(ca);}
                 else{
                 errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"no existe una tabla "+a[0]+" en el ambito actual"); } :};
 origen1 ::= COMA origen | empty {: Lista_tablas_alias = new LinkedList<Tabla_alias>(); :};
@@ -750,25 +751,50 @@ joins ::= tipo_join JOIN objeto_nombre:a alias_tabla:b ON objeto_nombre:c ASIGNA
                     Tabla_alias ca = new Tabla_alias(); 
                     ca.setAlias(b);
                     ca.setNombre(a[0]);
-                int indice1 = buscar_Tabla_alias(c[0], ambito);
-                int indice2 = buscar_Tabla_alias(d[0], ambito);
+                    Lista_tablas_alias.add(ca);
+                int indice1 = buscar_Tabla_alias(c[1], ambito);
+                int indice2 = buscar_Tabla_alias(d[1], ambito);
                 if(indice1 != -1)
                 {
                     if(indice2 != -1)
                     {
                         
-                        if(c[0].equals(b) || d[0].equals(b))
+                        if(c[1].equals(b) || d[1].equals(b))
                         {
                             Tabla tabla1= Lista_tablas.get(indice1);
                             Tabla tabla2= Lista_tablas.get(indice2);
+                            int indiceCampo1 = tabla1.buscar_campo(c[0], ambito);
+                            int indiceCampo2 = tabla2.buscar_campo(d[0], ambito);
                             
-                            if(tabla1.buscar_campo(c[1], ambito) != -1){
-                                if(tabla2.buscar_campo(c[1], ambito) != -1){}
+                            if(indiceCampo1 != -1){
+                                if(indiceCampo2 != -1){
+                                    if(tabla1.getCampos().get(indiceCampo1).getData_tipo() == tabla2.getCampos().get(indiceCampo2).getData_tipo())
+                                    {
+                                         
+                                    }
+                                    else if((tabla1.getCampos().get(indiceCampo1).getData_tipo() == "int" && tabla2.getCampos().get(indiceCampo2).getData_tipo() == "float") || ((tabla2.getCampos().get(indiceCampo2).getData_tipo() == "int" && tabla1.getCampos().get(indiceCampo1).getData_tipo() == "float")))
+                                    {
+                                    }
+                                    else{
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"no concuerdan los tipos de campo "+c[0]+" y "+d[0]); }
+                                 }
+                                 else{
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el campo "+d[0]+" no existe en la tabla "+tabla2.getNombre()); }
                             }
+                            else{
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el campo "+c[0]+" no existe en la tabla "+tabla1.getNombre()); }
                         }
+                        else{
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el alias no se utiliza en la relación. "); }
                     }
+                    else{
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el no existe el alias "+ d[1]); }
                 }
+                else{
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el no existe el alias "+ c[1]); }
                 }
+                else{
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+" la tabla  "+ a[0] + "no existe."); }
 :} |empty;
 tipo_join ::= INNER|LEFT tipo_join1 | RIGHT tipo_join1 | FULL tipo_join1|empty;
 tipo_join1 ::= OUTER|empty;
