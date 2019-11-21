@@ -800,15 +800,85 @@ joins ::= tipo_join JOIN objeto_nombre:a alias_tabla:b ON objeto_nombre:c ASIGNA
 tipo_join ::= INNER|LEFT tipo_join1 | RIGHT tipo_join1 | FULL tipo_join1|empty;
 tipo_join1 ::= OUTER|empty;
 
-agrupado ::= GROUP BY objeto_nombre mas_de_un_objeto|empty;
+agrupado ::= GROUP BY objeto_nombre:id mas_de_un_objeto
+{:
+
+    String alias = id[1];
+    String campo = id[0];
+    Campo_alias c2 = new Campo_alias();
+        c2.setAlias(alias);
+        c2.setCampo(campo);
+        
+    Lista_aux_group_by.add(c2);
+:}
+|empty;
 
 teniendo ::= HAVING teniendo1|empty;
-teniendo1 ::= funciones operadores data_tipo teniendo2|objeto_nombre operadores data_tipo teniendo2;
+teniendo1 ::= funciones:f operadores:o data_tipo:dt teniendo2
+{:
+
+//este pedazo de codigo falta nada mas
+Lista_aux_having.add();
+
+:}
+|objeto_nombre:id operadores:op data_tipo:a teniendo2{:
+
+
+    String alias = id[1];
+    String campo = id[0];
+    Campo_alias c2 = new Campo_alias();
+        c2.setAlias(alias);
+        c2.setCampo(campo);
+        
+    
+
+
+String valor_exp = a[0];
+String tipo_dato = a[1];
+
+
+
+            Comparacion c1 = new Comparacion();
+            
+            c1.setData(tipo_dato);
+            c1.setValor(valor_exp);
+           
+      c1.setComparador(op);
+            c1.setCampo(c2);
+            
+    Lista_aux_where.add(c1);
+:};
+
+
 teniendo2 ::= operadores_logicos teniendo1|empty;
 
-orden ::= ORDER BY objeto_nombre tipo_orden orden2|ORDER BY funciones tipo_orden orden2|empty;
+orden ::= ORDER BY objeto_nombre:id tipo_orden orden2{:
+
+    String alias = id[1];
+    String campo = id[0];
+
+    Campo_alias c2 = new Campo_alias();
+        c2.setAlias(alias);
+        c2.setCampo(campo);
+        
+        Lista_aux_order_by.add(c2);
+
+:}|ORDER BY funciones:f tipo_orden orden2{:
+
+
+:}|empty;
 tipo_orden ::= ASC|DESC|empty;
-orden2 ::= COMA objeto_nombre tipo_orden orden|empty;
+orden2 ::= COMA objeto_nombre:id tipo_orden orden{:
+    String alias = id[1];
+    String campo = id[0];
+
+    Campo_alias c2 = new Campo_alias();
+        c2.setAlias(alias);
+        c2.setCampo(campo);
+        
+        Lista_aux_order_by.add(c2);
+
+:}|empty;
 
 
 insert ::= INSERT into objeto_nombre campos VALUES valores{: System.out.println("Sentencia analizada correctamente. Sin errores.");cont++; :}|INSERT into objeto_nombre campos DEFAULT VALUES{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++;:};        
@@ -843,7 +913,17 @@ drop_backward_compatible_index2 ::= mas_de_un_objeto| empty;
 	
 database ::= DATABASE if_op objeto_nombre mas_de_un_objeto;
 
-mas_de_un_objeto ::= COMA objeto_nombre mas_de_un_objeto| empty;
+mas_de_un_objeto ::= COMA objeto_nombre:id mas_de_un_objeto{:
+
+    String alias = id[1];
+    String campo = id[0];
+    Campo_alias c2 = new Campo_alias();
+        c2.setAlias(alias);
+        c2.setCampo(campo);
+        
+    Lista_aux_group_by.add(c2);
+
+:}| empty;
 
 truncate ::= TRUNCATE TABLE objeto_nombre{: System.out.println("Sentencia analizada correctamente. Sin errores.");cont++; :};   
 
