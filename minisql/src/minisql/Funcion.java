@@ -16,6 +16,15 @@ public class Funcion {
     private String ambito;
     private String tipo_dato;
     private LinkedList<Variable> parametros = new LinkedList<Variable>();
+    private LinkedList<Set> sets = new LinkedList<Set>();
+
+    public LinkedList<Set> getSets() {
+        return sets;
+    }
+
+    public void setSets(LinkedList<Set> sets) {
+        this.sets = sets;
+    }
 
     public String getNombre() {
         return nombre;

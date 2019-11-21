@@ -24,15 +24,30 @@ parser code
     public LinkedList<String> Lista_aux_concatenar = new LinkedList<String>();
    public LinkedList<Campo_alias> Lista_select = new LinkedList<Campo_alias>();
    public LinkedList<String> errores_semanticos = new LinkedList<String>();
-
+public boolean esta_en_una_funcio=false;
    public String ambito="";
-
-
+   public String ambito_aux="";
+   public String ambito_aux_1="";
     public LinkedList<Funcion> Lista_funciones = new LinkedList<Funcion>();
     Stack<String> transacciones=new Stack<>();
     public LinkedList<Variable> Lista_variables  = new LinkedList<Variable>();
+    public LinkedList<Set> Lista_aux_sets  = new LinkedList<Set>();
+
     public LinkedList<String> Lista_nombre = new LinkedList<String>();
 
+
+public void lista_parametros(String parametros)
+    { 
+    String[] parametros_arra = parametros.split(",");
+        for (int i = 0; i < parametros_arra.length; i++) {
+         String[] props=  parametros_arra[i].split(" ");
+            Variable v = new Variable();
+          v.setNombre(props[0].substring(1));
+          v.setAmbito("ambito pendiente");
+          v.setTipo_dato(props[1]);
+          Lista_variables.add(v);
+        }
+    }
 
  public int buscar_variable(String id,String ambito)
     {       
@@ -50,10 +65,16 @@ parser code
     public String concatenar()
     {  String retorno="";
         int i=0;
-        for (String var : Lista_aux_concatenar ) {            
-            retorno+=var;
+        
+
+for (String var : Lista_aux_concatenar ) {            
+            retorno+=var.substring(1, var.length()-1);
         }
-        return retorno;
+        return retorno.substring(0,retorno.length()-1);
+
+
+
+
     }
     
     public int buscar_funcion(String id,String ambito)
@@ -142,8 +163,10 @@ errores_semanticos.add("error semantico en linea "+fright+" en columa"+fleft+"el
 
 if(f[1].equals("float")||t[1].equals("float")){
 
+
+
 float valor=0;
- if(operacion=="*"){
+if(operacion=="*"){
  valor=Float.valueOf(t[0])*Float.valueOf(f[0]);
 
  }else    if(operacion=="+"){
@@ -156,15 +179,19 @@ float valor=0;
   if(operacion=="/"){
     valor=Float.valueOf(t[0])/Float.valueOf(f[0]); 
  }
-
-
 RESULT[0]=new String(String.valueOf(valor));
 RESULT[1]=new String("float");
+ 
+ 
+
+
+
 
 }else{
-    
+
+
 float valor=0;
- if(operacion=="*"){
+if(operacion=="*"){
  valor=Float.valueOf(t[0])*Float.valueOf(f[0]);
 
  }else    if(operacion=="+"){
@@ -177,12 +204,9 @@ float valor=0;
   if(operacion=="/"){
     valor=Float.valueOf(t[0])/Float.valueOf(f[0]); 
  }
-
-
-
-
 RESULT[0]=new String(String.valueOf(valor));
 RESULT[1]=new String("int");
+ 
 
 }
 
@@ -233,13 +257,13 @@ non terminal joins,tipo_join,tipo_join1,joins1,agrupado,teniendo,teniendo1,tenie
 non terminal create,opciones_crear,database_create,extras_database,filespec,mas_file,opciones_index,index_create,column_index,mas_index,view_create,column_view,column_view1;
 non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,add_column,add_column1,add_column2,constraint,constraint1,constraint2,expresion_logica,declara_constraint;
 non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,tipo_alter_base,index_alter,nombre_index,accion_index,table_alter,accion_alter,tipo_add,drop_column,user_alter,set_item,set_item1;
-non terminal declares,declares2,sets,sets2,procedure,alterar,proc,parametros,parametros1,parametros2,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
-non terminal exec,enviar_datos,mandar_mas,functions,as,interno_funcion,tipo_retorno,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
+non terminal declares,declares2,sets,sets2,procedure,alterar,proc,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
+non terminal querys_sin_set,sentencia_sin_set,exec,enviar_datos,mandar_mas,functions,as,interno_funcion,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
 non terminal String[] VALORES_NUMEROS,FLOTANTE,NUM,F,T,E,data_tipo, objeto_nombre;
 non terminal String[] OPTIONAL_DEFAULT_VALUE;
-non terminal String VARIABLES, tipo_dato, objeto_nombre1,objeto_nombre2,alias_tabla,OPTIONAL_TRANSACTION_NAME,OPTIONAL_COMMIT_OPTIONS ;
+non terminal String tipo_retorno,VARIABLES, tipo_dato, objeto_nombre1,objeto_nombre2,alias_tabla,OPTIONAL_TRANSACTION_NAME,OPTIONAL_COMMIT_OPTIONS ;
 non terminal from,fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT ,  BEGIN_TRANSACTION_STATEMENT ,  TRANSACTION_OPTIONS;
-non terminal String concatenar_string,varios_string,varios_string_prima;
+non terminal String concatenar_string,varios_string,varios_string_prima,parametros,parametros1,parametros2;
 non terminal USE_STATEMENT;
 
 
@@ -255,8 +279,10 @@ empty ::=;
 inicio ::= querys ;
 querys ::= querys sentencia | sentencia;
 
+
 sentencia ::= eliminar fin|update fin|truncate fin|drop fin|insert fin|select fin|create fin|alter fin
              |procedure fin|sets fin|declares fin|exec fin|functions fin|BEGIN_TRANSACTION_STATEMENT fin | COMMIT_STATEMENT fin | ROLLBACK_STATEMENT fin | SAVE_STATEMENT fin | USE_STATEMENT fin |cursor fin|error;
+
 
 
 USE_STATEMENT ::= USE IDENTIFICADOR:a {: ambito = a.toString(); :};
@@ -353,9 +379,82 @@ RESULT= new String(" ");:}
  ;
 TRANSACTION_OPTIONS ::= TRAN | TRANSACTION;
 
-functions ::= CREATE alterar FUNCTION objeto_nombre PARENTESIS_ABIERTO parametros PARENTESIS_CERRADO RETURNS tipo_retorno with_procedure as BEGIN interno_funcion RETURN E fin_function END{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
+functions ::= CREATE alterar FUNCTION objeto_nombre:o PARENTESIS_ABIERTO parametros PARENTESIS_CERRADO RETURNS tipo_retorno:tipo with_procedure as BEGIN interno_funcion RETURN E:dat fin_function END{: 
+
+System.out.println("Sentencia analizada correctamente. Sin errores.");
+ cont++; 
+            Funcion f = new Funcion();
+   LinkedList<Variable> pams = new LinkedList<Variable>();
+String nombre=" ";
+
+if(o.length==2){
+nombre=o[1];
+}else if(o.length==1){
+nombre=o[0];
+}else {
+errores_semanticos.add("error semantico en linea "+oright+" en columa"+oleft+"el nombre de la funcion solo puede de tipo ESQUEMA.NOMBRE");
+
+}
+
+        int i=0;
+for (Variable var : Lista_variables ) {            
+            if(var.getAmbito().equals("ambito pendiente")){
+             Variable v=new Variable();
+                               v.setNombre(var.getNombre());
+                                v.setTipo_dato(var.getTipo_dato());
+                                v.setValor(var.getValor());
+                                v.setAmbito(nombre);
+                                pams.add(v);
+                                Lista_variables.set(i,v);
+            }
+            i++;
+        }
+       
+
+if(!dat[1].equals(tipo)){
+
+errores_semanticos.add("error semantico en linea "+datright+" en columa"+datleft+" se esperaba que retornara un: "+tipo);
+
+}else{
+
+
+if(!nombre.equals(" ")){
+if(buscar_funcion(nombre,ambito)==-1){
+errores_semanticos.add("error semantico en linea "+oright+" en columa"+oleft+"ya existe una funcion con el nombre "+nombre+" en el ambito actual");
+
+}else{
+
+ 
+ambito=ambito_aux;
+ambito_aux="";
+
+         f.setNombre(nombre);
+         f.setParametros(pams);
+         f.setTipo_dato(tipo);
+        f.setAmbito(ambito);
+        f.setSets(Lista_aux_sets);
+Lista_aux_sets.clear();
+esta_en_una_funcio=false;
+}
+}
+}
+
+:};
 as ::= AS|empty;
-tipo_retorno ::= tipo_dato | VARIABLES TABLE PARENTESIS_ABIERTO add_column PARENTESIS_CERRADO|TABLE; 
+tipo_retorno ::= tipo_dato:t {:RESULT = new String();
+RESULT= new String();
+RESULT=t.toString();
+
+
+
+ambito_aux=ambito;
+
+ambito="ambito pendiente";
+
+esta_en_una_funcio=true;
+
+
+:} | VARIABLES TABLE PARENTESIS_ABIERTO add_column PARENTESIS_CERRADO|TABLE; 
 llamar_funciones ::= objeto_nombre:a PARENTESIS_ABIERTO enviar_datos:b PARENTESIS_CERRADO;
 fin_function ::= fin|empty;
 interno_funcion ::= querys|empty;
@@ -368,17 +467,97 @@ sets ::= SET VARIABLES:v ASIGNAR E:e {:
 
 Variable va=new Variable();
 int indice=buscar_variable(v.toString(),ambito);
-if(indice!=-1){
+if(esta_en_una_funcio){
+   if(indice!=-1){
 Variable vcomp=Lista_variables.get(indice);
 if(e[1].equals("float")){
 
 if(!vcomp.getTipo_dato().equals("int")||vcomp.getTipo_dato().equals("string")){
+va.setValor(e[0]);
+va.setTipo_dato(e[1]);
+va.setAmbito("ambito pendiente");
+va.setNombre(v);
+Lista_variables.set(indice, va);
+
+}else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
+
+}
+
+}else if (e[1].equals("int")){
+
+
+if(!vcomp.getTipo_dato().equals("string")){
+
+
+float convf=Float.valueOf(e[0]);
+int conversion=Math.round(convf);
+String cadena_conv=String.valueOf(conversion);
+va.setValor(cadena_conv);
+va.setTipo_dato(e[1]);
+va.setAmbito("ambito pendiente");
+va.setNombre(v);
+Lista_variables.set(indice, va);
+
+
+
+}else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
+
+}
+
+
+}else if (e[1].equals("error")||e[1].equals("null")){
+  errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"su expresion es nula o devuelve un error");
+
+
+} else if(e[1].equals("string")){
+
+
+if(vcomp.getTipo_dato().equals("string")){
+
+
+va.setValor(e[0]);
+va.setTipo_dato(e[1]);
+va.setAmbito("ambito pendiente");
+va.setNombre(v);
+Lista_variables.set(indice, va);
+
+
+
+}else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
+
+}
+
+
+} 
+
+            
+}else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" la variable no existe");
+}
+
+            
+
+
+}else{
+    
+    if(indice!=-1){
+Variable vcomp=Lista_variables.get(indice);
+if(e[1].equals("float")){
+
+if(!vcomp.getTipo_dato().equals("int")||vcomp.getTipo_dato().equals("string")){
+
 
 va.setValor(e[0]);
 va.setTipo_dato(e[1]);
 va.setAmbito(ambito);
 va.setNombre(v);
 Lista_variables.set(indice, va);
+
+
+
 
 }else{
 errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
@@ -396,8 +575,10 @@ String cadena_conv=String.valueOf(conversion);
 va.setValor(cadena_conv);
 va.setTipo_dato(e[1]);
 va.setAmbito(ambito);
-            va.setNombre(v);
+va.setNombre(v);
 Lista_variables.set(indice, va);
+
+
 
 }else{
 errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
@@ -414,11 +595,15 @@ errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el
 
 if(vcomp.getTipo_dato().equals("string")){
 
+
+
 va.setValor(e[0]);
 va.setTipo_dato(e[1]);
 va.setAmbito(ambito);
-            va.setNombre(v);
+va.setNombre(v);
 Lista_variables.set(indice, va);
+
+
 
 }else{
 errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
@@ -432,26 +617,33 @@ errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el
 }else{
 errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" la variable no existe");
 }
+}
 
 :}|SET VARIABLES:v ASIGNAR concatenar_string
 {:
-
-
 Variable va=new Variable();
 int indice=buscar_variable(v.toString(),ambito);
-
+if(esta_en_una_funcio){
 if(indice!=-1){
 
 Variable vcomp=Lista_variables.get(indice);
 if(vcomp.getTipo_dato().equals("string")){
 
+
+
 String cadena_conv=concatenar();
 Lista_aux_concatenar.clear();
+
+
 va.setValor(cadena_conv);
 va.setTipo_dato("string");
-va.setAmbito(ambito);
+va.setAmbito("ambito pendiente");
 va.setNombre(v);
 Lista_variables.set(indice, va);
+
+
+
+
 
 }else{
 errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un string dentro de un "+vcomp.getTipo_dato());
@@ -461,6 +653,42 @@ errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el
 }else{
 errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" la variable no existe");
 
+}
+
+
+
+}else{
+if(indice!=-1){
+
+Variable vcomp=Lista_variables.get(indice);
+if(vcomp.getTipo_dato().equals("string")){
+
+
+
+String cadena_conv=concatenar();
+Lista_aux_concatenar.clear();
+
+
+
+va.setValor(cadena_conv);
+va.setTipo_dato("string");
+va.setAmbito(ambito);
+va.setNombre(v);
+Lista_variables.set(indice, va);
+
+
+
+
+
+}else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un string dentro de un "+vcomp.getTipo_dato());
+
+}
+
+}else{
+errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" la variable no existe");
+
+}
 }
 
 :};
@@ -479,12 +707,16 @@ Lista_aux_concatenar.add(s.toString());
 
 declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, ambito)==-1)){
                 
-            
-
+        
                 Variable nuevaVariable = new Variable(); 
                 nuevaVariable.setNombre(a);
                 nuevaVariable.setTipo_dato(b) ; 
-                nuevaVariable.setAmbito(ambito);
+                  if(!esta_en_una_funcio){
+  nuevaVariable.setAmbito(ambito);
+    }else{
+nuevaVariable.setAmbito("ambito pendiente");
+}
+
                 Lista_variables.add(nuevaVariable);}
         else{
                 errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
@@ -496,7 +728,11 @@ declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, 
 
             va.setValor(e[0]);
             va.setTipo_dato(e[1]);
-            va.setAmbito(ambito);
+                   if(!esta_en_una_funcio){
+  va.setAmbito(ambito);
+    }else{
+va.setAmbito("ambito pendiente");
+}
             va.setNombre(v);
             Lista_variables.add(va);
 
@@ -515,7 +751,11 @@ declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, 
             String cadena_conv=String.valueOf(conversion);
             va.setValor(cadena_conv);
             va.setTipo_dato(e[1]);
-            va.setAmbito(ambito);
+                   if(!esta_en_una_funcio){
+  va.setAmbito(ambito);
+    }else{
+va.setAmbito("ambito pendiente");
+}
                     va.setNombre(v);
             Lista_variables.add(va);
 
@@ -536,7 +776,11 @@ declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, 
 
             va.setValor(e[0]);
             va.setTipo_dato(e[1]);
-            va.setAmbito(ambito);
+                   if(!esta_en_una_funcio){
+  va.setAmbito(ambito);
+    }else{
+va.setAmbito("ambito pendiente");
+}
                     va.setNombre(v);
             Lista_variables.add(va);
 
@@ -557,7 +801,11 @@ declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, a
                 Variable nuevaVariable = new Variable(); 
                 nuevaVariable.setNombre(a);
                 nuevaVariable.setTipo_dato(b) ; 
-                nuevaVariable.setAmbito(ambito);
+                   if(!esta_en_una_funcio){
+  nuevaVariable.setAmbito(ambito);
+    }else{
+nuevaVariable.setAmbito("ambito pendiente");
+}
                 Lista_variables.add(nuevaVariable);}
         else{
                 errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
@@ -569,7 +817,11 @@ declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, a
 
             va.setValor(e[0]);
             va.setTipo_dato(e[1]);
-            va.setAmbito(ambito);
+              if(!esta_en_una_funcio){
+  va.setAmbito(ambito);
+    }else{
+va.setAmbito("ambito pendiente");
+}
             va.setNombre(v);
             Lista_variables.add(va);
 
@@ -629,9 +881,23 @@ errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el
 procedure ::= CREATE alterar proc objeto_nombre parametros with_procedure replication AS empezar querys final{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
 alterar ::= OR ALTER|empty;
 proc ::= PROC|PROCEDURE;
-parametros ::= parametros1|empty;
-parametros1 ::= ARROBA IDENTIFICADOR tipo_dato tipo_parametro parametros2;
-parametros2 ::= COMA parametros1|empty;
+parametros ::= parametros1:p {:
+lista_parametros(p);
+:}|empty;
+parametros1 ::= ARROBA IDENTIFICADOR:id tipo_dato:t tipo_parametro parametros2:p{:
+RESULT = new String();
+if(p==null){
+RESULT= ("@"+id+" "+t);
+
+}else{
+RESULT= ("@"+id+" "+t+","+p);
+
+}
+:};
+parametros2 ::= COMA parametros1:p{:
+RESULT = new String();
+RESULT= (p.toString());
+:}|empty;
 tipo_parametro ::= OUT|OUTPUT|READONLY|empty;
 with_procedure ::= WITH procedure_option|empty;
 procedure_option ::=   ENCRYPTION | RECOMPILE | EXECUTE AS IDENTIFICADOR;
@@ -697,7 +963,7 @@ extra_create_table ::= ON objeto_nombre|ON PRIMARY|empty;
 add_column ::= add_column1 add_column2;
 add_column1 ::= objeto_nombre tipo_dato constraint|aux2;
 add_column2 ::= COMA add_column | empty;
-tipo_dato ::= CHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO| VARCHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO {: RESULT = new String ("string");:} |NVARCHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO|TEXT
+tipo_dato ::= CHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO{: RESULT = new String ("string");:}| VARCHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO {: RESULT = new String ("string");:} |NVARCHAR PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO{: RESULT = new String ("string");:}|TEXT
               |IMAGE|VARBINARY|VARBINARY PARENTESIS_ABIERTO MAX PARENTESIS_CERRADO| DATE | DATETIME | DATETIME2 | SMALLDATETIME | TIME | DATETIMEOFFSET
               | TIMESTAMP| FLOAT PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO {:RESULT = new String ("float");:}| FLOAT{:RESULT = new String ("float");:} | INT PARENTESIS_ABIERTO VALORES_NUMEROS PARENTESIS_CERRADO {:RESULT = new String ("int");:}|MONEY|REAL|BIT|INT{:RESULT = new String ("int");:}|DECIMAL PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO {:RESULT = new String ("float");:}|DEC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO|NUMERIC PARENTESIS_ABIERTO VALORES_NUMEROS COMA VALORES_NUMEROS PARENTESIS_CERRADO;
 
@@ -930,15 +1196,61 @@ RESULT[1]=new String("null");
 
 RESULT=new String[2]; 
 int i1=buscar_variable(id.toString(),ambito);
+
+if(esta_en_una_funcio){
+
 if(i1==-1){
+
 
 RESULT[0]=new String("error");
 RESULT[1]=new String("error");
 errores_semanticos.add("error semantico en linea "+idright+" en columa"+idleft+"no existe una variable "+id+" en el ambito actual");
-}else {
+}
+else {
+
+String val= new String(Lista_variables.get(buscar_variable(id.toString(),"ambito pendiente")).getValor());
+if(val==null){
+
+errores_semanticos.add("error semantico en linea "+idright+" en columa"+idleft+"la variable "+id+" no se ha inicializado");
+RESULT[0]=new String("null");
+RESULT[1]=new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).getTipo_dato());
+
+
+}else{
 RESULT[0]=new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).getValor());
 RESULT[1]=new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).getTipo_dato());
 }
+
+}
+
+
+
+}else{
+if(i1==-1){
+
+
+RESULT[0]=new String("error");
+RESULT[1]=new String("error");
+errores_semanticos.add("error semantico en linea "+idright+" en columa"+idleft+"no existe una variable "+id+" en el ambito actual");
+}
+else {
+
+String val= new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).getValor());
+if(val==null){
+
+errores_semanticos.add("error semantico en linea "+idright+" en columa"+idleft+"la variable "+id+" no se ha inicializado");
+RESULT[0]=new String("null");
+RESULT[1]=new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).getTipo_dato());
+
+
+}else{
+RESULT[0]=new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).getValor());
+RESULT[1]=new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).getTipo_dato());
+}
+
+}
+}
+
 
 
 :} 
