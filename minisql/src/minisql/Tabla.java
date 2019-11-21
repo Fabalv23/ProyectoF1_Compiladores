@@ -6,6 +6,7 @@
 package minisql;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -14,10 +15,22 @@ import java.util.List;
  */
 public class Tabla {
      private String nombre;
-   private String ambito;
-     private List<Campo> campos;
+     private String schema;
+     private String ambito;
+     public LinkedList<Campo> campos;
      
+     public Tabla(){
+         campos = new LinkedList<Campo>();
+     }
      
+     public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+    
      public int buscar_campo(String id,String ambito)
     {       
         int index=-1;
@@ -31,10 +44,6 @@ public class Tabla {
         return index;
     }
      
-    public Tabla(List<Campo> campos) {
-        this.campos = new ArrayList<>();
-    }
-
     public String getNombre() {
         return nombre;
     }
@@ -49,14 +58,6 @@ public class Tabla {
 
     public void setAmbito(String ambito) {
         this.ambito = ambito;
-    }
-
-    public List<Campo> getCampos() {
-        return campos;
-    }
-
-    public void setCampos(List<Campo> campos) {
-        this.campos = campos;
     }
     
              

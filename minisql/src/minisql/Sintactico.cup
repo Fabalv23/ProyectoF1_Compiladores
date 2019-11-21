@@ -24,6 +24,9 @@ parser code
     public LinkedList<String> Lista_aux_concatenar = new LinkedList<String>();
    public LinkedList<Campo_alias> Lista_select = new LinkedList<Campo_alias>();
    public LinkedList<String> errores_semanticos = new LinkedList<String>();
+    public LinkedList<String> Lista_bases = new LinkedList<String>();
+    Tabla t;
+    Campo c;
 
    public String ambito="";
 
@@ -34,6 +37,154 @@ parser code
     public LinkedList<String> Lista_nombre = new LinkedList<String>();
 
     public LinkedList<Comparacion> Lista_aux_where  = new LinkedList<Comparacion>();
+
+    public void IniciarParse()
+    {
+        Lista_bases.add("master");
+
+        t = new Tabla(); t.setNombre("Carrera"); t.setSchema("NASCAR"); t.setAmbito("master"); 
+        c = new Campo(); c.setNombre("NombreGP"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Año"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("FechaHoraInicio"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("NumVueltas"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("NombreCircuito"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        Lista_bases.add("Motociclismo");
+        t = new Tabla(); t.setNombre("Circuito"); t.setSchema("NASCAR"); t.setAmbito("VARCHAR"); 
+        c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Pais"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Tipo"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Longitud"); c.setData_tipo("float"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Diseñador"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("CONSULTAS_SQL"); t.setSchema("dbo"); t.setAmbito("FLOAT"); 
+        c = new Campo(); c.setNombre("ID_CONSULTA"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CONSULTA"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Escuderia"); t.setSchema("NASCAR"); t.setAmbito("INT"); 
+        c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Manager"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("FabricanteMotor"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Sede"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Piloto"); t.setSchema("NASCAR"); t.setAmbito("VARCHAR"); 
+        c = new Campo(); c.setNombre("Codigo"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Nacionalidad"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("FechaNacimiento"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CarreraDebut"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("NombreEscuderia"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Resultado"); t.setSchema("NASCAR"); t.setAmbito("VARCHAR"); 
+        c = new Campo(); c.setNombre("NombreGP"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Año"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodPiloto"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Puesto"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("DistanciaGanador"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+
+        t = new Tabla(); t.setNombre("CalendarioVacunacion"); t.setSchema("dbo"); t.setAmbito("master"); 
+        c = new Campo(); c.setNombre("Fecha"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Enfermedad"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodigoPaciente"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        Lista_bases.add("Veterinaria");
+        t = new Tabla(); t.setNombre("Cliente"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("DPI"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("NIT"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Numero"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Direccion"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Correo"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Clinica"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("Codigo"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Direccion"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Consulta"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("Sala"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("PrecioFijo"); c.setData_tipo("float"); t.campos.add(c);
+        c = new Campo(); c.setNombre("NumeroOperaciones"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("NumeroVacunas"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("NumeroPruebasEspecificas"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("PrecioOperaciones"); c.setData_tipo("float"); t.campos.add(c);
+        c = new Campo(); c.setNombre("PrecioVacunas"); c.setData_tipo("float"); t.campos.add(c);
+        c = new Campo(); c.setNombre("PrecioPruebasEspecificas"); c.setData_tipo("float"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodigoPaciente"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("NombreVeterinario"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("FECHA"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Diagnostico"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("Resultado"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("PruebaEspecifica"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Lugar"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("FechaPrueba"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodigoPaciente"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Factura"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("Numero"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Detalle"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Importe"); c.setData_tipo("float"); t.campos.add(c);
+        c = new Campo(); c.setNombre("TOTAL"); c.setData_tipo("float"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodigoClinica"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("NITCliente"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("HistorialMedico"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("MotivoVisita"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("FechaVisita"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodigoPaciente"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("ResultadoDiagnostico"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Laboratorio"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("NIT"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Direccion"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Medicina"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("Codigo"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("PrecioUnitario"); c.setData_tipo("int"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("OperacionQuirurgica"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("CodigoClinica"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Quirofano"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("NombreVeterinario"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Fecha"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Duracion"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Obervaciones"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Paciente"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("Codigo"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Especie"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Raza"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("ColorPelo"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("FechaNacimiento"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("PesoMedio"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodigoClinica"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("NITCliente"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Producto"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("Codigo"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("PrecioUnitario"); c.setData_tipo("int"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Proveedor"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("NIT"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Direccion"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("SuministraFarmacia"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("NITLaboratorio"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodigoMedicina"); c.setData_tipo("int"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("SuministraTienda"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("NITProveedor"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodigoProducto"); c.setData_tipo("int"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Tratamiento"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("Medicamento"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Dosificacion"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Duracion"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Resultado"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodigoPaciente"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("VentaFarmacia"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("NITCliente"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodigoMedicina"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Fecha"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodigoClinica"); c.setData_tipo("int"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("VentaTienda"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("NITCliente"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodigoProducto"); c.setData_tipo("int"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Fecha"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("CodigoClinica"); c.setData_tipo("int"); t.campos.add(c); Lista_tablas.add(t);
+        t = new Tabla(); t.setNombre("Veterinario"); t.setSchema("dbo"); t.setAmbito("Veterinaria"); 
+        c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
+        c = new Campo(); c.setNombre("SalarioBase"); c.setData_tipo("float"); t.campos.add(c);
+        c = new Campo(); c.setNombre("Salario"); c.setData_tipo("float"); t.campos.add(c); Lista_tablas.add(t);
+
+
+    }
 
  public int buscar_variable(String id,String ambito)
     {       
@@ -769,11 +920,11 @@ joins ::= tipo_join JOIN objeto_nombre:a alias_tabla:b ON objeto_nombre:c ASIGNA
                             
                             if(indiceCampo1 != -1){
                                 if(indiceCampo2 != -1){
-                                    if(tabla1.getCampos().get(indiceCampo1).getData_tipo() == tabla2.getCampos().get(indiceCampo2).getData_tipo())
+                                    if(tabla1.campos.get(indiceCampo1).getData_tipo() == tabla2.campos.get(indiceCampo2).getData_tipo())
                                     {
                                          
                                     }
-                                    else if((tabla1.getCampos().get(indiceCampo1).getData_tipo() == "int" && tabla2.getCampos().get(indiceCampo2).getData_tipo() == "float") || ((tabla2.getCampos().get(indiceCampo2).getData_tipo() == "int" && tabla1.getCampos().get(indiceCampo1).getData_tipo() == "float")))
+                                    else if((tabla1.campos.get(indiceCampo1).getData_tipo() == "int" && tabla2.campos.get(indiceCampo2).getData_tipo() == "float") || ((tabla2.campos.get(indiceCampo2).getData_tipo() == "int" && tabla1.campos.get(indiceCampo1).getData_tipo() == "float")))
                                     {
                                     }
                                     else{
