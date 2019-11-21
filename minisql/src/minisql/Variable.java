@@ -59,7 +59,7 @@ public class Variable {
     {
         String linea = "";
         
-        linea = "|" + String.format("%1$31s",nombre) + "|" + String.format("%1$14s",tipo_dato)+ "|"+ String.format("%1$63s",valor)+ "|"+ String.format("%1$31s",ambito)+ "|" ;
+        linea = "|" + String.format("%1$31s",nombre) + "|" + String.format("%1$14s",tipo_dato)+ "|"+ String.format("%1$64s",valor)+ "|"+ String.format("%1$31s",ambito)+ "|" ;
         
         return linea;
     }

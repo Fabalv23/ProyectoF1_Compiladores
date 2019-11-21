@@ -219,16 +219,16 @@ public void lista_parametros(String parametros)
 
     public void Escribir()
     {
-        String separador = "------------------------------------------------------------------------------------------------------------------------------------------------";
-        String fin = "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"+"\n";
+        String separador = "-------------------------------------------------------------------------------------------------------------------------------------------------";
+        String fin = "/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"+"\n";
         
         String linea = "";
         linea = separador;        
-        linea = linea + "\n"+ "|                                                              TABLA DE SIMBOLOS                                                               |";
+        linea = linea + "\n"+ "|                                                              TABLA DE SIMBOLOS                                                                |";
         linea = linea + "\n"+ separador;
-        linea = linea + "\n"+ "|                                                                  VARIABLES                                                                   |";
+        linea = linea + "\n"+ "|                                                                  VARIABLES                                                                    |";
         linea = linea + "\n"+ separador;
-        linea = linea + "\n"+ "| Nombre                        | Tipo de Dato | Valor                                                         | Ambito                        |";
+        linea = linea + "\n"+ "| Nombre                        | Tipo de Dato | Valor                                                          | Ambito                        |";
         linea = linea + "\n"+ separador;
         
         for(Variable v: Lista_variables)
@@ -236,9 +236,9 @@ public void lista_parametros(String parametros)
             linea = linea + "\n"+ v.escribirVariable();
         }
         linea = linea + "\n"+ separador;
-        linea = linea + "\n"+ "|                                                                  FUNCIONES                                                                   |";
+        linea = linea + "\n"+ "|                                                                  FUNCIONES                                                                    |";
         linea = linea + "\n"+ separador;
-        linea = linea + "\n"+ "| Nombre                        | Tipo de Dato | Parametros                                                    | Ambito                        |";
+        linea = linea + "\n"+ "| Nombre                        | Tipo de Dato | Parametros                                                     | Ambito                        |";
         linea = linea + "\n"+ separador;
         
         for(Funcion f: Lista_funciones)
@@ -246,9 +246,9 @@ public void lista_parametros(String parametros)
             linea = linea + "\n"+ f.escribirFuncion();
         }
         linea = linea + "\n"+ separador;
-        linea = linea + "\n"+ "|                                                                    TABLAS                                                                    |";
+        linea = linea + "\n"+ "|                                                                    TABLAS                                                                     |";
         linea = linea + "\n"+ separador;
-        linea = linea + "\n"+ "| Nombre                        | Schema                        | Campos                                       | Ambito                        |";
+        linea = linea + "\n"+ "| Nombre                        | Schema                        | Campos                                        | Ambito                        |";
         linea = linea + "\n"+ separador;
         
         for(Tabla t: Lista_tablas)
@@ -607,9 +607,9 @@ System.out.println("Sentencia analizada correctamente. Sin errores.");
    LinkedList<Variable> pams = new LinkedList<Variable>();
 String nombre=" ";
 
-if(o.length==2){
-nombre=o[1];
-}else if(o.length==1){
+if(o[1]!=null){
+nombre=o[0];
+}else if(o[1]==null){
 nombre=o[0];
 }else {
 errores_semanticos.add("error semantico en linea "+oright+" en columa"+oleft+"el nombre de la funcion solo puede de tipo ESQUEMA.NOMBRE");
@@ -639,7 +639,7 @@ errores_semanticos.add("error semantico en linea "+datright+" en columa"+datleft
 
 
 if(!nombre.equals(" ")){
-if(buscar_funcion(nombre,ambito)==-1){
+if(buscar_funcion(nombre,ambito)!=-1){
 errores_semanticos.add("error semantico en linea "+oright+" en columa"+oleft+"ya existe una funcion con el nombre "+nombre+" en el ambito actual");
 
 }else{
@@ -653,6 +653,8 @@ ambito_aux="";
          f.setTipo_dato(tipo);
         f.setAmbito(ambito);
         f.setSets(Lista_aux_sets);
+Lista_funciones.add(f);
+Escribir();
 Lista_aux_sets.clear();
 esta_en_una_funcio=false;
 }
