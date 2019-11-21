@@ -1067,9 +1067,10 @@ otra_condicion ::=empty {:RESULT = null;:} |objeto_nombre:id operadores:b data_t
         String tipo_objeto = id[1];
 
 
+   
       Campo_alias c2 = new Campo_alias();
-          c2.setAlias(alias);
-          c2.setCampo(campo);
+          c2.setAlias(tipo_objeto);
+          c2.setCampo(nombre);
 
 
             Comparacion c1 = new Comparacion();            
