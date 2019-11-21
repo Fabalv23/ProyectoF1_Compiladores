@@ -6,6 +6,7 @@
 package minisql;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -14,16 +15,31 @@ import java.util.List;
  */
 public class Tabla {
      private String nombre;
-   private String ambito;
-     private List<Campo> campos;
+     private String schema;
+     private String ambito;
+     public LinkedList<Campo> campos;
      
+     public Tabla(){
+         campos = new LinkedList<Campo>();
+         nombre = "";
+         schema = "";
+         ambito = "";
+     }
      
+     public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+    
      public int buscar_campo(String id,String ambito)
     {       
         int index=-1;
         int i=0;
         for (Campo var : campos ) {            
-            if(var.getNombre()==id ){
+            if(var.getNombre().equals(id) ){
             index=i;
             }
             i++;
@@ -31,10 +47,6 @@ public class Tabla {
         return index;
     }
      
-    public Tabla(List<Campo> campos) {
-        this.campos = new ArrayList<>();
-    }
-
     public String getNombre() {
         return nombre;
     }
@@ -51,13 +63,31 @@ public class Tabla {
         this.ambito = ambito;
     }
 
-    public List<Campo> getCampos() {
-        return campos;
+    public String escribirTabla() {
+        String linea = "";
+
+        linea = "|" + String.format("%1$31s", nombre) + "|" + String.format("%1$31s", schema) + "|";
+
+        if (campos.isEmpty()) {
+            linea = linea + "                                              |" + String.format("%1$31s", ambito) + "|";
+        } else {
+            if (campos.size() == 1) {
+                linea = linea + campos.get(0).escribirCampo() + "|" + String.format("%1$31s", ambito) + "|";
+            } else {
+                linea = linea + campos.get(0).escribirCampo() + "|" + String.format("%1$31s", ambito) + "|";
+                int cont = 0;
+                for (Campo cam : campos) {
+                    if (cont == 0) {
+                        cont++;
+                    } else {
+                        linea = linea + "\n" + "|                               |                               |" + cam.escribirCampo() + "|                               |";
+                    }
+                }
+
+            }
+        }
+
+        return linea;
     }
 
-    public void setCampos(List<Campo> campos) {
-        this.campos = campos;
-    }
-    
-             
-             }
+}

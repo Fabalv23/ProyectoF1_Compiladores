@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import JFlex.*;
+import jflex.*;
 import java_cup.runtime.*;
 
 /**
@@ -31,6 +33,7 @@ import java_cup.runtime.*;
 public class Inicio extends javax.swing.JFrame {
 
     public String errores = "";
+    public String newPath = "";
 
     public String Tokens = "";
 
@@ -173,6 +176,7 @@ public class Inicio extends javax.swing.JFrame {
         int valor = dialogo.showOpenDialog(this);
         if (valor == JFileChooser.APPROVE_OPTION) {
             archivosql = dialogo.getSelectedFile();
+            newPath = archivosql.getParent() + File.separator + FileNameWithoutExtension(archivosql) + ".out";
             rutaArchivo = archivosql.getPath();
             nombre_archivo = archivosql.getName();
                 origen_datos = archivosql;
@@ -191,6 +195,21 @@ public class Inicio extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    public String FileNameWithoutExtension(File file) {
+        String fileName = "";
+        try {
+            if (file != null && file.exists()) {
+                String name = file.getName();
+                fileName = name.replaceFirst("[.][^.]+$", "");
+            }
+        } catch (Exception e) {
+            fileName = "";
+        }
+
+        return fileName;
+    }
+
+    
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         
@@ -212,14 +231,27 @@ public class Inicio extends javax.swing.JFrame {
                 }
 
                 parser s = new parser(new minisql.LexicoCup(new StringReader(resultado)));
+                s.path = newPath;
+                s.IniciarParse();
 
                 try {
-                    s.parse();         
+                    s.parse(); 
+                    String mensaje = "";
                     
-                    if (s.errores=="") {
+                    if (s.errores=="" && s.errores_semanticos.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "Programa ANALIZADO exitosamente", "Mensaje de exito ", HEIGHT);
                     }else{
-                        Resultados r = new Resultados("",s.errores);
+                        mensaje = s.errores;
+                        
+                        for(String error: s.errores_semanticos)
+                        {
+                            mensaje = mensaje + "\n"+error; 
+                        }
+                        
+                        Resultados r = new Resultados("",mensaje);
+                        
+                        
+                        
                         r.show();
                     }
                     
@@ -268,7 +300,7 @@ public class Inicio extends javax.swing.JFrame {
     public static void generarFlex(String ruta) {
         File archivo = new File(ruta);
 
-        JFlex.Main.generate(archivo);
+        jflex.Main.generate(archivo);
 
         JOptionPane.showMessageDialog(null, "Programa compilado exitosamente", "Mensaje de exito ", HEIGHT);
     }

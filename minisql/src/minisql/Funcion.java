@@ -57,5 +57,42 @@ public class Funcion {
     public void setParametros(LinkedList<Variable> parametros) {
         this.parametros = parametros;
     }
-            
+    
+    public String escribirFuncion()
+    {
+        String linea = "";
+        
+        linea = "|" + String.format("%1$31s",nombre) + "|" + String.format("%1$14s",tipo_dato)+ "|";
+        
+        if(parametros.isEmpty())
+        {
+            linea = linea +"                                                               |"+String.format("%1$31s",ambito) + "|";
+        }
+        else
+        {
+            if(parametros.size() == 1)
+            {
+                linea = linea + parametros.get(0).escribirParametro() + "|"+String.format("%1$31s",ambito) + "|";
+            }
+            else {
+                linea = linea + parametros.get(0).escribirParametro() + "|"+String.format("%1$31s",ambito) + "|";
+                int cont = 0;
+                for (Variable var : parametros) {
+                    if(cont == 0)
+                    {
+                        cont++;
+                    }
+                    else
+                    {
+                        linea = linea +"\n"+ "|                               |              |"+  var.escribirParametro() + "|                               |";
+                    }
+                }
+
+            }
+        }
+        
+        
+        
+        return linea;
+    }
    }

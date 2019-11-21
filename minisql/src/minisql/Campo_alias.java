@@ -13,6 +13,12 @@ public class Campo_alias {
     private String alias;
     private String campo;
 
+    public Campo_alias()
+    {
+        alias = "";
+        campo = "";
+    }
+    
     public String getAlias() {
         return alias;
     }

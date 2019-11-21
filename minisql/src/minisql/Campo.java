@@ -29,4 +29,13 @@ public class Campo {
         this.data_tipo = data_tipo;
     }
     
+    public String escribirCampo()
+    {
+        String linea = "";
+        
+        linea = String.format("%1$31s",nombre) + ", " + String.format("%1$14s",data_tipo);
+        
+        return linea;
+    }
+    
 }

@@ -17,13 +17,13 @@ public class Comparacion {
     public String valor;
     public String data;
     public Campo_alias Campo;
-    public Symbol comparador;
+    public String comparador;
 
-    public Symbol getComparador() {
+    public String getComparador() {
         return comparador;
     }
 
-    public void setComparador(Symbol comparador) {
+    public void setComparador(String comparador) {
         this.comparador = comparador;
     }
     
@@ -51,7 +51,13 @@ public class Comparacion {
         this.Campo = Campo;
     }
     
-    
+    public boolean isObjeto()
+    {
+        boolean esObjeto = true;
+        if(data.equals("string") || data.equals("int") ||data.equals("float") ||data.equals("bit"))
+             esObjeto = false;
+        return esObjeto;
+    }
     
     
     
