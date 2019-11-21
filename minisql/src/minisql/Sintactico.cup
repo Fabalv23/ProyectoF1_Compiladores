@@ -818,7 +818,7 @@ teniendo1 ::= funciones:f operadores:o data_tipo:dt teniendo2
 {:
 
 //este pedazo de codigo falta nada mas
-Lista_aux_having.add();
+//Lista_aux_having.add();
 
 :}
 |objeto_nombre:id operadores:op data_tipo:a teniendo2{:
@@ -1131,33 +1131,40 @@ RESULT=new String(id.toString());
 :};
 
 operadores ::= MAYOR_QUE:a {:
-RESULT = new String("a");
+RESULT = new String(a.toString());
 :}
     | MENOR_QUE:b {:
-RESULT = b;
+RESULT = new String(b.toString());
 :}
     | MAYOR_IGUAL:c {:
-RESULT = c;
+
+RESULT = new String(c.toString());
 :}
     | MENOR_IGUAL:d {:
-RESULT = d;
+
+RESULT = new String(d.toString());
 :}    
                 | DIFERENTE_DE:e {:
-RESULT = e;
+
+RESULT = new String(e.toString());
 :}
     | LIKE:f {:
-RESULT = f;
+
+RESULT = new String(f.toString());
 :}
     | BETWEEN:aa NUM:a AND:bb INT_NUM:b {:
 
-        RESULT = aa;
+        
+        RESULT = new String(aa.toString());
 
     :}  
                 | ASIGNAR:g{:
-RESULT = g;
+
+RESULT = new String(g.toString());
 :} 
                 | IS:h{:
-RESULT = h;             
+
+RESULT = new String(h.toString());   
     :};
 objeto_nombre ::= IDENTIFICADOR objeto_nombre1 {: RESULT = new String[4]; 
                 int cont = 0;

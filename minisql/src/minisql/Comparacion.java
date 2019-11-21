@@ -17,13 +17,13 @@ public class Comparacion {
     public String valor;
     public String data;
     public Campo_alias Campo;
-    public Symbol comparador;
+    public String comparador;
 
-    public Symbol getComparador() {
+    public String getComparador() {
         return comparador;
     }
 
-    public void setComparador(Symbol comparador) {
+    public void setComparador(String comparador) {
         this.comparador = comparador;
     }
     
