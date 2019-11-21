@@ -15,22 +15,16 @@ import java.util.List;
 public class Tabla_alias {
         private String nombre;
         private String ambito;
-        private List<Campo> campos;
         private String alias;
 
-        
-         public int buscar_campo(String id,String ambito)
-    {       
-        int index=-1;
-        int i=0;
-        for (Campo var : campos ) {            
-            if(var.getNombre()==id ){
-            index=i;
-            }
-            i++;
+        public Tabla_alias()
+        {
+            nombre = "";
+            ambito = "";
+            alias = "";
         }
-        return index;
-    }
+        
+         
         
     public String getAlias() {
         return alias;
@@ -56,11 +50,5 @@ public class Tabla_alias {
         this.ambito = ambito;
     }
 
-    public List<Campo> getCampos() {
-        return campos;
-    }
 
-    public void setCampos(List<Campo> campos) {
-        this.campos = campos;
-    }
 }

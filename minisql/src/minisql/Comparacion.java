@@ -51,7 +51,13 @@ public class Comparacion {
         this.Campo = Campo;
     }
     
-    
+    public boolean isObjeto()
+    {
+        boolean esObjeto = true;
+        if(data.equals("string") || data.equals("int") ||data.equals("float") ||data.equals("bit"))
+             esObjeto = false;
+        return esObjeto;
+    }
     
     
     

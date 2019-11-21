@@ -321,7 +321,7 @@ parser code
         int index=-1;
         int i=0;
         for (Tabla_alias var : Lista_tablas_alias ) {            
-            if(var.getAlias().equals(id) && var.getAmbito().equals(ambito)){
+            if(var.getAlias().equals(id)){
             index=i;
             }
             i++;
@@ -349,31 +349,31 @@ if(t[1].equals("string")||t[1].equals("null")||t[1].equals("error")){
  
 RESULT[0]=new String("error");
 RESULT[1]=new String("error");
-errores_semanticos.add("error semantico en linea "+tright+" en columa"+tleft+"el tipo deberia de ser int o float");
+errores_semanticos.add("error semantico en linea "+tright+" en columna "+tleft+" el tipo deberia de ser int o float");
 }else{
 
 if(f[1].equals("string")||f[1].equals("null")||f[1].equals("error")){
 
 RESULT[0]=new String("error");
 RESULT[1]=new String("error");
-errores_semanticos.add("error semantico en linea "+fright+" en columa"+fleft+"el tipo deberia de ser int o float");
+errores_semanticos.add("error semantico en linea "+fright+" en columna "+fleft+" el tipo deberia de ser int o float");
 
 }else{
 
 if(f[1].equals("float")||t[1].equals("float")){
 
 float valor=0;
- if(operacion=="*"){
+ if(operacion.equals("*")){
  valor=Float.valueOf(t[0])*Float.valueOf(f[0]);
 
- }else    if(operacion=="+"){
+ }else    if(operacion.equals("+")){
   valor=Float.valueOf(t[0])+Float.valueOf(f[0]);
 
- } if(operacion=="-"){
+ } if(operacion.equals("-")){
   valor=Float.valueOf(t[0])-Float.valueOf(f[0]);
 
  }
-  if(operacion=="/"){
+  if(operacion.equals("/")){
     valor=Float.valueOf(t[0])/Float.valueOf(f[0]); 
  }
 
@@ -384,17 +384,17 @@ RESULT[1]=new String("float");
 }else{
     
 float valor=0;
- if(operacion=="*"){
+ if(operacion.equals("*")){
  valor=Float.valueOf(t[0])*Float.valueOf(f[0]);
 
- }else    if(operacion=="+"){
+ }else    if(operacion.equals("+")){
   valor=Float.valueOf(t[0])+Float.valueOf(f[0]);
 
- } if(operacion=="-"){
+ } if(operacion.equals("-")){
   valor=Float.valueOf(t[0])-Float.valueOf(f[0]);
 
  }
-  if(operacion=="/"){
+  if(operacion.equals("/")){
     valor=Float.valueOf(t[0])/Float.valueOf(f[0]); 
  }
 
@@ -459,7 +459,7 @@ non terminal String[] VALORES_NUMEROS,FLOTANTE,NUM,F,T,E,data_tipo, objeto_nombr
 non terminal String[] OPTIONAL_DEFAULT_VALUE;
 non terminal String VARIABLES, tipo_dato, objeto_nombre1,objeto_nombre2,alias_tabla,OPTIONAL_TRANSACTION_NAME,OPTIONAL_COMMIT_OPTIONS ;
 non terminal from,fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT ,  BEGIN_TRANSACTION_STATEMENT ,  TRANSACTION_OPTIONS;
-non terminal String concatenar_string,varios_string,varios_string_prima,operadores;
+non terminal String concatenar_string,varios_string,varios_string_prima,operadores,mas_de_un_origen;
 non terminal USE_STATEMENT;
 
 
@@ -492,7 +492,7 @@ SAVE_STATEMENT ::= SAVE TRANSACTION_OPTIONS IDENTIFICADOR:i{:
 if(!transacciones.isEmpty()){
 transacciones.push(i.toString());
 }else{
-errores_semanticos.add("error semantico en linea "+iright+" en columa"+ileft+"no hay una transaccion activa");
+errores_semanticos.add("error semantico en linea "+iright+" en columna "+ileft+" no hay una transaccion activa");
 
 }
 
@@ -504,14 +504,14 @@ if(opt.equals(" ")){
 if(!transacciones.isEmpty()){
 transacciones.clear();
 }else{
-errores_semanticos.add("error semantico en linea "+optright+" en columa"+optleft+"no hay una transaccion activa");
+errores_semanticos.add("error semantico en linea "+optright+" en columna "+optleft+" no hay una transaccion activa");
 }
 
 }else{
 if(!(transacciones.search(opt)==-1)){
       vaciar_pila_hasta_id(opt);
           }else{
-   errores_semanticos.add("error semantico en linea "+optright+" en columa"+optleft+"no hay una transaccion activa para el id:"+opt);
+   errores_semanticos.add("error semantico en linea "+optright+" en columna "+optleft+" no hay una transaccion activa para el id:"+opt);
                }
 }
 
@@ -523,7 +523,7 @@ COMMIT_STATEMENT ::= COMMIT OPTIONAL_COMMIT_OPTIONS:opc{:
 if(!transacciones.isEmpty()){
 transacciones.pop();
 }else{
-errores_semanticos.add("error semantico en linea "+opcright+" en columa"+opcleft+"no hay una transaccion activa");
+errores_semanticos.add("error semantico en linea "+opcright+" en columna "+opcleft+" no hay una transaccion activa");
 }
 
 
@@ -548,7 +548,7 @@ RESULT= new String(i.toString());
 int indice = buscar_variable(i.toString(), ambito);       
 
  if(indice==-1){
-errores_semanticos.add("error semantico en linea "+iright+" en columa"+ileft+"no existe una variable "+i+" en el ambito actual");
+errores_semanticos.add("error semantico en linea "+iright+" en columna "+ileft+" no existe una variable "+i+" en el ambito actual");
 
 }else{
 
@@ -559,7 +559,7 @@ if(var.getTipo_dato().equals("string")){
 RESULT=new String();
 RESULT= new String(var.getValor());
 }else{
-errores_semanticos.add("error semantico en linea "+iright+" en columa"+ileft+"la variable tiene que se de tipo string");
+errores_semanticos.add("error semantico en linea "+iright+" en columna "+ileft+" la variable tiene que se de tipo string");
 
 }
 
@@ -602,7 +602,7 @@ Lista_variables.set(indice, va);
 Escribir();
 
 }else{
-errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
+errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
 
 }
 
@@ -622,13 +622,13 @@ Lista_variables.set(indice, va);
 Escribir();
 
 }else{
-errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
+errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
 
 }
 
 
 }else if (e[1].equals("error")||e[1].equals("null")){
-  errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"su expresion es nula o devuelve un error");
+  errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" su expresion es nula o devuelve un error");
 
 
 } else if(e[1].equals("string")){
@@ -644,7 +644,7 @@ Lista_variables.set(indice, va);
 Escribir();
 
 }else{
-errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
+errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
 
 }
 
@@ -653,7 +653,7 @@ errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el
 
             
 }else{
-errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" la variable no existe");
+errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" la variable no existe");
 }
 
 :}|SET VARIABLES:v ASIGNAR concatenar_string
@@ -678,12 +678,12 @@ Lista_variables.set(indice, va);
 Escribir();
 
 }else{
-errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un string dentro de un "+vcomp.getTipo_dato());
+errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" no se puede meter un string dentro de un "+vcomp.getTipo_dato());
 
 }
 
 }else{
-errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" la variable no existe");
+errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" la variable no existe");
 
 }
 
@@ -713,7 +713,7 @@ declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, 
                 Escribir();
                 }
         else{
-                errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
+                errores_semanticos.add("error semantico en linea "+aright+" en columna "+aleft+" el id "+a+" la variable ya existe");
 } :} | DECLARE VARIABLES:v tipo_dato:b ASIGNAR E:e declares2{: if((buscar_variable(v, ambito)==-1)){
             Variable va = new Variable(); 
             if(e[1].equals("float")){
@@ -727,7 +727,7 @@ declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, 
             Lista_variables.add(va);
             Escribir();
             }else{
-            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
+            errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
 
             }
 
@@ -746,13 +746,13 @@ declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, 
             Lista_variables.add(va);
             Escribir();
             }else{
-            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
+            errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
 
             }
 
 
             }else if (e[1].equals("error")||e[1].equals("null")){
-            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"su expresion es nula o devuelve un error");
+            errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" su expresion es nula o devuelve un error");
 
 
             } else if(e[1].equals("string")){
@@ -767,7 +767,7 @@ declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, 
             Lista_variables.add(va);
             Escribir();
             }else{
-            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
+            errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
 
             }
 
@@ -776,7 +776,7 @@ declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, 
 
             }
             else{
-errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" la variable ya existe");
+errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" la variable ya existe");
 }
                  :};
 declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, ambito)==-1)){
@@ -787,7 +787,7 @@ declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, a
                 Lista_variables.add(nuevaVariable);
                 Escribir();}
         else{
-                errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
+                errores_semanticos.add("error semantico en linea "+aright+" en columna "+aleft+" el id "+a+" la variable ya existe");
 } :} | COMA VARIABLES:v tipo_dato:b ASIGNAR E:e declares2{: if((buscar_variable(v, ambito)==-1)){
             Variable va = new Variable(); 
             if(e[1].equals("float")){
@@ -801,7 +801,7 @@ declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, a
             Lista_variables.add(va);
             Escribir();
             }else{
-            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
+            errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
 
             }
 
@@ -820,13 +820,13 @@ declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, a
             Lista_variables.add(va);
             Escribir();
             }else{
-            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
+            errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
 
             }
 
 
             }else if (e[1].equals("error")||e[1].equals("null")){
-            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"su expresion es nula o devuelve un error");
+            errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" su expresion es nula o devuelve un error");
 
 
             } else if(e[1].equals("string")){
@@ -841,7 +841,7 @@ declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, a
             Lista_variables.add(va);
             Escribir();
             }else{
-            errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
+            errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
 
             }
 
@@ -850,7 +850,7 @@ declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, a
 
             }
             else{
-errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" la variable ya existe");
+errores_semanticos.add("error semantico en linea "+vright+" en columna "+vleft+" el id "+v+" la variable ya existe");
 }:} | empty;
 
 procedure ::= CREATE alterar proc objeto_nombre parametros with_procedure replication AS empezar querys final{: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};
@@ -961,13 +961,31 @@ operacion_matematica ::= E;
 operacion_logica ::= data_tipo_operacion operadores data_tipo_operacion;
 operador ::= SUMA|RESTA|MULTIPLICACION|DIVISION|PORCENTAJE;
 
-origen ::= objeto_nombre:a alias_tabla:b origen1 {: if(buscar_Tabla(a[0], ambito) != -1){
-                Tabla_alias ca = new Tabla_alias(); 
-                ca.setAlias(b);
-                ca.setNombre(a[0]);
-                Lista_tablas_alias.add(ca);}
+origen ::= objeto_nombre:a alias_tabla:b origen1 {: 
+                int indice = buscar_Tabla(a[0], ambito);
+                if(indice != -1){
+                    if(a[1] != null)
+                    {
+                        if(Lista_tablas.get(indice).getSchema().equals(a[1]) || ambito.equals(a[1]))
+                        {
+                            Tabla_alias ca = new Tabla_alias(); 
+                            ca.setAlias(b);
+                            ca.setNombre(a[0]);
+                            Lista_tablas_alias.add(ca);
+                        }
+                        else{
+                            errores_semanticos.add("error semantico en linea "+aright+" en columna "+aleft+"  la tabla "+a[0]+" no pertenece al schema o base de datos indicado"); }
+                    }
+                    else
+                    {
+                        Tabla_alias ca = new Tabla_alias(); 
+                        ca.setAlias("");
+                        ca.setNombre(a[0]);
+                        Lista_tablas_alias.add(ca);
+                    }
+                }
                 else{
-                errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"no existe una tabla "+a[0]+" en el ambito actual"); } :};
+                errores_semanticos.add("error semantico en linea "+aright+" en columna "+aleft+" no existe una tabla "+a[0]+" en el ambito actual"); } :};
 origen1 ::= COMA origen | empty {: Lista_tablas_alias = new LinkedList<Tabla_alias>(); :};
 alias_tabla ::= AS STRING:a {: RESULT = new String(a.toString()); :} |AS IDENTIFICADOR:a {: RESULT = new String(a.toString()); :}|IDENTIFICADOR:a {: RESULT = new String(a.toString()); :}|empty;
 
@@ -988,40 +1006,40 @@ joins ::= tipo_join JOIN objeto_nombre:a alias_tabla:b ON objeto_nombre:c ASIGNA
                         
                         if(c[1].equals(b) || d[1].equals(b))
                         {
-                            Tabla tabla1= Lista_tablas.get(indice1);
-                            Tabla tabla2= Lista_tablas.get(indice2);
+                            Tabla tabla1= Lista_tablas.get(buscar_Tabla(Lista_tablas_alias.get(indice1).getNombre(),ambito));
+                            Tabla tabla2= Lista_tablas.get(buscar_Tabla(Lista_tablas_alias.get(indice2).getNombre(),ambito));
                             int indiceCampo1 = tabla1.buscar_campo(c[0], ambito);
                             int indiceCampo2 = tabla2.buscar_campo(d[0], ambito);
                             
                             if(indiceCampo1 != -1){
                                 if(indiceCampo2 != -1){
-                                    if(tabla1.campos.get(indiceCampo1).getData_tipo() == tabla2.campos.get(indiceCampo2).getData_tipo())
+                                    if(tabla1.campos.get(indiceCampo1).getData_tipo().equals(tabla2.campos.get(indiceCampo2).getData_tipo()))
                                     {
                                          
                                     }
-                                    else if((tabla1.campos.get(indiceCampo1).getData_tipo() == "int" && tabla2.campos.get(indiceCampo2).getData_tipo() == "float") || ((tabla2.campos.get(indiceCampo2).getData_tipo() == "int" && tabla1.campos.get(indiceCampo1).getData_tipo() == "float")))
+                                    else if((tabla1.campos.get(indiceCampo1).getData_tipo().equals("int") && tabla2.campos.get(indiceCampo2).getData_tipo().equals("float") || ((tabla2.campos.get(indiceCampo2).getData_tipo().equals("int") && tabla1.campos.get(indiceCampo1).getData_tipo().equals("float")))))
                                     {
                                     }
                                     else{
-                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"no concuerdan los tipos de campo "+c[0]+" y "+d[0]); }
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columna "+aleft+" no concuerdan los tipos de campo "+c[0]+" y "+d[0]); }
                                  }
                                  else{
-                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el campo "+d[0]+" no existe en la tabla "+tabla2.getNombre()); }
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columna "+aleft+" el campo "+d[0]+" no existe en la tabla "+tabla2.getNombre()); }
                             }
                             else{
-                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el campo "+c[0]+" no existe en la tabla "+tabla1.getNombre()); }
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columna "+aleft+" el campo "+c[0]+" no existe en la tabla "+tabla1.getNombre()); }
                         }
                         else{
-                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el alias no se utiliza en la relación. "); }
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columna "+aleft+" el alias no se utiliza en la relación. "); }
                     }
                     else{
-                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el no existe el alias "+ d[1]); }
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columna "+aleft+" el no existe el alias "+ d[1]); }
                 }
                 else{
-                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el no existe el alias "+ c[1]); }
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columna "+aleft+" el no existe el alias "+ c[1]); }
                 }
                 else{
-                                        errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+" la tabla  "+ a[0] + "no existe."); }
+                                        errores_semanticos.add("error semantico en linea "+aright+" en columna "+aleft+"  la tabla  "+ a[0] + "no existe."); }
 :} |empty;
 tipo_join ::= INNER|LEFT tipo_join1 | RIGHT tipo_join1 | FULL tipo_join1|empty;
 tipo_join1 ::= OUTER|empty;
@@ -1196,7 +1214,9 @@ RESULT[1]=new String(e[1]);
 :}
 
 
-|objeto_nombre|data_tipo:dt
+|objeto_nombre:e{: RESULT=new String[2]; 
+RESULT[0]=new String(e[0]);
+RESULT[1]=new String(e[1]); :}|data_tipo:dt
 {:
 RESULT=new String[2]; 
 RESULT[0]=new String(dt[0]);
@@ -1240,7 +1260,69 @@ RESULT[1]=new String(floa[1]);
 
 :};
 
-eliminar ::= DELETE opciones_delete FROM objeto_nombre mas_de_un_objeto condicionales {: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++;:};            
+eliminar ::= DELETE opciones_delete FROM origen joins condicionales:c {:  
+                for (Comparacion comp : Lista_aux_where) {
+                  if (comp.isObjeto()) {
+                      int indice1 = buscar_Tabla_alias(comp.getCampo().getAlias(), ambito);
+                      int indice2 = buscar_Tabla_alias(comp.getData(), ambito);
+                      if (indice1 != -1) {
+                          if (indice2 != -1) {
+
+                              Tabla tabla1 = Lista_tablas.get(buscar_Tabla(Lista_tablas_alias.get(indice1).getNombre(),ambito));
+                              Tabla tabla2 = Lista_tablas.get(buscar_Tabla(Lista_tablas_alias.get(indice2).getNombre(),ambito));
+                              int indiceCampo1 = tabla1.buscar_campo(comp.getCampo().getCampo(), ambito);
+                              int indiceCampo2 = tabla2.buscar_campo(comp.getValor(), ambito);
+
+                              if (indiceCampo1 != -1) {
+                                  if (indiceCampo2 != -1) {
+                                      if (tabla1.campos.get(indiceCampo1).getData_tipo().equals(tabla2.campos.get(indiceCampo2).getData_tipo())) {
+
+                                      } else if ((tabla1.campos.get(indiceCampo1).getData_tipo().equals("int") && tabla2.campos.get(indiceCampo2).getData_tipo().equals("float") || ((tabla2.campos.get(indiceCampo2).getData_tipo().equals("int") && tabla1.campos.get(indiceCampo1).getData_tipo().equals("float"))))) {
+                                      } else {
+                                          errores_semanticos.add("error semantico en linea " + cright + " en columna " + cleft + " no concuerdan los tipos de campo " + comp.getCampo().getCampo() + " y " + comp.getValor());
+                                      }
+                                  } else {
+                                      errores_semanticos.add("error semantico en linea " + cright + " en columna " + cleft + " el campo " + comp.getValor() + " no existe en la tabla " + tabla2.getNombre());
+                                  }
+                              } else {
+                                  errores_semanticos.add("error semantico en linea " + cright + " en columna " + cleft + " el campo " + comp.getCampo().getCampo() + " no existe en la tabla " + tabla1.getNombre());
+                              }
+
+                          } else {
+                              errores_semanticos.add("error semantico en linea " + cright + " en columna " + cleft + " no existe el alias " + comp.getData());
+                          }
+                      } else {
+                          errores_semanticos.add("error semantico en linea " + cright + " en columna " + cleft + " no existe el alias " + comp.getCampo().getAlias());
+                      }
+                  }
+                  else
+                  {
+                      int indice1 = buscar_Tabla_alias(comp.getCampo().getAlias(), ambito);
+                      if (indice1 != -1) {
+
+                              Tabla tabla1 = Lista_tablas.get(buscar_Tabla(Lista_tablas_alias.get(indice1).getNombre(),ambito));
+                              
+                              int indiceCampo1 = tabla1.buscar_campo(comp.getCampo().getCampo(), ambito);
+
+                              if (indiceCampo1 != -1) {
+                                      if (tabla1.campos.get(indiceCampo1).getData_tipo().equals(comp.getData())) {
+
+                                      } else if ((tabla1.campos.get(indiceCampo1).getData_tipo().equals("int") && comp.getData().equals("float") || ((comp.getData().equals("int") && tabla1.campos.get(indiceCampo1).getData_tipo().equals("float"))))) {
+                                      } else {
+                                          errores_semanticos.add("error semantico en linea " + cright + " en columna " + cleft + " no concuerdan los tipos de campo " + comp.getCampo().getCampo() + " y " + comp.getValor());
+                                      }
+                                  
+                              } else {
+                                  errores_semanticos.add("error semantico en linea " + cright + " en columna " + cleft + " el campo " + comp.getCampo().getCampo() + " no existe en la tabla " + tabla1.getNombre());
+                              }
+
+                           
+                      } else {
+                          errores_semanticos.add("error semantico en linea " + cright + " en columna " + cleft + " no existe el alias " + comp.getCampo().getAlias());
+                      }
+                  }
+              }
+System.out.println("Sentencia analizada correctamente. Sin errores."); cont++;:};            
              
             
 fin ::= PUNTO_COMA
@@ -1260,7 +1342,10 @@ condicionales ::=WHERE objeto_nombre:id operadores:op E:a condicionales1 {:
     String campo = id[0];
 
     Campo_alias c2 = new Campo_alias();
+    if(alias != null)
+        {
         c2.setAlias(alias);
+}
         c2.setCampo(campo);
         
       String valor_exp = a[0];
@@ -1340,7 +1425,7 @@ if(i1==-1){
 
 RESULT[0]=new String("error");
 RESULT[1]=new String("error");
-errores_semanticos.add("error semantico en linea "+idright+" en columa"+idleft+"no existe una variable "+id+" en el ambito actual");
+errores_semanticos.add("error semantico en linea "+idright+" en columna "+idleft+" no existe una variable "+id+" en el ambito actual");
 }else {
 RESULT[0]=new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).getValor());
 RESULT[1]=new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).getTipo_dato());
@@ -1392,8 +1477,9 @@ RESULT = new String(g.toString());
 
 RESULT = new String(h.toString());   
     :};
-objeto_nombre ::= IDENTIFICADOR objeto_nombre1 {: RESULT = new String[4]; 
+objeto_nombre ::= IDENTIFICADOR:a objeto_nombre1 {: RESULT = new String[4]; 
                 int cont = 0;
+                Lista_nombre.add(a.toString());
                 if(Lista_nombre.size() <= 4)
                 {
                 for(String s: Lista_nombre)
