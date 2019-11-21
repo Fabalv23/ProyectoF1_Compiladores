@@ -21,6 +21,9 @@ public class Tabla {
      
      public Tabla(){
          campos = new LinkedList<Campo>();
+         nombre = "";
+         schema = "";
+         ambito = "";
      }
      
      public String getSchema() {
@@ -59,6 +62,32 @@ public class Tabla {
     public void setAmbito(String ambito) {
         this.ambito = ambito;
     }
-    
-             
-             }
+
+    public String escribirTabla() {
+        String linea = "";
+
+        linea = "|" + String.format("%1$31s", nombre) + "|" + String.format("%1$31s", schema) + "|";
+
+        if (campos.isEmpty()) {
+            linea = linea + "                                              |" + String.format("%1$31s", ambito) + "|";
+        } else {
+            if (campos.size() == 1) {
+                linea = linea + campos.get(0).escribirCampo() + "|" + String.format("%1$31s", ambito) + "|";
+            } else {
+                linea = linea + campos.get(0).escribirCampo() + "|" + String.format("%1$31s", ambito) + "|";
+                int cont = 0;
+                for (Campo cam : campos) {
+                    if (cont == 0) {
+                        cont++;
+                    } else {
+                        linea = linea + "\n" + "|                               |                               |" + cam.escribirCampo() + "|                               |";
+                    }
+                }
+
+            }
+        }
+
+        return linea;
+    }
+
+}

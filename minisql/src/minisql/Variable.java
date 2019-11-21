@@ -15,6 +15,14 @@ public class Variable {
     private  String valor;
     private  String ambito;
 
+    public Variable()
+    {
+        nombre = "";
+        tipo_dato = "";
+        valor = "";
+        ambito = "";
+    }
+    
     public String getNombre() {
         return nombre;
     }
@@ -47,6 +55,22 @@ public class Variable {
         this.ambito = ambito;
     }
     
+    public String escribirVariable()
+    {
+        String linea = "";
+        
+        linea = "|" + String.format("%1$31s",nombre) + "|" + String.format("%1$14s",tipo_dato)+ "|"+ String.format("%1$63s",valor)+ "|"+ String.format("%1$31s",ambito)+ "|" ;
+        
+        return linea;
+    }
     
+    public String escribirParametro()
+    {
+        String linea = "";
+        
+        linea = String.format("%1$31s",nombre) + ", " + String.format("%1$31s",tipo_dato);
+        
+        return linea;
+    }
     
 }

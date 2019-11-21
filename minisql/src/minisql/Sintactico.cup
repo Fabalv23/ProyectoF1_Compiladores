@@ -7,6 +7,9 @@ import java_cup.runtime.Symbol;
 
 import java.util.LinkedList;
 import java.util.Stack;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+
 parser code
 {:
 
@@ -15,6 +18,7 @@ parser code
     private Symbol s;
     public int cont = 0;
     public String errores="";
+    public String path = "";
     public LinkedList<Tabla> Lista_tablas = new LinkedList<Tabla>();
 
     public LinkedList<Tabla_alias> Lista_tablas_alias = new LinkedList<Tabla_alias>();
@@ -49,28 +53,28 @@ parser code
         c = new Campo(); c.setNombre("NumVueltas"); c.setData_tipo("int"); t.campos.add(c);
         c = new Campo(); c.setNombre("NombreCircuito"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
         Lista_bases.add("Motociclismo");
-        t = new Tabla(); t.setNombre("Circuito"); t.setSchema("NASCAR"); t.setAmbito("VARCHAR"); 
+        t = new Tabla(); t.setNombre("Circuito"); t.setSchema("NASCAR"); t.setAmbito("Motociclismo"); 
         c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
         c = new Campo(); c.setNombre("Pais"); c.setData_tipo("string"); t.campos.add(c);
         c = new Campo(); c.setNombre("Tipo"); c.setData_tipo("string"); t.campos.add(c);
         c = new Campo(); c.setNombre("Longitud"); c.setData_tipo("float"); t.campos.add(c);
         c = new Campo(); c.setNombre("Diseñador"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
-        t = new Tabla(); t.setNombre("CONSULTAS_SQL"); t.setSchema("dbo"); t.setAmbito("FLOAT"); 
+        t = new Tabla(); t.setNombre("CONSULTAS_SQL"); t.setSchema("dbo"); t.setAmbito("Motociclismo"); 
         c = new Campo(); c.setNombre("ID_CONSULTA"); c.setData_tipo("int"); t.campos.add(c);
         c = new Campo(); c.setNombre("CONSULTA"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
-        t = new Tabla(); t.setNombre("Escuderia"); t.setSchema("NASCAR"); t.setAmbito("INT"); 
+        t = new Tabla(); t.setNombre("Escuderia"); t.setSchema("NASCAR"); t.setAmbito("Motociclismo"); 
         c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
         c = new Campo(); c.setNombre("Manager"); c.setData_tipo("string"); t.campos.add(c);
         c = new Campo(); c.setNombre("FabricanteMotor"); c.setData_tipo("string"); t.campos.add(c);
         c = new Campo(); c.setNombre("Sede"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
-        t = new Tabla(); t.setNombre("Piloto"); t.setSchema("NASCAR"); t.setAmbito("VARCHAR"); 
+        t = new Tabla(); t.setNombre("Piloto"); t.setSchema("NASCAR"); t.setAmbito("Motociclismo"); 
         c = new Campo(); c.setNombre("Codigo"); c.setData_tipo("int"); t.campos.add(c);
         c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
         c = new Campo(); c.setNombre("Nacionalidad"); c.setData_tipo("string"); t.campos.add(c);
         c = new Campo(); c.setNombre("FechaNacimiento"); c.setData_tipo("string"); t.campos.add(c);
         c = new Campo(); c.setNombre("CarreraDebut"); c.setData_tipo("string"); t.campos.add(c);
         c = new Campo(); c.setNombre("NombreEscuderia"); c.setData_tipo("string"); t.campos.add(c); Lista_tablas.add(t);
-        t = new Tabla(); t.setNombre("Resultado"); t.setSchema("NASCAR"); t.setAmbito("VARCHAR"); 
+        t = new Tabla(); t.setNombre("Resultado"); t.setSchema("NASCAR"); t.setAmbito("Motociclismo"); 
         c = new Campo(); c.setNombre("NombreGP"); c.setData_tipo("string"); t.campos.add(c);
         c = new Campo(); c.setNombre("Año"); c.setData_tipo("string"); t.campos.add(c);
         c = new Campo(); c.setNombre("CodPiloto"); c.setData_tipo("int"); t.campos.add(c);
@@ -182,10 +186,74 @@ parser code
         c = new Campo(); c.setNombre("Nombre"); c.setData_tipo("string"); t.campos.add(c);
         c = new Campo(); c.setNombre("SalarioBase"); c.setData_tipo("float"); t.campos.add(c);
         c = new Campo(); c.setNombre("Salario"); c.setData_tipo("float"); t.campos.add(c); Lista_tablas.add(t);
-
+        
+        try
+        {
+            PrintWriter pw = new PrintWriter(new FileOutputStream(path, false));
+            pw.print("");
+            pw.close();
+            Escribir();
+        }
+        catch(Exception e)
+        {
+            
+        }
 
     }
 
+    public void Escribir()
+    {
+        String separador = "------------------------------------------------------------------------------------------------------------------------------------------------";
+        String fin = "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"+"\n";
+        
+        String linea = "";
+        linea = separador;        
+        linea = linea + "\n"+ "|                                                              TABLA DE SIMBOLOS                                                               |";
+        linea = linea + "\n"+ separador;
+        linea = linea + "\n"+ "|                                                                  VARIABLES                                                                   |";
+        linea = linea + "\n"+ separador;
+        linea = linea + "\n"+ "| Nombre                        | Tipo de Dato | Valor                                                         | Ambito                        |";
+        linea = linea + "\n"+ separador;
+        
+        for(Variable v: Lista_variables)
+        {
+            linea = linea + "\n"+ v.escribirVariable();
+        }
+        linea = linea + "\n"+ separador;
+        linea = linea + "\n"+ "|                                                                  FUNCIONES                                                                   |";
+        linea = linea + "\n"+ separador;
+        linea = linea + "\n"+ "| Nombre                        | Tipo de Dato | Parametros                                                    | Ambito                        |";
+        linea = linea + "\n"+ separador;
+        
+        for(Funcion f: Lista_funciones)
+        {
+            linea = linea + "\n"+ f.escribirFuncion();
+        }
+        linea = linea + "\n"+ separador;
+        linea = linea + "\n"+ "|                                                                    TABLAS                                                                    |";
+        linea = linea + "\n"+ separador;
+        linea = linea + "\n"+ "| Nombre                        | Schema                        | Campos                                       | Ambito                        |";
+        linea = linea + "\n"+ separador;
+        
+        for(Tabla t: Lista_tablas)
+        {
+            linea = linea + "\n"+ t.escribirTabla();
+        }
+        
+        linea = linea + "\n"+fin;
+        
+        try
+        {
+            PrintWriter pw = new PrintWriter(new FileOutputStream(path, true));
+            pw.print(linea);
+            pw.close();
+        }
+        catch(Exception e)
+        {
+            
+        }
+        
+    }    
  public int buscar_variable(String id,String ambito)
     {       
         int index=-1;
@@ -203,7 +271,7 @@ parser code
     {  String retorno="";
         int i=0;
         for (String var : Lista_aux_concatenar ) {            
-            retorno+=var;
+            retorno=var.replace("\'", "")+retorno;
         }
         return retorno;
     }
@@ -531,6 +599,7 @@ va.setTipo_dato(e[1]);
 va.setAmbito(ambito);
 va.setNombre(v);
 Lista_variables.set(indice, va);
+Escribir();
 
 }else{
 errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
@@ -550,6 +619,7 @@ va.setTipo_dato(e[1]);
 va.setAmbito(ambito);
             va.setNombre(v);
 Lista_variables.set(indice, va);
+Escribir();
 
 }else{
 errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
@@ -571,6 +641,7 @@ va.setTipo_dato(e[1]);
 va.setAmbito(ambito);
             va.setNombre(v);
 Lista_variables.set(indice, va);
+Escribir();
 
 }else{
 errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+vcomp.getTipo_dato());
@@ -604,6 +675,7 @@ va.setTipo_dato("string");
 va.setAmbito(ambito);
 va.setNombre(v);
 Lista_variables.set(indice, va);
+Escribir();
 
 }else{
 errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un string dentro de un "+vcomp.getTipo_dato());
@@ -637,7 +709,9 @@ declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, 
                 nuevaVariable.setNombre(a);
                 nuevaVariable.setTipo_dato(b) ; 
                 nuevaVariable.setAmbito(ambito);
-                Lista_variables.add(nuevaVariable);}
+                Lista_variables.add(nuevaVariable);
+                Escribir();
+                }
         else{
                 errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
 } :} | DECLARE VARIABLES:v tipo_dato:b ASIGNAR E:e declares2{: if((buscar_variable(v, ambito)==-1)){
@@ -651,7 +725,7 @@ declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, 
             va.setAmbito(ambito);
             va.setNombre(v);
             Lista_variables.add(va);
-
+            Escribir();
             }else{
             errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
 
@@ -670,7 +744,7 @@ declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, 
             va.setAmbito(ambito);
                     va.setNombre(v);
             Lista_variables.add(va);
-
+            Escribir();
             }else{
             errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
 
@@ -691,7 +765,7 @@ declares ::= DECLARE VARIABLES:a tipo_dato:b declares2{: if((buscar_variable(a, 
             va.setAmbito(ambito);
                     va.setNombre(v);
             Lista_variables.add(va);
-
+            Escribir();
             }else{
             errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
 
@@ -710,7 +784,8 @@ declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, a
                 nuevaVariable.setNombre(a);
                 nuevaVariable.setTipo_dato(b) ; 
                 nuevaVariable.setAmbito(ambito);
-                Lista_variables.add(nuevaVariable);}
+                Lista_variables.add(nuevaVariable);
+                Escribir();}
         else{
                 errores_semanticos.add("error semantico en linea "+aright+" en columa"+aleft+"el id "+a+" la variable ya existe");
 } :} | COMA VARIABLES:v tipo_dato:b ASIGNAR E:e declares2{: if((buscar_variable(v, ambito)==-1)){
@@ -724,7 +799,7 @@ declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, a
             va.setAmbito(ambito);
             va.setNombre(v);
             Lista_variables.add(va);
-
+            Escribir();
             }else{
             errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
 
@@ -743,7 +818,7 @@ declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, a
             va.setAmbito(ambito);
                     va.setNombre(v);
             Lista_variables.add(va);
-
+            Escribir();
             }else{
             errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
 
@@ -764,7 +839,7 @@ declares2 ::= COMA VARIABLES:a tipo_dato:b declares2 {: if((buscar_variable(a, a
             va.setAmbito(ambito);
                     va.setNombre(v);
             Lista_variables.add(va);
-
+            Escribir();
             }else{
             errores_semanticos.add("error semantico en linea "+vright+" en columa"+vleft+"el id "+v+" no se puede meter un "+ e[1]+" dentro de un "+b);
 
