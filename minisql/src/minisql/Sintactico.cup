@@ -33,6 +33,7 @@ parser code
     public LinkedList<Variable> Lista_variables  = new LinkedList<Variable>();
     public LinkedList<String> Lista_nombre = new LinkedList<String>();
 
+    public LinkedList<Comparacion> Lista_aux_where  = new LinkedList<Comparacion>();
 
  public int buscar_variable(String id,String ambito)
     {       
@@ -948,15 +949,63 @@ opciones_delete ::=TOP expresion porcentaje|empty;
 expresion ::= PARENTESIS_ABIERTO NUM PARENTESIS_CERRADO | NUM
 			;
 porcentaje ::=PERCENT|empty;
-condicionales ::=WHERE objeto_nombre operadores E condicionales1 |empty;
+condicionales ::=WHERE objeto_nombre:id operadores:op E:a condicionales1 {:
+    String alias = id[1];
+    String campo = id[0];
 
-condicionales1  ::=operadores_logicos otra_condicion|empty;
+    Campo_alias c2 = new Campo_alias();
+        c2.setAlias(alias);
+        c2.setCampo(campo);
+        
+      String valor_exp = a[0];
+      String tipo_dato = a[1];
+            Comparacion c1 = new Comparacion();
+            
+            c1.setData(tipo_dato);
+            c1.setValor(valor_exp);            
+      c1.setComparador(op);
+            c1.setCampo(c2);
+            
+    Lista_aux_where.add(c1);
 
-otra_condicion ::=empty|objeto_nombre operadores data_tipo condicionales1				
-				;
-operadores_logicos ::= AND
-			| OR
-			;
+:} |empty;
+
+
+condicionales1  ::=operadores_logicos:op otra_condicion:oa {:
+if (oa==null) {
+  //error
+}
+
+:}|empty;
+
+otra_condicion ::=empty {:RESULT=NULL:} |objeto_nombre:id operadores:b data_tipo:c condicionales1 {:
+        String valor = c[0];
+        String tipo = c[1];
+
+
+        String nombre = id[0];
+        String tipo_objeto = id[1];
+
+
+      Campo_alias c2 = new Campo_alias();
+          c2.setAlias(alias);
+          c2.setCampo(campo);
+
+
+            Comparacion c1 = new Comparacion();            
+            c1.setData(tipo);
+            c1.setValor(valor);            
+      c1.setComparador(b);
+            c1.setCampo(c2);
+            
+    Lista_aux_where.add(c1);
+:};
+operadores_logicos ::= AND:a {:
+RESULT = a;
+:}
+| OR:o {:
+RESULT = o;
+:};
 data_tipo ::= STRING:s{:
 RESULT=new String[2]; 
 RESULT[0]=new String(s.toString().substring(1, s.toString().length()-1));
@@ -1000,16 +1049,35 @@ RESULT=new String(id.toString());
 
 :};
 
-operadores ::= MAYOR_QUE
-		| MENOR_QUE
-		| MAYOR_IGUAL
-		| MENOR_IGUAL		
-                | DIFERENTE_DE
-		| LIKE
-		| BETWEEN NUM AND INT_NUM		
-                | ASIGNAR
-                | IS                 
-		;
+operadores ::= MAYOR_QUE:a {:
+RESULT = a;
+:}
+    | MENOR_QUE:b {:
+RESULT = b;
+:}
+    | MAYOR_IGUAL:c {:
+RESULT = c;
+:}
+    | MENOR_IGUAL:d {:
+RESULT = d;
+:}    
+                | DIFERENTE_DE:e {:
+RESULT = e;
+:}
+    | LIKE:f {:
+RESULT = f;
+:}
+    | BETWEEN:aa NUM:a AND:bb INT_NUM:b {:
+
+        RESULT = aa;
+
+    :}  
+                | ASIGNAR:g{:
+RESULT = g;
+:} 
+                | IS:h{:
+RESULT = h;             
+    :};
 objeto_nombre ::= IDENTIFICADOR objeto_nombre1 {: RESULT = new String[4]; 
                 int cont = 0;
                 if(Lista_nombre.size() <= 4)
