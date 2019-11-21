@@ -224,7 +224,7 @@ terminal ALTER,CURRENT,MODIFY,REBUILD,DISABLE,REORGANIZE,RESUME,PAUSE,ABORT,PASS
 terminal PROC,PROCEDURE,ARROBA,OUT,OUTPUT,READONLY,ENCRYPTION,RECOMPILE,EXECUTE,BEGIN,END,DECLARE,EXEC,FUNCTION,RETURNS,RETURN;
 terminal TRAN,TRANSACTION,MARK,COMMIT,ROLLBACK,SAVE,CURSOR,INSENSITIVE,SCROLL,FETCH,NEXT,OPEN,CONCAT;
 
-non terminal update,inicio,querys, sentencia,empty,operadores,fin, eliminar, opciones_delete,condicionales,expresion,porcentaje,condicionales1,otra_condicion,operadores_logicos;
+non terminal update,inicio,querys, sentencia,empty,fin, eliminar, opciones_delete,condicionales,expresion,porcentaje,condicionales1,otra_condicion,operadores_logicos;
 non terminal asignaciones,asignaciones1,asignaciones2,opciones_update,err,truncate,tipo_objeto,drop,if_op,tabla,tabla2,index,index2;
 non terminal drop_relational_or_xml_or_spatial_index,drop_relational_or_xml_or_spatial_index2,drop_backward_compatible_index,drop_backward_compatible_index2;
 non terminal database,mas_de_un_objeto;
@@ -240,7 +240,7 @@ non terminal String[] VALORES_NUMEROS,FLOTANTE,NUM,F,T,E,data_tipo, objeto_nombr
 non terminal String[] OPTIONAL_DEFAULT_VALUE;
 non terminal String VARIABLES, tipo_dato, objeto_nombre1,objeto_nombre2,alias_tabla,OPTIONAL_TRANSACTION_NAME,OPTIONAL_COMMIT_OPTIONS ;
 non terminal from,fin_function,begin_transaction,trans,transaction_name,with_trans,description,fin_transaction,save_point,cursor,tipo_cursor,abrir_cursor,mas_variables,tipo_fetch, SAVE_STATEMENT , ROLLBACK_STATEMENT , COMMIT_STATEMENT ,  BEGIN_TRANSACTION_STATEMENT ,  TRANSACTION_OPTIONS;
-non terminal String concatenar_string,varios_string,varios_string_prima;
+non terminal String concatenar_string,varios_string,varios_string_prima,operadores;
 non terminal USE_STATEMENT;
 
 
@@ -1058,7 +1058,7 @@ if (oa==null) {
 
 :}|empty;
 
-otra_condicion ::=empty {:RESULT=NULL:} |objeto_nombre:id operadores:b data_tipo:c condicionales1 {:
+otra_condicion ::=empty {:RESULT = null;:} |objeto_nombre:id operadores:b data_tipo:c condicionales1 {:
         String valor = c[0];
         String tipo = c[1];
 
@@ -1130,7 +1130,7 @@ RESULT=new String(id.toString());
 :};
 
 operadores ::= MAYOR_QUE:a {:
-RESULT = a;
+RESULT = new String("a");
 :}
     | MENOR_QUE:b {:
 RESULT = b;
