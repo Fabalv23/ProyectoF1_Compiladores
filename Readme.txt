@@ -17,3 +17,17 @@ Los errores como son especificos y para que fuera mas rapido su identificacion, 
 
 ***NOTA: Tanto la ruta del archivo flex como del destino de los archivos de salida
 	estan quemadas en el codigo de la aplicacion. (Inicio.Java)
+
+
+Manejo de la tabla de simbolos
+Pare el manejo de la tabla de simbolos se empleo un metodo de Escribir() el cual actualiza un archivo  .OUT con la tabla de simbolos
+para el manejo de la misma se utilizaron estructura de datos para ser mas especificos se utilizaron listas enlazadas donde almacenamos
+las funciones y sus parametros , la tablas (los campos de las mismas) , variables , para cierto ambito o base de datos.
+
+Estructura de tabla de simbolos
+
+
+
+Para el manejo de transacciones se manejo una pila donde si se hace un begin tran hace un push en la pila con el nombre de la transaccion o si esta vacia , tambien se hace un commit tran que representa un pop en la pila , si se raliza un save tran se hace un push en la pila donde se manda el nombre del save point po ultimo para los rollback se vacia la pila hasta el id que mandemos y si el rollback viene vacio se sacan todos los elementos de la pila.
+
+
