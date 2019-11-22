@@ -28,6 +28,9 @@ Estructura de tabla de simbolos
 
 
 
-Para el manejo de transacciones se manejo una pila donde si se hace un begin tran hace un push en la pila con el nombre de la transaccion o si esta vacia , tambien se hace un commit tran que representa un pop en la pila , si se raliza un save tran se hace un push en la pila donde se manda el nombre del save point po ultimo para los rollback se vacia la pila hasta el id que mandemos y si el rollback viene vacio se sacan todos los elementos de la pila.
+Para el manejo de transacciones se manejo una pila donde si se hace un begin tran hace un push en la pila con el nombre de la transaccion
+o si esta vacia , tambien se hace un commit tran que representa un pop en la pila , si se raliza un save tran se hace un push en la pila
+donde se manda el nombre del save point po ultimo para los rollback se vacia la pila hasta el id que mandemos y si el rollback viene
+vacio se sacan todos los elementos de la pila.
 
 
