@@ -75,8 +75,8 @@ y floats se comprobo que si operamos int con float de forma automatica lo convie
 error porque el float pierde todos sus decimales de lo contrario si deseamos meter un  int en un float si deja porque no pierde
 decimales; todos estos errores semanticos se guardan en una lista la cual al terminar el analisis los imprime.
 
-
-
+ESTRUCTURA DE ERRORES :
+error semantico en linea (numero de linea) en columa (numero de columna) descripcion del error 
 
 
 
