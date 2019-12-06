@@ -471,13 +471,14 @@ non terminal asignaciones,asignaciones1,asignaciones2,opciones_update,err,trunca
 non terminal drop_relational_or_xml_or_spatial_index,drop_relational_or_xml_or_spatial_index2,drop_backward_compatible_index,drop_backward_compatible_index2;
 non terminal database,mas_de_un_objeto;
 non terminal insert,into,campos,campos2,mas_de_un_identificador,valores,valores2,mas_valores2,mas_valores;
-non terminal operacion_logica,opcion_alias,select,option_select,seleccion,columna,columna1,columna2,data_tipo_operacion,funciones,valor,puede,alias_columna,operacion,operacion_matematica,operador,origen,origen1;
+non terminal operacion_logica,opcion_alias,select,seleccion,columna2,data_tipo_operacion,valor,puede,alias_columna,operacion,operacion_matematica,operador,origen,origen1;
 non terminal joins,tipo_join,tipo_join1,joins1,agrupado,teniendo,teniendo1,teniendo2,orden,tipo_orden,orden2;
 non terminal create,opciones_crear,database_create,extras_database,filespec,mas_file,opciones_index,index_create,column_index,mas_index,view_create,column_view,column_view1;
 non terminal mas_file2,extra_primary,aux2,user,table_create,extra_create_table,add_column,add_column1,add_column2,constraint,constraint1,constraint2,expresion_logica,declara_constraint;
 non terminal extra_unique,set_item2,alter,opciones,database_alter,nombre_actual,tipo_alter_base,index_alter,nombre_index,accion_index,table_alter,accion_alter,tipo_add,drop_column,user_alter,set_item,set_item1;
 non terminal declares,declares2,sets,sets2,procedure,alterar,proc,tipo_parametro,with_procedure,procedure_option,replication,empezar,final;
-non terminal querys_sin_set,sentencia_sin_set,exec,enviar_datos,mandar_mas,functions,as,interno_funcion,llamar_funciones,mas_drop,tipo_index_orden,mas_de_columnindex;
+non terminal querys_sin_set,sentencia_sin_set,exec,enviar_datos,mandar_mas,functions,as,interno_funcion,mas_drop,tipo_index_orden,mas_de_columnindex;
+non terminal String llamar_funciones, funciones, columna1, columna, option_select;
 non terminal String[] VALORES_NUMEROS,FLOTANTE,NUM,F,T,E,data_tipo, objeto_nombre;
 non terminal String[] OPTIONAL_DEFAULT_VALUE;
 non terminal String tipo_retorno,VARIABLES, tipo_dato, objeto_nombre1,objeto_nombre2,alias_tabla,OPTIONAL_TRANSACTION_NAME,OPTIONAL_COMMIT_OPTIONS ;
@@ -677,7 +678,15 @@ esta_en_una_funcio=true;
 
 
 :} | VARIABLES TABLE PARENTESIS_ABIERTO add_column PARENTESIS_CERRADO|TABLE; 
-llamar_funciones ::= objeto_nombre:a PARENTESIS_ABIERTO enviar_datos:b PARENTESIS_CERRADO;
+llamar_funciones ::= objeto_nombre:a PARENTESIS_ABIERTO enviar_datos:b PARENTESIS_CERRADO {:int indice = buscar_funcion(a[0],ambito);
+                if(indice != -1)
+                {
+                    RESULT = new String(Lista_funciones.get(indice).getNombre());
+                }
+                else{
+                    errores_semanticos.add("error semantico en linea "+aright+" en columna "+aleft+" no existe la función en el ámbito actual.");
+
+                    }:};
 fin_function ::= fin|empty;
 interno_funcion ::= querys|empty;
 
@@ -1213,16 +1222,22 @@ expresion_logica ::= otra_condicion;
 aux2 ::= constraint1|CONSTRAINT objeto_nombre constraint1;
 
 
-select ::= SELECT option_select from {: System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};           
+select ::= SELECT option_select:a from {: if(a!=null){
+                                                        int indice = buscar_funcion(a,ambito);
+                                                        if(indice != -1)
+                                                        {
+                                                            
+                                                        }
+} System.out.println("Sentencia analizada correctamente. Sin errores."); cont++; :};           
 from ::=  FROM origen joins condicionales agrupado teniendo orden|empty;
 
-option_select ::= MULTIPLICACION | seleccion columna;
+option_select ::= MULTIPLICACION | seleccion columna:a {: RESULT = a; :};
 seleccion ::= DISTINCT|ALL|TOP expresion | empty;
-columna ::= columna1 alias_columna columna2;
-columna1 ::= funciones | E|objeto_nombre ASIGNAR E;
+columna ::= columna1:a alias_columna columna2 {: RESULT = a; :};
+columna1 ::= funciones:a {:RESULT = a; :} | E|objeto_nombre ASIGNAR E;
 columna2 ::= COMA option_select|empty;
 data_tipo_operacion ::= data_tipo|objeto_nombre;
-funciones ::= SUM PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|AVG PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|COUNT PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|MIN PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|MAX PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|llamar_funciones;
+funciones ::= SUM PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|AVG PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|COUNT PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|MIN PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|MAX PARENTESIS_ABIERTO valor PARENTESIS_CERRADO|llamar_funciones:a{: RESULT = a; :};
 valor ::= BIT_NUM | MULTIPLICACION | puede objeto_nombre;
 puede ::= DISTINCT|empty;
 alias_columna ::= AS STRING|AS IDENTIFICADOR|empty;
@@ -1239,7 +1254,8 @@ origen ::= objeto_nombre:a alias_tabla:b origen1 {:
                         if(Lista_tablas.get(indice).getSchema().equals(a[1]) || ambito.equals(a[1]))
                         {
                             Tabla_alias ca = new Tabla_alias(); 
-                            ca.setAlias(b);
+                            if(b!=null)
+                            {    ca.setAlias(b);}
                             ca.setNombre(a[0]);
                             Lista_tablas_alias.add(ca);
                         }
@@ -1264,7 +1280,10 @@ alias_tabla ::= AS STRING:a {: RESULT = new String(a.toString()); :} |AS IDENTIF
 joins ::= tipo_join JOIN objeto_nombre:a alias_tabla:b ON objeto_nombre:c ASIGNAR objeto_nombre:d joins {: 
                 if(buscar_Tabla(a[0], ambito) != -1){
                     Tabla_alias ca = new Tabla_alias(); 
+                    if(b!=null)
+                    {
                     ca.setAlias(b);
+                    }
                     ca.setNombre(a[0]);
                     Lista_tablas_alias.add(ca);
                 int indice1 = buscar_Tabla_alias(c[1], ambito);
@@ -1752,10 +1771,12 @@ RESULT[1]=new String(Lista_variables.get(buscar_variable(id.toString(),ambito)).
                   
 		;
 
-VARIABLES ::= ARROBA IDENTIFICADOR:id{:
+VARIABLES ::= ARROBA IDENTIFICADOR:id VARIABLES1{:
 RESULT=new String(id.toString());    
 
 :};
+
+VARIABLES1 ::= COMA VARIABLES |;
 
 operadores ::= MAYOR_QUE:a {:
 RESULT = new String(a.toString());
